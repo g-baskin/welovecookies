@@ -1,7 +1,7 @@
 /**
  * We Love Cookies: the shared consent contract (framework-free, no SvelteKit imports).
- * Used by the browser core (banner, signals), the store server (state, log, admin) and the
- * standalone script for other sites. Change it only additively; both sides depend on it.
+ * Used by the browser core (banner, signals), the standalone script and any server that records
+ * choices. Change it only additively; servers depend on it.
  * Engineering defaults, not legal advice.
  */
 
@@ -68,7 +68,7 @@ export interface StoredConsent {
 	action: ConsentAction;
 }
 
-/** POST body (JSON) to the record endpoint (`/api/consent` in the store). */
+/** POST body (JSON) sent to `endpoints.record` (your own proof-of-consent endpoint). */
 export interface ConsentRecordPayload {
 	id: string;
 	action: ConsentAction;
@@ -103,24 +103,18 @@ export interface ConsentSeenPayload {
 }
 
 /**
- * Hosted install on another website: `<script src="https://<your-server>/consent/welovecookies.min.js"
- * data-site="<site key>" async></script>`. The script fetches HOSTED_CONFIG_PATH?site=<key> from the
- * store (same host as the script), which answers a ConsentConfig for this visitor (region from the
- * visitor's connection, absolute endpoints that accept that site's origin).
+ * Hosted install: `<script src="https://<your-server>/welovecookies.min.js" data-site="<site key>"
+ * async></script>`. The script fetches HOSTED_CONFIG_PATH?site=<key> from the server that serves it,
+ * which answers a ConsentConfig for this visitor (region from the visitor's connection, absolute
+ * endpoints that accept that site's origin).
  */
 export const HOSTED_CONFIG_PATH = '/api/consent/config';
 
-/** Privacy requests shoppers can send from the privacy page (laws worldwide give these rights). */
-export const PRIVACY_REQUEST_KINDS = ['delete', 'copy', 'correct', 'stop_selling'] as const;
-export type PrivacyRequestKind = (typeof PRIVACY_REQUEST_KINDS)[number];
-export const PRIVACY_REQUEST_STATUSES = ['new', 'in_progress', 'done', 'declined'] as const;
-export type PrivacyRequestStatus = (typeof PRIVACY_REQUEST_STATUSES)[number];
-
-/** One row of the shopper-facing cookie list. */
+/** One row of the visitor-facing cookie list. */
 export interface CookieInfo {
-	/** Plain name shoppers read, e.g. "Shopping bag" (never a technical cookie or field name). */
+	/** Plain name visitors read, e.g. "Sign-in" (never a technical cookie or field name). */
 	name: string;
-	/** Plain-words name shown to shoppers, e.g. "Your shopping bag"; the cookie name shows under it. */
+	/** Plain-words name shown to visitors, e.g. "Keeps you signed in"; the cookie name shows under it. */
 	label?: string;
 	provider: string;
 	category: ConsentCategory;
@@ -208,7 +202,7 @@ export interface ConsentIntegrations {
 	scriptBlocking: boolean;
 }
 
-/** Everything the browser core needs. The store server builds it per request (clientConfigFor). */
+/** Everything the browser core needs: from the page, the script tag, or a server per request. */
 export interface ConsentConfig {
 	/** Resolved region mode; 'auto' (standalone only) guesses from the browser time zone. */
 	mode: ConsentMode | 'auto';
@@ -237,28 +231,26 @@ export interface ConsentConfig {
 	cookieName?: string;
 	/**
 	 * Where the choice cookie lives. 'auto' (default) finds the site's root domain with a test
-	 * cookie, so one choice covers shop.example.com and example.com. A domain string forces it.
+	 * cookie, so one choice covers blog.example.com and example.com. A domain string forces it.
 	 */
 	cookieDomain?: string | 'auto';
 	integrations?: Partial<ConsentIntegrations>;
-	/** Logo shown at the top of the banner (store logo); absent = the cookie illustration. */
+	/** Logo shown at the top of the banner (your logo); absent = the cookie illustration. */
 	logoUrl?: string | null;
-	/** Store name used as the logo's alt text (plain words). */
+	/** Your site or brand name, used as the logo's alt text (plain words). */
 	brandName?: string;
 	/**
 	 * Extra technical cookie names to delete when a category is switched off (a trailing * is a
 	 * prefix). Never shown to people. Added to the built-in list in autoclear.ts.
 	 */
 	autoClear?: Partial<Record<OptionalCategory, string[]>>;
-	/** Another website using the store's banner: its site key, sent with every record. */
+	/** Site key for the hosted install, sent with every record. */
 	site?: string;
-	/** Path prefixes where the banner is compact and the floating button hidden (e.g. "/checkout"). */
+	/** Path prefixes where the banner is compact and the floating button hidden (e.g. "/signup"). */
 	compactOn?: string[];
-	/** CSS selector of a fixed bottom bar (sticky add-to-cart) the banner must sit above. */
+	/** CSS selector of a fixed bottom bar (e.g. a sticky call-to-action) the banner must sit above. */
 	avoidSelector?: string;
 }
 
 /** Name of the consent cookie. */
 export const CONSENT_COOKIE_NAME = 'wlc_consent';
-/** Old ads-only cookie (granted | denied | optout), read as a fallback only. */
-export const LEGACY_CONSENT_COOKIE = 'wlc_consent_v0';

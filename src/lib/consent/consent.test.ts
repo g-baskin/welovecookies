@@ -24,7 +24,7 @@ function setup(
 	} as unknown as Document; // prettier-ignore
 	const w: ConsentWindow = {
 		document,
-		location: { pathname: '/products/shirt', protocol: 'https:' },
+		location: { pathname: '/pricing', protocol: 'https:' },
 		navigator: { languages: ['de-DE'], userAgent: 'x', maxTouchPoints: 0, ...nav },
 		innerWidth: 1440,
 		dispatchEvent: (e) => (events.push(e), true)
@@ -70,7 +70,7 @@ describe('consent manager', () => {
 			id: c?.id,
 			action: 'accept_all',
 			lang: 'de',
-			page: '/products/shirt',
+			page: '/pricing',
 			gpc: false
 		});
 		// Re-choosing keeps the id; withdrawing after granting is recorded as withdraw.

@@ -28,14 +28,14 @@
 			preferencesCategory: true,
 			position: q.get('pos') || 'auto',
 			logoUrl: q.get('logo') === '1' ? '/favicon.png' : q.get('logo') === 'broken' ? '/no-such-logo.png' : null,
-			brandName: 'Demo shop',
+			brandName: 'Demo site',
 			avoidSelector: '[data-sticky-cta]',
-			compactOn: q.get('compact') ? ['/consent/'] : [],
+			compactOn: q.get('compact') ? ['/demo/'] : [],
 			links: { privacyPolicy: '/privacy', cookiePolicy: '/cookies', privacyChoices: '/privacy#choices' },
 			cookies: [
-				{ name: 'Cookie choice', provider: 'This shop', category: 'necessary', purpose: 'Remembers your cookie choice.', duration: '6-12 months' },
-				{ name: 'Shopping bag', provider: 'This shop', category: 'necessary', purpose: 'Keeps your cart.', duration: '30 days' },
-				{ name: 'Visit counter', provider: 'PostHog', category: 'analytics', purpose: 'Counts visits and popular products.', duration: '1 year' },
+				{ name: 'Cookie choice', provider: 'This website', category: 'necessary', purpose: 'Remembers your cookie choice.', duration: '6-12 months' },
+				{ name: 'Sign-in', provider: 'This website', category: 'necessary', purpose: 'Keeps you signed in.', duration: '30 days' },
+				{ name: 'Visit counter', provider: 'PostHog', category: 'analytics', purpose: 'Counts visits and popular pages.', duration: '1 year' },
 				{ name: 'Ad click', provider: 'Google Ads', category: 'marketing', purpose: 'Measures ad clicks.', duration: '90 days' },
 				{ name: 'Ad visit', provider: 'Meta', category: 'marketing', purpose: 'Measures ads on Facebook and Instagram.', duration: '90 days' }
 			]
@@ -43,20 +43,20 @@
 		window.dataLayer = [];
 	})();
 </script>
-<script src="/consent/welovecookies.min.js"></script>
+<script src="../dist/welovecookies.min.js"></script>
 </head>
 <body>
 <main>
-	<h1>Demo shop</h1>
+	<h1>Demo site</h1>
 	<p>Try <code>?mode=opt-out-gpc&amp;gpc=1</code>, <code>?mode=notice</code>, <code>?lang=ar</code>, <code>?prefs=1</code>, <code>?logo=1</code>.</p>
 	<div class="grid">
-		<div class="card">Linen shirt · $48</div><div class="card">Wool scarf · $36</div><div class="card">Canvas tote · $24</div>
-		<div class="card">Cotton tee · $22</div><div class="card">Leather belt · $55</div><div class="card">Rain jacket · $120</div>
+		<div class="card">Features</div><div class="card">Pricing</div><div class="card">Blog</div>
+		<div class="card">Docs</div><div class="card">About us</div><div class="card">Contact</div>
 	</div>
 	<p><button type="button" onclick="WeLoveCookies.openPreferences()">Cookie settings</button></p>
 	<script type="text/plain" data-consent="analytics">console.log('[demo] analytics script ran');</script>
 </main>
-<div data-sticky-cta><span>Linen shirt · $48</span><button type="button">Add to cart</button></div>
+<div data-sticky-cta><span>Ready to get started?</span><button type="button">Sign up</button></div>
 <script>
 	if (new URLSearchParams(location.search).get('prefs') === '1') addEventListener('load', function () { WeLoveCookies.openPreferences(); });
 	addEventListener('welovecookies:change', function (e) { console.log('[demo] change', e.detail); });

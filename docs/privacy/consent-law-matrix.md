@@ -66,7 +66,7 @@ Recommendation: honor GPC for all US visitors (most teams do; avoids state misde
 Fields: consent ID (random UUID, stored in first-party cookie), timestamp (UTC ISO 8601), country + regionCode, mode applied, banner/config version and cookie-policy version hash, language, choice per category (necessary/analytics/functional/marketing), action (accept_all, reject_all, custom, withdraw, gpc_auto), GPC/Sec-GPC value, user agent, truncated IP or hash (avoid full IP), page URL, customer ID if logged in.
 Retention: keep each record for the life of the consent plus a limitation buffer; engineering default 5 years for opt-in regions (burden of proof under GDPR Art. 7(1), LGPD, POPIA, India). US opt-out request records: 24 months (CCPA regs 7101) [unverified]. Consent cookie itself: 6 months (opt-in), 12 months (others).
 
-## 4. Required shopper-facing pages/links
+## 4. Required visitor-facing pages/links
 - Cookie policy/list: every cookie/tag, purpose, provider, lifetime, third-party recipients (EU, UK, BR, JP external transmission, KR, all opt-in).
 - Privacy policy with notice at collection (all; CA, Quebec in French, BR in Portuguese, SA in Arabic recommended).
 - Persistent "Cookie settings" link to reopen preferences and withdraw (all opt-in modes; UK objection control).

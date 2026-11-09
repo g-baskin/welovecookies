@@ -20,7 +20,7 @@ const EU_EEA = [
 export const COUNTRY_MODES: Readonly<Record<string, ConsentMode>> = {
 	...Object.fromEntries(EU_EEA.map((c) => [c, 'opt-in' as const])),
 	GB: 'opt-in-uk',
-	// Switzerland: nFADP is opt-out by most readings, but this store has always asked first there.
+	// Switzerland: nFADP is opt-out by most readings, but asking first is the safer default.
 	CH: 'opt-in',
 	CA: 'opt-out',
 	BR: 'opt-in', MX: 'opt-in-light', AR: 'opt-in-light', CL: 'opt-in-light', CO: 'opt-in-light',
