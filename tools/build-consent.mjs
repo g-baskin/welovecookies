@@ -4,19 +4,22 @@ import { copyFileSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
 const esbuild = './node_modules/.bin/esbuild';
+// `node tools/build-consent.mjs <dir>` builds only the two scripts into <dir> (dist.test.ts compares them with dist/).
+const out = process.argv[2] ?? 'dist';
 // Licence notice kept in the built files so every site serving them passes on the terms and the source link.
 const banner = '/*! We Love Cookies | (c) 2026 g-baskin | AGPL-3.0-only | Source: https://github.com/g-baskin/welovecookies */';
 const common = ['--bundle', '--minify', '--target=es2019', '--legal-comments=none', `--banner:js=${banner}`];
 execFileSync(
 	esbuild,
-	['src/lib/consent/standalone.ts', ...common, '--format=iife', '--outfile=dist/welovecookies.min.js'],
+	['src/lib/consent/standalone.ts', ...common, '--format=iife', `--outfile=${out}/welovecookies.min.js`],
 	{ stdio: 'inherit' }
 );
 execFileSync(
 	esbuild,
-	['src/lib/consent/index.ts', ...common, '--format=esm', '--outfile=dist/welovecookies.mjs'],
+	['src/lib/consent/index.ts', ...common, '--format=esm', `--outfile=${out}/welovecookies.mjs`],
 	{ stdio: 'inherit' }
 );
+if (out !== 'dist') process.exit(0);
 for (const f of ['dist/welovecookies.min.js', 'dist/welovecookies.mjs']) {
 	const b = readFileSync(f);
 	console.log(

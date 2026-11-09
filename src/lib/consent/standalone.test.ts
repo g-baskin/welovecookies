@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createConsent, type ConsentWindow } from './consent.ts';
-import { hostedDefaults, loadHosted } from './standalone.ts';
+import { fromScript, hostedDefaults, loadHosted } from './standalone.ts';
 import type { ConsentConfig } from './types.ts';
 
 const ok = (body: unknown) =>
@@ -65,5 +65,27 @@ describe('hosted install', () => {
 			expect(p.init.keepalive).toBeUndefined();
 			expect(p.init.headers).toEqual({ 'content-type': 'application/json' });
 		}
+	});
+});
+
+describe('script tag data-* settings', () => {
+	const tag = (dataset: Record<string, string>) => fromScript({ dataset } as unknown as HTMLScriptElement);
+	it('reads every documented attribute', () => {
+		expect(
+			tag({
+				mode: 'opt-out', rev: '4', lang: 'fr', position: 'bottom-left', floating: 'false', preferences: 'true',
+				avoid: '[data-sticky]', gpc: 'true', record: '/r', seen: '/s', privacy: '/p', cookiesPage: '/c', choices: '/x'
+			})
+		).toEqual({
+			mode: 'opt-out', rev: 4, lang: 'fr', position: 'bottom-left', floatingButton: false, preferencesCategory: true,
+			avoidSelector: '[data-sticky]', gpc: true, endpoints: { record: '/r', seen: '/s' },
+			links: { privacyPolicy: '/p', cookiePolicy: '/c', privacyChoices: '/x' }
+		}); // prettier-ignore
+	});
+	it('leaves out what is not set and falls back to revision 1 for junk', () => {
+		expect(fromScript(null)).toEqual({});
+		expect(tag({})).toEqual({});
+		expect(tag({ rev: 'abc', floating: 'yes', gpc: 'no' })).toEqual({ rev: 1, floatingButton: true, gpc: false });
+		expect(tag({ seen: '/s' })).toEqual({ endpoints: { record: undefined, seen: '/s' } });
 	});
 });
