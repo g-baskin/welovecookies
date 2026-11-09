@@ -6,6 +6,7 @@
  * Requires at least: 5.7
  * Requires PHP:      7.2
  * Text Domain:       welovecookies
+ * License:           Proprietary. Copyright (c) 2026 g-baskin. All rights reserved.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
