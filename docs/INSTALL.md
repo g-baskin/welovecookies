@@ -14,6 +14,7 @@ We Love Cookies is one script file that works on any website. Pick the way that 
 - [Block your own scripts until consent](#block-your-own-scripts-until-consent)
 - [Settings](#settings)
 - [Check that it works](#check-that-it-works)
+- [Optional admin](#optional-admin)
 
 ## Any website: upload one file
 
@@ -262,3 +263,7 @@ The same settings can go on the script tag as `data-` attributes, for example `<
 2. To see the strict EU-style banner from anywhere, set `mode: 'opt-in'` for a moment, reload, then set it back to `'auto'`.
 3. Click **Reject all**, open your browser's developer tools, and check that no analytics or ad requests are sent.
 4. Try the demo page: `npm run demo`, then open `http://localhost:4173/demo/?mode=opt-in&lang=fr`.
+
+## Optional admin
+
+To keep proof-of-consent records, see answer rates, edit the banner and cookie list without touching code, and receive privacy requests, deploy the optional admin to your own Cloudflare account and use the script tag it gives you instead of the one above. Setup: [ADMIN.md](ADMIN.md).
