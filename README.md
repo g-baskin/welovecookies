@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="docs/assets/hero.jpg" alt="Cookies of every kind bursting out toward the viewer" width="720">
+  <img src="docs/assets/hero-title.jpg" alt="We Love Cookies: cookies of every kind bursting out toward the viewer" width="100%">
 </p>
-
-<h1 align="center">We Love Cookies</h1>
 
 <p align="center"><strong>Cookie consent that follows the law where each visitor actually is.</strong></p>
 
