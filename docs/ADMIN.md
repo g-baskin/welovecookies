@@ -139,4 +139,4 @@ To test the banner from a local page, add `http://localhost:<port>` as a website
 | `GET`, `POST /privacy/<key>` | Visitors: the "Ask about your data" form |
 | `/admin/*` | You |
 
-Cross-origin access is allowed only for each website's exact address, never with cookies. Code: `admin/src/`. Decision: [ADR 0007](decisions/0007-admin-on-cloudflare.md).
+Cross-origin access is allowed only for each website's exact address, never with cookies. Request and response formats, status codes and limits for the `/api/consent*` endpoints: [`docs/api/openapi.json`](api/openapi.json) (OpenAPI 3.1). Code: `admin/src/`. Decision: [ADR 0007](decisions/0007-admin-on-cloudflare.md).

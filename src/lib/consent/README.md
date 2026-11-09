@@ -98,4 +98,4 @@ Once the category is allowed, each script is cloned into a real script. This hap
 
 ## With a server or a framework
 
-A server can build the config per request (for example with the visitor's country from a CDN header) and pass it to `WeLoveCookies.init(config)`, `createConsent(config)` or the Svelte wrapper `<CookieConsent {config} {posthog} onready={(m) => ...} />`. To keep proof of consent, point `endpoints.record` at an endpoint that stores the `ConsentRecordPayload` JSON (see `types.ts`).
+A server can build the config per request (for example with the visitor's country from a CDN header) and pass it to `WeLoveCookies.init(config)`, `createConsent(config)` or the Svelte wrapper `<CookieConsent {config} {posthog} onready={(m) => ...} />`. To keep proof of consent, point `endpoints.record` at an endpoint that stores the `ConsentRecordPayload` JSON (see `types.ts`). The request, CORS needs and the optional `{ consent }` reply are described in [`docs/api/openapi.json`](../../../docs/api/openapi.json).
