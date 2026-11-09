@@ -25,6 +25,12 @@ One name per idea. When docs or law sources use another word, it is listed in br
 | **Record endpoint** | `endpoints.record`, `ConsentRecordPayload` | Your own address that receives each choice as JSON, to keep proof of consent. |
 | **Seen endpoint** | `endpoints.seen`, `ConsentSeenPayload` | Optional address counting banner views, without cookies. |
 | **Hosted install** | `data-site`, `HOSTED_CONFIG_PATH` | Loading the config for a site key from the server that serves the script. |
+| **Admin** | `admin/` | The optional Cloudflare Worker and D1 database a site owner deploys to their own account: overview, records, banner and cookie settings, privacy requests, tracking check ([docs/ADMIN.md](docs/ADMIN.md)). |
+| **Site key** | `data-site`, `sites.key` (`ws_` + 12 characters) | The public id of one website connected to the admin. It sits in the script tag and is not a secret: only the site's exact address may use it. |
+| **Consent record** | `consent_records` | A choice as stored by the admin: proof of consent, kept 5 years, no IP address. [proof of consent] |
+| **Banner version snapshot** | `consent_versions` | What one revision of a site's banner said and which cookies it listed, kept as proof of what visitors saw. |
+| **Privacy request** | `privacy_requests` | A visitor's request sent through the hosted "Ask about your data" form: delete, copy, correct, or stop selling or sharing. [data subject request, DSAR] |
+| **Tracking check** | `admin/src/tracking.ts` | The admin's daily rule-based list of gaps (missing privacy policy link, unlisted tool cookies, overdue requests, no banner views, dated legal lists). A reminder list, not legal advice. |
 | **All-party-consent state** | `ALL_PARTY_CONSENT_STATES` | A US state whose wiretap law needs every party's consent. There, an **identifying tag** (one that identifies visitors or records sessions) needs an explicit Accept: `mayLoadIdentifyingTag()`. |
 
 Decisions behind these rules: [docs/decisions/](docs/decisions/).

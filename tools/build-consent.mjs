@@ -24,6 +24,9 @@ for (const f of ['dist/welovecookies.min.js', 'dist/welovecookies.mjs']) {
 	);
 }
 
+// The optional admin Worker serves the same script for hosted installs (admin/public is gitignored).
+mkdirSync('admin/public', { recursive: true });
+copyFileSync('dist/welovecookies.min.js', 'admin/public/welovecookies.min.js');
 mkdirSync('wordpress/welovecookies/assets', { recursive: true });
 copyFileSync('dist/welovecookies.min.js', 'wordpress/welovecookies/assets/welovecookies.min.js');
 rmSync('dist/welovecookies-wordpress.zip', { force: true });

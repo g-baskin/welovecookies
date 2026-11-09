@@ -15,7 +15,7 @@ It is one small JavaScript file (about 23 KB gzipped). If your site can put a sc
 - **Works with the tools you already use**: Google Consent Mode v2, Google Tag Manager, Microsoft UET, Meta, TikTok and PostHog
 - **Auto-clear**: known analytics and ad cookies are deleted as soon as a category is switched off
 - **20 languages** (including right-to-left Arabic), phone, tablet and desktop layouts, and colours that match your site
-- **Proof of consent**: send every choice to your own endpoint to keep a record
+- **Proof of consent**: send every choice to your own endpoint to keep a record, or use the optional admin
 
 > Engineering defaults, not legal advice. Have your privacy policy and banner wording reviewed for your business, and re-check the rules at least yearly.
 
@@ -59,12 +59,17 @@ That's it. The banner picks the rules for each visitor's region, the language fr
 
 Single-page apps need nothing extra: the banner keeps working across client-side page changes. The full [install guide](docs/INSTALL.md) has code for each framework, all settings, and how to block your own scripts until consent.
 
+## Optional admin
+
+Want answer rates, proof-of-consent records with a CSV export, banner and cookie-list settings, privacy requests and a daily compliance check, for one website or several? Deploy the optional admin to your own Cloudflare account (a Worker and a D1 database; the free tier covers small sites) and swap the script tag for the one it gives you. Your data stays in your account. Setup takes about 10 minutes: [docs/ADMIN.md](docs/ADMIN.md).
+
 ## What's included
 
 | Path | What it is |
 | --- | --- |
 | `dist/` | Ready to use: `welovecookies.min.js` (script tag, works on any site), `welovecookies.mjs` (JavaScript module), `welovecookies-wordpress.zip` (optional WordPress plugin) |
 | `docs/INSTALL.md` | Install steps for every framework and site builder, settings, and how to check it works |
+| `admin/`, `docs/ADMIN.md` | The optional admin (Cloudflare Worker and D1) and its setup guide |
 | `docs/privacy/` | How it works, the law matrix with sources, and banner research |
 | `CONTEXT.md`, `docs/decisions/` | Glossary of terms, and the records of key decisions |
 | `demo/` | A demo page to try every region and language |
@@ -81,6 +86,7 @@ npm test        # unit tests
 npm run check   # TypeScript
 npm run build   # rebuild dist/ (script, module and WordPress zip)
 npm run demo    # demo at http://localhost:4173/demo/
+npm run admin:dev   # optional admin at http://127.0.0.1:8787/admin (see docs/ADMIN.md)
 ```
 
 ## Licence

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { decodeConsent, encodeConsent, newConsentId, readCookie } from './cookie.ts';
-import { bannerFor, effectiveGrants, modeFor, modeFromTimeZone } from './regions.ts';
+import {
+	bannerFor,
+	effectiveGrants,
+	modeFor,
+	modeFromTimeZone,
+	REGIONS_CHECKED
+} from './regions.ts';
 import type { StoredConsent } from './types.ts';
 
 const NOW = Date.UTC(2026, 10, 3);
@@ -112,4 +118,11 @@ describe('wording overrides', async () => {
 		expect(t.categories.analytics.title).toBe('Statistik');
 		expect(t.categories.analytics.description.length).toBeGreaterThan(0);
 	});
+});
+
+it('REGIONS_CHECKED is a real past ISO date (the admin tracking check reads it)', () => {
+	expect(REGIONS_CHECKED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+	const t = Date.parse(`${REGIONS_CHECKED}T00:00:00Z`);
+	expect(Number.isFinite(t)).toBe(true);
+	expect(t).toBeLessThanOrEqual(Date.now());
 });
