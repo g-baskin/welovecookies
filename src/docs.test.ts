@@ -28,7 +28,8 @@ function frontmatter(text: string): Record<string, string[]> {
 			out[key] = v === '' || v === '[]' ? [] : v.startsWith('[') ? v.slice(1, -1).split(',') : [v];
 		} else if (item && key) out[key].push(item[1]);
 	}
-	for (const k in out) out[k] = out[k].map((v) => v.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+	for (const k in out)
+		out[k] = out[k].map((v) => v.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
 	return out;
 }
 
@@ -54,7 +55,9 @@ describe('library citations', () => {
 			const fm = frontmatter(text);
 			const cites = [...(fm.path ?? []), ...(fm.sources ?? []), ...(fm.tested_by ?? [])];
 			// Backticked `dir/file.ext:12` style references in the page body.
-			for (const m of text.matchAll(/`((?:src|admin|tools|wordpress|docs|demo)\/[^`\s:]+:\d+(?:[-,]\d+)*)`/g))
+			for (const m of text.matchAll(
+				/`((?:src|admin|tools|wordpress|docs|demo)\/[^`\s:]+:\d+(?:[-,]\d+)*)`/g
+			))
 				cites.push(m[1]);
 			for (const c of cites) {
 				const p = checkCitation(c);
@@ -73,9 +76,17 @@ describe('library citations', () => {
 		);
 		const code = (dir: string, ext: RegExp): string[] =>
 			readdirSync(join(root, dir), { withFileTypes: true }).flatMap((e) =>
-				e.isDirectory() ? code(`${dir}/${e.name}`, ext) : ext.test(e.name) && !e.name.includes('.test.') ? [`${dir}/${e.name}`] : []
+				e.isDirectory()
+					? code(`${dir}/${e.name}`, ext)
+					: ext.test(e.name) && !e.name.includes('.test.')
+						? [`${dir}/${e.name}`]
+						: []
 			);
-		const modules = [...code('src/lib/consent', /\.(ts|svelte)$/), ...code('admin/src', /\.ts$/), ...code('tools', /\.mjs$/)];
+		const modules = [
+			...code('src/lib/consent', /\.(ts|svelte)$/),
+			...code('admin/src', /\.ts$/),
+			...code('tools', /\.mjs$/)
+		];
 		expect(modules.filter((m) => !cited.has(m))).toEqual([]);
 	});
 
@@ -97,16 +108,21 @@ describe('library citations', () => {
 describe('relative Markdown links', () => {
 	it('resolve to files in the repo', () => {
 		const docs = [
-			...['README.md', 'CHANGELOG.md', 'CONTEXT.md', 'src/lib/consent/README.md'].map((f) => join(root, f)),
+			...['README.md', 'CHANGELOG.md', 'CONTEXT.md', 'src/lib/consent/README.md'].map((f) =>
+				join(root, f)
+			),
 			...walk(join(root, 'docs')),
 			...library
 		];
 		const problems: string[] = [];
 		for (const f of docs) {
-			for (const m of stripCode(readFileSync(f, 'utf8')).matchAll(/\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)) {
+			for (const m of stripCode(readFileSync(f, 'utf8')).matchAll(
+				/\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g
+			)) {
 				const target = m[1].replace(/^<|>$/g, '').split('#')[0];
 				if (!target || /^[a-z][a-z0-9+.-]*:/i.test(target)) continue;
-				if (!existsSync(resolve(dirname(f), decodeURI(target)))) problems.push(`${rel(f)} -> ${m[1]}`);
+				if (!existsSync(resolve(dirname(f), decodeURI(target))))
+					problems.push(`${rel(f)} -> ${m[1]}`);
 			}
 		}
 		expect(problems).toEqual([]);

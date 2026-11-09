@@ -9,7 +9,9 @@ export class Html {
 export const esc = (s: string) =>
 	s.replace(
 		/[&<>"'`]/g,
-		(c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' })[c] ?? c
+		(c) =>
+			({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' })[c] ??
+			c
 	);
 
 function render(v: unknown): string {
@@ -48,11 +50,18 @@ export function htmlResponse(body: Html, status = 200, headers: Record<string, s
 export const json = (data: unknown, status = 200, headers: Record<string, string> = {}) =>
 	new Response(JSON.stringify(data), {
 		status,
-		headers: { 'content-type': 'application/json', 'cache-control': 'private, no-store', ...headers }
+		headers: {
+			'content-type': 'application/json',
+			'cache-control': 'private, no-store',
+			...headers
+		}
 	});
 
 export const redirect = (location: string, headers: Record<string, string> = {}) =>
-	new Response(null, { status: 303, headers: { location, 'cache-control': 'no-store', ...headers } });
+	new Response(null, {
+		status: 303,
+		headers: { location, 'cache-control': 'no-store', ...headers }
+	});
 
 /** A public page (privacy request form) or the sign-in page. */
 export function plainPage(title: string, body: Html): Html {

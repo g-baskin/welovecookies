@@ -13,8 +13,11 @@
 		"admin:deploy": "npm run admin:assets && wrangler d1 migrations apply DB --remote -c admin/wrangler.jsonc && wrangler deploy -c admin/wrangler.jsonc",
 		"admin:dev": "npm run admin:assets && wrangler dev -c admin/wrangler.jsonc",
 		"build": "node tools/build-consent.mjs",
-		"check": "tsc --noEmit && tsc --noEmit -p admin",
+		"check": "tsc --noEmit && tsc --noEmit -p admin && tsc --noEmit -p tools && svelte-check --tsconfig src/lib/consent/svelte/tsconfig.json --fail-on-warnings",
 		"demo": "node tools/serve-demo.mjs",
+		"format": "prettier --write \"src/**/*.ts\" \"admin/src/**/*.ts\" \"tools/*.mjs\" eslint.config.js vitest.config.ts",
+		"format:check": "prettier --check \"src/**/*.ts\" \"admin/src/**/*.ts\" \"tools/*.mjs\" eslint.config.js vitest.config.ts",
+		"lint": "eslint .",
 		"test": "vitest run"
 	},
 	"imports": {
@@ -22,12 +25,22 @@
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "5.20261107.1",
+		"@eslint/js": "10.0.1",
 		"@types/node": "26.6.6",
 		"esbuild": "0.28.2",
+		"eslint": "10.14.0",
+		"globals": "17.14.0",
 		"happy-dom": "21.0.4",
+		"prettier": "3.9.10",
+		"svelte": "5.57.3",
+		"svelte-check": "4.7.8",
 		"typescript": "6.0.3",
+		"typescript-eslint": "8.72.2",
 		"vite": "8.3.5",
 		"vitest": "5.0.5",
 		"wrangler": "4.158.0"
+	},
+	"overrides": {
+		"minimatch": "11.0.5"
 	}
 }

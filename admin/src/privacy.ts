@@ -4,11 +4,24 @@ import { ipHash, readFormFields } from './auth.ts';
 import { placeOf } from './config.ts';
 import { getSite, type Env, type SiteRow } from './db.ts';
 import { html, htmlResponse, plainPage } from './html.ts';
-import { createRequest, dueDaysFor, isKind, KIND_LABEL, parseRequestForm, REQUEST_KINDS } from './requests.ts';
+import {
+	createRequest,
+	dueDaysFor,
+	isKind,
+	KIND_LABEL,
+	parseRequestForm,
+	REQUEST_KINDS
+} from './requests.ts';
 
 const MAX_FORM = 8192;
 
-function form(site: SiteRow, action: string, values: Record<string, string>, days: number, error = '') {
+function form(
+	site: SiteRow,
+	action: string,
+	values: Record<string, string>,
+	days: number,
+	error = ''
+) {
 	return plainPage(
 		`Ask about your data – ${site.name}`,
 		html`<h1>Ask about your data</h1>
@@ -40,9 +53,17 @@ function sent(site: SiteRow, email: string, days: number) {
 }
 
 const notFound = () =>
-	htmlResponse(plainPage('Not found', html`<h1>Not found</h1><p>This form is not available.</p>`), 404);
+	htmlResponse(
+		plainPage('Not found', html`<h1>Not found</h1><p>This form is not available.</p>`),
+		404
+	);
 
-export async function handlePrivacy(request: Request, env: Env, key: string, now = Date.now()): Promise<Response> {
+export async function handlePrivacy(
+	request: Request,
+	env: Env,
+	key: string,
+	now = Date.now()
+): Promise<Response> {
 	const site = await getSite(env.DB, key);
 	if (!site || !site.enabled) return notFound();
 	const url = new URL(request.url);
@@ -52,12 +73,15 @@ export async function handlePrivacy(request: Request, env: Env, key: string, now
 		const kind = url.searchParams.get('kind');
 		return htmlResponse(form(site, action, isKind(kind) ? { kind } : {}, days));
 	}
-	if (request.method !== 'POST') return new Response(null, { status: 405, headers: { allow: 'GET, POST' } });
-	if (request.headers.get('origin') !== url.origin) return htmlResponse(form(site, action, {}, days, 'Please send the form from this page.'), 403);
+	if (request.method !== 'POST')
+		return new Response(null, { status: 405, headers: { allow: 'GET, POST' } });
+	if (request.headers.get('origin') !== url.origin)
+		return htmlResponse(form(site, action, {}, days, 'Please send the form from this page.'), 403);
 	const f = await readFormFields(request, MAX_FORM);
 	if (!f) return htmlResponse(form(site, action, {}, days, 'That message is too long.'), 413);
 	const values: Record<string, string> = {};
-	for (const k of ['kind', 'email', 'name', 'message', 'website']) values[k] = (f[k] ?? '').slice(0, 2000);
+	for (const k of ['kind', 'email', 'name', 'message', 'website'])
+		values[k] = (f[k] ?? '').slice(0, 2000);
 	if (values.website.trim()) return htmlResponse(sent(site, values.email, days));
 	const parsed = parseRequestForm(values);
 	if (!parsed.ok) return htmlResponse(form(site, action, values, days, parsed.error), 400);

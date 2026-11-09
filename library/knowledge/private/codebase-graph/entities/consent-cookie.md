@@ -36,7 +36,7 @@ sources:
 
 ## Overview
 
-The consent cookie wire format, which both the browser and servers read (`src/lib/consent/cookie.ts:1-5`). **This format is a wire contract** (ADR 0004). Changing the layout, `MODE_CODE`, `ACTION_CODE` or the cookie name makes every saved choice decode as `null`, so every visitor is asked again. `src/lib/consent/contract.test.ts:23-38` pins it. Full layout: [[concepts/consent-cookie-format]].
+The consent cookie wire format, which both the browser and servers read (`src/lib/consent/cookie.ts:1-5`). **This format is a wire contract** (ADR 0004). Changing the layout, `MODE_CODE`, `ACTION_CODE` or the cookie name makes every saved choice decode as `null`, so every visitor is asked again. `src/lib/consent/contract.test.ts:23-40` pins it. Full layout: [[concepts/consent-cookie-format]].
 
 ## Signature / Definition
 
@@ -68,7 +68,7 @@ export const isConsentMode, isConsentAction;               // type guards
 
 ## Tested by
 
-- `src/lib/consent/contract.test.ts:23-38`, `src/lib/consent/consent.test.ts`
+- `src/lib/consent/contract.test.ts:23-40`, `src/lib/consent/consent.test.ts`
 
 ## History
 

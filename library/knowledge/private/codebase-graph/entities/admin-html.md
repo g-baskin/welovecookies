@@ -30,7 +30,7 @@ tags:
 related:
   - "[[concepts/admin-request-security]]"
 sources:
-  - admin/src/html.ts:1-88
+  - admin/src/html.ts:1-97
 ---
 
 # admin/src/html.ts (escaping template, security headers, CSS)
@@ -57,15 +57,15 @@ export const CSS: string
 
 ## Behavior
 
-- `esc` escapes `& < > " ' \`` (`admin/src/html.ts:9-13`); `render` drops null/undefined/false, passes `Html` through, flattens arrays (`admin/src/html.ts:15-20`).
-- `raw()` is for trusted markup only, never visitor or owner text (`admin/src/html.ts:28-29`).
-- Every HTML response gets: `cache-control: private, no-store`; CSP `default-src 'none'; style-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'; base-uri 'none'`; `nosniff`; `referrer-policy: same-origin`; `x-frame-options: DENY` (`admin/src/html.ts:31-46`).
-- `json` responses are `private, no-store` (`admin/src/html.ts:48-52`); `redirect` is 303 `no-store` (`admin/src/html.ts:54-55`).
-- `plainPage` adds `robots: noindex` and links `/wlc.css` (`admin/src/html.ts:58-60`).
+- `esc` escapes `& < > " ' \`` (`admin/src/html.ts:9-15`); `render` drops null/undefined/false, passes `Html` through, flattens arrays (`admin/src/html.ts:17-22`).
+- `raw()` is for trusted markup only, never visitor or owner text (`admin/src/html.ts:30-31`).
+- Every HTML response gets: `cache-control: private, no-store`; CSP `default-src 'none'; style-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'; base-uri 'none'`; `nosniff`; `referrer-policy: same-origin`; `x-frame-options: DENY` (`admin/src/html.ts:33-48`).
+- `json` responses are `private, no-store` (`admin/src/html.ts:50-58`); `redirect` is 303 `no-store` (`admin/src/html.ts:60-64`).
+- `plainPage` adds `robots: noindex` and links `/wlc.css` (`admin/src/html.ts:67-69`).
 
 ## Gotchas
 
-- The CSP has no `script-src` and `style-src 'self'` only, so inline `<style>`, `style=""` and any script are blocked. New styles go in `CSS` (`admin/src/html.ts:62-88`), served at `/wlc.css` by [[entities/admin-index]].
+- The CSP has no `script-src` and `style-src 'self'` only, so inline `<style>`, `style=""` and any script are blocked. New styles go in `CSS` (`admin/src/html.ts:71-97`), served at `/wlc.css` by [[entities/admin-index]].
 
 ## Connections
 
@@ -83,4 +83,4 @@ export const CSS: string
 
 ## Sources
 
-- `admin/src/html.ts:1-88`
+- `admin/src/html.ts:1-97`

@@ -7,11 +7,23 @@ const esbuild = './node_modules/.bin/esbuild';
 // `node tools/build-consent.mjs <dir>` builds only the two scripts into <dir> (dist.test.ts compares them with dist/).
 const out = process.argv[2] ?? 'dist';
 // Licence notice kept in the built files so every site serving them passes on the terms and the source link.
-const banner = '/*! We Love Cookies | (c) 2026 g-baskin | AGPL-3.0-only | Source: https://github.com/g-baskin/welovecookies */';
-const common = ['--bundle', '--minify', '--target=es2019', '--legal-comments=none', `--banner:js=${banner}`];
+const banner =
+	'/*! We Love Cookies | (c) 2026 g-baskin | AGPL-3.0-only | Source: https://github.com/g-baskin/welovecookies */';
+const common = [
+	'--bundle',
+	'--minify',
+	'--target=es2019',
+	'--legal-comments=none',
+	`--banner:js=${banner}`
+];
 execFileSync(
 	esbuild,
-	['src/lib/consent/standalone.ts', ...common, '--format=iife', `--outfile=${out}/welovecookies.min.js`],
+	[
+		'src/lib/consent/standalone.ts',
+		...common,
+		'--format=iife',
+		`--outfile=${out}/welovecookies.min.js`
+	],
 	{ stdio: 'inherit' }
 );
 execFileSync(
@@ -34,8 +46,12 @@ mkdirSync('wordpress/welovecookies/assets', { recursive: true });
 copyFileSync('dist/welovecookies.min.js', 'wordpress/welovecookies/assets/welovecookies.min.js');
 rmSync('dist/welovecookies-wordpress.zip', { force: true });
 // -X drops extra file attributes; zip is run inside wordpress/ so the archive holds welovecookies/...
-execFileSync('zip', ['-q', '-r', '-X', '../dist/welovecookies-wordpress.zip', 'welovecookies', '-x', '*.DS_Store'], {
-	cwd: 'wordpress',
-	stdio: 'inherit'
-});
+execFileSync(
+	'zip',
+	['-q', '-r', '-X', '../dist/welovecookies-wordpress.zip', 'welovecookies', '-x', '*.DS_Store'],
+	{
+		cwd: 'wordpress',
+		stdio: 'inherit'
+	}
+);
 console.log('dist/welovecookies-wordpress.zip: WordPress plugin');

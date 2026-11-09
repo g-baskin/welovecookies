@@ -25,7 +25,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/privacy.ts:1-68
+  - admin/src/privacy.ts:1-92
 ---
 
 # admin/src/privacy.ts (hosted "Ask about your data" form)
@@ -44,12 +44,12 @@ export async function handlePrivacy(request, env, key, now?): Promise<Response>
 
 ## Behavior
 
-- Unknown or disabled site -> 404 page (`admin/src/privacy.ts:46-47`).
-- GET renders the form, pre-selecting a valid `?kind=` (`admin/src/privacy.ts:51-54`); other methods -> 405 (`admin/src/privacy.ts:55`).
-- POST requires `Origin` == the Worker origin, else 403 (`admin/src/privacy.ts:56`); body capped at 8192 bytes, 413 otherwise (`admin/src/privacy.ts:9`, `admin/src/privacy.ts:57-58`).
-- Field values cut to 2000 chars; non-empty hidden `website` field = bot, returns success without saving (`admin/src/privacy.ts:59-61`).
-- Validation errors -> 400; limits from `createRequest` -> 429 (`admin/src/privacy.ts:62-66`). IP hash only when `SESSION_SECRET` is set (`admin/src/privacy.ts:64`).
-- Due days shown come from `dueDaysFor(placeOf(request).country)` (`admin/src/privacy.ts:50`).
+- Unknown or disabled site -> 404 page (`admin/src/privacy.ts:67-68`).
+- GET renders the form, pre-selecting a valid `?kind=` (`admin/src/privacy.ts:72-75`); other methods -> 405 (`admin/src/privacy.ts:76-77`).
+- POST requires `Origin` == the Worker origin, else 403 (`admin/src/privacy.ts:78-79`); body capped at 8192 bytes, 413 otherwise (`admin/src/privacy.ts:16`, `admin/src/privacy.ts:80-81`).
+- Field values cut to 2000 chars; non-empty hidden `website` field = bot, returns success without saving (`admin/src/privacy.ts:82-85`).
+- Validation errors -> 400; limits from `createRequest` -> 429 (`admin/src/privacy.ts:86-90`). IP hash only when `SESSION_SECRET` is set (`admin/src/privacy.ts:88`).
+- Due days shown come from `dueDaysFor(placeOf(request).country)` (`admin/src/privacy.ts:71`).
 
 ## Connections
 
@@ -66,4 +66,4 @@ export async function handlePrivacy(request, env, key, now?): Promise<Response>
 
 ## Sources
 
-- `admin/src/privacy.ts:1-68`
+- `admin/src/privacy.ts:1-92`

@@ -26,7 +26,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/auth.ts:1-173
+  - admin/src/auth.ts:1-188
 ---
 
 # admin/src/auth.ts (session, password, rate limits, body caps)
@@ -57,10 +57,10 @@ export function sameOrigin(request): boolean
 - **Session.** HMAC-SHA256 of `admin.<exp>` with key `SESSION_SECRET\0ADMIN_PASSWORD`, so changing either secret signs everyone out (`admin/src/auth.ts:49-56`). Verify rejects bad shape, expired, or expiry further than 12h out; compares in constant time (`admin/src/auth.ts:58-69`).
 - **Cookie.** `HttpOnly; Secure; SameSite=Strict; Path=/`, `__Host-` prefix (`admin/src/auth.ts:5`, `admin/src/auth.ts:71-74`).
 - **Password.** Both sides HMAC'd before a constant-time compare (`admin/src/auth.ts:84-91`).
-- **IP hashing.** IPv6 collapsed to its /64 (`admin/src/auth.ts:94-102`); `ipHash` = HMAC of `cf-connecting-ip`, truncated to 32 chars; the address is never stored (`admin/src/auth.ts:104-107`).
-- **Rate events.** Rows in `rate_events` with kind `login|request` (`admin/src/auth.ts:109-130`); blocked at 5 failures per 15 min (`admin/src/auth.ts:123-124`).
-- **Body caps.** `readCapped` rejects on `content-length` or by streaming past `max` (`admin/src/auth.ts:133-156`). `readFormFields` accepts only urlencoded, keys <= 64 chars, values cut to 5000 (`admin/src/auth.ts:159-166`).
-- **sameOrigin.** `Origin` must equal the request URL origin; without `Origin`, requires `sec-fetch-site: same-origin` (`admin/src/auth.ts:169-173`).
+- **IP hashing.** IPv6 collapsed to its /64 (`admin/src/auth.ts:94-104`); `ipHash` = HMAC of `cf-connecting-ip`, truncated to 32 chars; the address is never stored (`admin/src/auth.ts:106-109`).
+- **Rate events.** Rows in `rate_events` with kind `login|request` (`admin/src/auth.ts:111-141`); blocked at 5 failures per 15 min (`admin/src/auth.ts:133-134`).
+- **Body caps.** `readCapped` rejects on `content-length` or by streaming past `max` (`admin/src/auth.ts:144-167`). `readFormFields` accepts only urlencoded, keys <= 64 chars, values cut to 5000 (`admin/src/auth.ts:170-181`).
+- **sameOrigin.** `Origin` must equal the request URL origin; without `Origin`, requires `sec-fetch-site: same-origin` (`admin/src/auth.ts:184-188`).
 
 ## Connections
 
@@ -78,4 +78,4 @@ export function sameOrigin(request): boolean
 
 ## Sources
 
-- `admin/src/auth.ts:1-173`
+- `admin/src/auth.ts:1-188`

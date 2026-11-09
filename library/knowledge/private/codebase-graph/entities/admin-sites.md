@@ -23,7 +23,7 @@ tags:
 related:
   - "[[concepts/hosted-install-flow]]"
 sources:
-  - admin/src/sites.ts:1-101
+  - admin/src/sites.ts:1-134
 ---
 
 # admin/src/sites.ts (connected websites)
@@ -50,9 +50,9 @@ export const snippet = (workerOrigin, key) => '<script src=".../welovecookies.mi
 ## Behavior
 
 - Key: 12 random bytes mapped onto 64 symbols, no modulo bias (`admin/src/sites.ts:8-13`).
-- `normaliseWebsite` strips to origin, rejects paths/query/hash/credentials, forces `https://` except `localhost`/`127.0.0.1` (`admin/src/sites.ts:17-36`).
-- `createSite` refuses a duplicate origin, then inserts the site and its rev-1 snapshot in one `db.batch` (`admin/src/sites.ts:67-79`).
-- `snippet` is the hosted-install tag (`admin/src/sites.ts:100-101`); see [[concepts/hosted-install-flow]].
+- `normaliseWebsite` strips to origin, rejects paths/query/hash/credentials, forces `https://` except `localhost`/`127.0.0.1` (`admin/src/sites.ts:17-38`).
+- `createSite` refuses a duplicate origin, then inserts the site and its rev-1 snapshot in one `db.batch` (`admin/src/sites.ts:80-102`).
+- `snippet` is the hosted-install tag (`admin/src/sites.ts:133-134`); see [[concepts/hosted-install-flow]].
 
 ## Connections
 
@@ -70,4 +70,4 @@ export const snippet = (workerOrigin, key) => '<script src=".../welovecookies.mi
 
 ## Sources
 
-- `admin/src/sites.ts:1-101`
+- `admin/src/sites.ts:1-134`

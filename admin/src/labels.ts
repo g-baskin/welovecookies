@@ -18,7 +18,11 @@ export const MODE_LABEL: Record<string, string> = {
 	'opt-out': 'Can opt out',
 	notice: 'Notice only'
 };
-export const DEVICE_LABEL: Record<string, string> = { phone: 'Phone', tablet: 'Tablet', desktop: 'Computer' };
+export const DEVICE_LABEL: Record<string, string> = {
+	phone: 'Phone',
+	tablet: 'Tablet',
+	desktop: 'Computer'
+};
 export const CATEGORY_LABEL: Record<string, string> = {
 	necessary: 'Necessary',
 	preferences: 'Preferences',
@@ -27,13 +31,29 @@ export const CATEGORY_LABEL: Record<string, string> = {
 };
 
 export const REGION_GROUPS = [
-	{ key: 'ask', label: 'Asks first', hint: 'EU, UK, Brazil and others: nothing optional runs until the visitor agrees.' },
-	{ key: 'optout', label: 'Lets people opt out', hint: 'Most US privacy states and Canada: on by default, with a clear way to say no.' },
-	{ key: 'notice', label: 'Notice only', hint: 'Places without a cookie law: visitors are just told.' }
+	{
+		key: 'ask',
+		label: 'Asks first',
+		hint: 'EU, UK, Brazil and others: nothing optional runs until the visitor agrees.'
+	},
+	{
+		key: 'optout',
+		label: 'Lets people opt out',
+		hint: 'Most US privacy states and Canada: on by default, with a clear way to say no.'
+	},
+	{
+		key: 'notice',
+		label: 'Notice only',
+		hint: 'Places without a cookie law: visitors are just told.'
+	}
 ] as const;
 export type RegionGroup = (typeof REGION_GROUPS)[number]['key'];
 export const groupOf = (mode: string): RegionGroup =>
-	!(mode in MODE_RULES) || MODE_RULES[mode as ConsentMode].optIn ? 'ask' : mode === 'notice' ? 'notice' : 'optout';
+	!(mode in MODE_RULES) || MODE_RULES[mode as ConsentMode].optIn
+		? 'ask'
+		: mode === 'notice'
+			? 'notice'
+			: 'optout';
 
 export const yesNo = (v: unknown) => (v ? 'Yes' : 'No');
 

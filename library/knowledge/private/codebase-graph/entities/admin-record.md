@@ -30,7 +30,7 @@ tags:
 related:
   - "[[concepts/hosted-install-flow]]"
 sources:
-  - admin/src/record.ts:1-169
+  - admin/src/record.ts:1-211
 ---
 
 # admin/src/record.ts (POST /api/consent and /api/consent/seen)
@@ -57,12 +57,12 @@ export async function handleRecord(request, env, now?); handleSeen(request, env,
 
 ## Behavior
 
-- `parseChoice` requires a valid action (`isConsentAction`), boolean grants, language tag, device, page <= 500 chars, optional boolean `gpc`; `rev` kept only if integer >= 1 (`admin/src/record.ts:53-69`).
-- `pathOnly` keeps the path (<= 200) only when the page is on the site's origin (`admin/src/record.ts:72-79`).
-- `correctChoice` keeps a valid client consent id else mints one, uses server mode/rev, forces `marketing: false` under GPC (`admin/src/record.ts:82-94`).
-- `saveChoice`: mode from `modeFor(country, regionCode)`; keeps the client revision only if <= site rev (`admin/src/record.ts:109-112`). Inserts the consent record and, unless the UA matches `BOT_RE`, bumps the action counter and a `gpc` counter, all in one `db.batch` (`admin/src/record.ts:114-128`, `admin/src/record.ts:24`).
-- `handleRecord`: 404/403 from `siteForRequest`, 400 invalid, 500 on DB error, 200 `{ ok, consent }` with CORS (`admin/src/record.ts:132-151`). The script rewrites its cookie from `consent` (see [[concepts/hosted-install-flow]]).
-- `handleSeen`: 400 without a valid device; bumps `seen` unless bot; DB errors logged; 204 (`admin/src/record.ts:153-169`).
+- `parseChoice` requires a valid action (`isConsentAction`), boolean grants, language tag, device, page <= 500 chars, optional boolean `gpc`; `rev` kept only if integer >= 1 (`admin/src/record.ts:61-87`).
+- `pathOnly` keeps the path (<= 200) only when the page is on the site's origin (`admin/src/record.ts:90-97`).
+- `correctChoice` keeps a valid client consent id else mints one, uses server mode/rev, forces `marketing: false` under GPC (`admin/src/record.ts:100-112`).
+- `saveChoice`: mode from `modeFor(country, regionCode)`; keeps the client revision only if <= site rev (`admin/src/record.ts:135-138`). Inserts the consent record and, unless the UA matches `BOT_RE`, bumps the action counter and a `gpc` counter, all in one `db.batch` (`admin/src/record.ts:140-155`, `admin/src/record.ts:32`).
+- `handleRecord`: 404/403 from `siteForRequest`, 400 invalid, 500 on DB error, 200 `{ ok, consent }` with CORS (`admin/src/record.ts:159-182`). The script rewrites its cookie from `consent` (see [[concepts/hosted-install-flow]]).
+- `handleSeen`: 400 without a valid device; bumps `seen` unless bot; DB errors logged; 204 (`admin/src/record.ts:184-211`).
 
 ## Connections
 
@@ -81,4 +81,4 @@ export async function handleRecord(request, env, now?); handleSeen(request, env,
 
 ## Sources
 
-- `admin/src/record.ts:1-169`
+- `admin/src/record.ts:1-211`

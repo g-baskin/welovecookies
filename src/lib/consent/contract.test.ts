@@ -33,7 +33,9 @@ describe('consent cookie', () => {
 			encodeConsent(c).replace('.i.', '.z.')
 		])
 			expect(decodeConsent(bad)).toBeNull();
-		expect(readCookie(`a=1; wlc_consent=${encodeConsent(c)}; b=2`, 'wlc_consent')).toBe(encodeConsent(c));
+		expect(readCookie(`a=1; wlc_consent=${encodeConsent(c)}; b=2`, 'wlc_consent')).toBe(
+			encodeConsent(c)
+		);
 	});
 });
 

@@ -38,4 +38,4 @@ The admin runs on the buyer's own Cloudflare account. `npm run admin:deploy` cop
 
 ## Branches and changelog
 
-Work on `feature/*`, open a PR into `dev`, and delete the feature branch once it is merged; only `dev` and `main` stay on GitHub. `main` is the release branch the CDN follows: release by merging a `dev` → `main` PR, then fast-forward `dev` to `main` and push it, so the two branches stay 0 commits apart. There is no CI, so run `npm run check` and `npm run test` yourself before merging. Record user-visible changes in `CHANGELOG.md` at the repo root (Keep a Changelog format).
+Work on `feature/*`, open a PR into `dev`, and delete the feature branch once it is merged; only `dev` and `main` stay on GitHub. `main` is the release branch the CDN follows: release by merging a `dev` → `main` PR, then fast-forward `dev` to `main` and push it, so the two branches stay 0 commits apart. There is no CI, so run `npm run test`, `npm run check`, `npm run lint` and `npm run format:check` yourself before merging. Record user-visible changes in `CHANGELOG.md` at the repo root (Keep a Changelog format).

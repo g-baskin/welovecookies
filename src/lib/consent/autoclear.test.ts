@@ -64,10 +64,9 @@ describe('auto-clear helpers', () => {
 		expect(p).toContain('_fbp');
 		expect(p).toContain('my_ad*');
 		expect(p).not.toContain('_ga');
-		expect(namesToClear('_fbp=1; _ga=2; wlc_consent=x; my_ad1=3', [...p, 'wlc_*'], 'wlc_consent')).toEqual([
-			'_fbp',
-			'my_ad1'
-		]);
+		expect(
+			namesToClear('_fbp=1; _ga=2; wlc_consent=x; my_ad1=3', [...p, 'wlc_*'], 'wlc_consent')
+		).toEqual(['_fbp', 'my_ad1']);
 	});
 	it('builds root candidates shortest first and skips local hosts', () => {
 		expect(rootCandidates('blog.example.co.uk')).toEqual([

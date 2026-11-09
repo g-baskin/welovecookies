@@ -2,8 +2,23 @@ import { CONSENT_ID_RE } from '../../../src/lib/consent/cookie.ts';
 import { toCsv } from '../csv.ts';
 import { DAY_MS, dayKey } from '../db.ts';
 import { html } from '../html.ts';
-import { ACTION_LABEL, browserName, DEVICE_LABEL, MODE_LABEL, placeName, utc, yesNo } from '../labels.ts';
-import { CSV_MAX_ROWS, recentRecords, recordsBetween, recordsForConsentId, RETENTION_YEARS, type RecordRow } from '../log.ts';
+import {
+	ACTION_LABEL,
+	browserName,
+	DEVICE_LABEL,
+	MODE_LABEL,
+	placeName,
+	utc,
+	yesNo
+} from '../labels.ts';
+import {
+	CSV_MAX_ROWS,
+	recentRecords,
+	recordsBetween,
+	recordsForConsentId,
+	RETENTION_YEARS,
+	type RecordRow
+} from '../log.ts';
 import { adminPage, noSitePrompt, type Ctx } from './layout.ts';
 
 const table = (rows: RecordRow[]) =>
@@ -18,7 +33,11 @@ export async function recordsPage(ctx: Ctx) {
 	const site = ctx.site;
 	if (!site) return adminPage(ctx, 'Consent records', '/admin/records', noSitePrompt());
 	const id = (ctx.url.searchParams.get('id') ?? '').trim();
-	const lookup = id ? (CONSENT_ID_RE.test(id) ? await recordsForConsentId(ctx.db, site.key, id) : null) : undefined;
+	const lookup = id
+		? CONSENT_ID_RE.test(id)
+			? await recordsForConsentId(ctx.db, site.key, id)
+			: null
+		: undefined;
 	const recent = await recentRecords(ctx.db, site.key, 50);
 	return adminPage(
 		ctx,
@@ -43,12 +62,32 @@ export async function recordsCsv(ctx: Ctx): Promise<Response> {
 	const real = (d: string, ms: number) => DAY_RE.test(d) && Number.isFinite(ms) && dayKey(ms) === d;
 	const back = html`<p><a href="/admin/records${site ? `?site=${site.key}` : ''}">Back to records</a></p>`;
 	if (!site || !real(from, a) || !real(to, b) || !(a <= b))
-		return adminPage(ctx, 'Consent records', '/admin/records', back, { error: 'Choose a real start date and an end date after it.' });
+		return adminPage(ctx, 'Consent records', '/admin/records', back, {
+			error: 'Choose a real start date and an end date after it.'
+		});
 	const rows = await recordsBetween(ctx.db, site.key, a, b);
 	if (rows.length > CSV_MAX_ROWS)
-		return adminPage(ctx, 'Consent records', '/admin/records', back, { error: `That range holds more than ${CSV_MAX_ROWS.toLocaleString('en')} records. Choose a shorter range and download it in parts.` });
+		return adminPage(ctx, 'Consent records', '/admin/records', back, {
+			error: `That range holds more than ${CSV_MAX_ROWS.toLocaleString('en')} records. Choose a shorter range and download it in parts.`
+		});
 	const csv = toCsv(
-		['Date and time (UTC)', 'Reference', 'Choice', 'Preferences', 'Statistics', 'Marketing', 'Rules that applied', 'Place', 'Banner version', 'Language', 'Device', 'Browser privacy signal', 'Page', 'Browser', 'Website'],
+		[
+			'Date and time (UTC)',
+			'Reference',
+			'Choice',
+			'Preferences',
+			'Statistics',
+			'Marketing',
+			'Rules that applied',
+			'Place',
+			'Banner version',
+			'Language',
+			'Device',
+			'Browser privacy signal',
+			'Page',
+			'Browser',
+			'Website'
+		],
 		rows.map((r) => [
 			new Date(r.created_at).toISOString().replace('T', ' ').slice(0, 19), r.consent_id, ACTION_LABEL[r.action] ?? 'Other',
 			yesNo(r.preferences), yesNo(r.analytics), yesNo(r.marketing), MODE_LABEL[r.mode] ?? 'Other', placeName(r.country, r.region_code),

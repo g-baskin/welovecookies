@@ -17,7 +17,7 @@ related:
   - "[[entities/tool-build-consent]]"
 sources:
   - "src/lib/consent/dist.test.ts:1-21"
-  - "tools/build-consent.mjs:7-21"
+  - "tools/build-consent.mjs:7-33"
 ---
 
 # Does a test check that dist/ matches src/?
@@ -28,7 +28,7 @@ sources:
 
 ## Answer
 
-Answered 2026-11-09: yes, for the two JS bundles. `tools/build-consent.mjs:7-21` builds only the scripts when given an output folder, so the WordPress zip is not compared. CLAUDE.md and ADR 0005 were updated to say so.
+Answered 2026-11-09: yes, for the two JS bundles. `tools/build-consent.mjs:7-33` builds only the scripts when given an output folder, so the WordPress zip is not compared. CLAUDE.md and ADR 0005 were updated to say so.
 
 ## Confidence
 
