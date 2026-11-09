@@ -2,18 +2,19 @@
 /**
  * Plugin Name:       We Love Cookies
  * Description:       Cookie consent that follows the law where each visitor is. Works as soon as it is activated.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 5.7
  * Requires PHP:      7.2
  * Text Domain:       welovecookies
- * License:           Proprietary. Copyright (c) 2026 g-baskin. All rights reserved.
+ * License:           AGPL-3.0-only
+ * License URI:       https://www.gnu.org/licenses/agpl-3.0.html
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WELOVECOOKIES_VERSION', '1.0.0' );
+define( 'WELOVECOOKIES_VERSION', '1.0.1' );
 
 /**
  * Banner settings. Change them from a theme or plugin with the `welovecookies_config` filter.

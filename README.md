@@ -84,4 +84,10 @@ npm run demo    # demo at http://localhost:4173/demo/
 
 ## Licence
 
-Copyright (c) 2026 g-baskin. All rights reserved. We Love Cookies is commercial software: using, copying or redistributing it needs a licence from the copyright holder. See [LICENSE](LICENSE).
+Copyright (c) 2026 g-baskin. We Love Cookies is licensed under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0-only).
+
+In plain words (not legal advice; the [LICENSE](LICENSE) is what counts):
+
+- **Use it on your website:** you can, free. Keep the licence comment at the top of `welovecookies.min.js`; it tells visitors the licence and where the source is.
+- **Change it, or offer it as a service:** you must share your full source code, including your changes, under the AGPL with the people who use it.
+- **Don't want to share your code?** Commercial licences are available from the copyright holder. Contact [g-baskin on GitHub](https://github.com/g-baskin).

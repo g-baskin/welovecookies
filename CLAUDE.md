@@ -23,6 +23,7 @@ A cookie consent banner sold as a product for any website. It is framework-free 
 - **`regions.ts` is the source of truth, not `docs/privacy/consent-law-matrix.md`.** Example: the matrix says CH is opt-out, but the code asks first (`CH: 'opt-in'`) on purpose.
 - **Keep `.npmrc` `legacy-peer-deps=true` and the direct `vite` devDependency.** Together they work around an npm arborist "edgesOut" crash caused by vitest 5's optional peers, and `npm install` fails without them.
 - **This is a generic product for any website.** Don't add store/shop/cart/product wording to texts, docs or examples, and don't reference any earlier project it came from.
+- **Licence is AGPL-3.0-only, dual-licensed** (owner sells commercial licences). The `/*! ... AGPL-3.0-only | Source: ... */` banner added in `tools/build-consent.mjs` must stay in `dist/` files: it is how sites serving the script pass on the terms and source link. Keep the LICENSE text verbatim from gnu.org.
 - **It is not a WordPress plugin** (owner's explicit direction). README and docs must lead with the plain script-tag install for any site or framework (`docs/INSTALL.md` has per-framework sections). WordPress is one optional row among many; never frame the product around it.
 
 ## Workflow

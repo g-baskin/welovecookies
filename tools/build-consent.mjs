@@ -4,7 +4,9 @@ import { copyFileSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
 const esbuild = './node_modules/.bin/esbuild';
-const common = ['--bundle', '--minify', '--target=es2019', '--legal-comments=none'];
+// Licence notice kept in the built files so every site serving them passes on the terms and the source link.
+const banner = '/*! We Love Cookies | (c) 2026 g-baskin | AGPL-3.0-only | Source: https://github.com/g-baskin/welovecookies */';
+const common = ['--bundle', '--minify', '--target=es2019', '--legal-comments=none', `--banner:js=${banner}`];
 execFileSync(
 	esbuild,
 	['src/lib/consent/standalone.ts', ...common, '--format=iife', '--outfile=dist/welovecookies.min.js'],
