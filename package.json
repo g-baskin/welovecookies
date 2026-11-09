@@ -1,24 +1,32 @@
 {
 	"name": "welovecookies",
 	"private": true,
-	"version": "0.0.1",
+	"version": "1.0.1",
+	"license": "AGPL-3.0-only",
 	"type": "module",
 	"engines": {
 		"node": ">=22"
 	},
 	"scripts": {
+		"admin:assets": "node -e \"fs.mkdirSync('admin/public',{recursive:true});fs.copyFileSync('dist/welovecookies.min.js','admin/public/welovecookies.min.js')\"",
+		"admin:db:local": "wrangler d1 migrations apply DB --local -c admin/wrangler.jsonc",
+		"admin:deploy": "npm run admin:assets && wrangler d1 migrations apply DB --remote -c admin/wrangler.jsonc && wrangler deploy -c admin/wrangler.jsonc",
+		"admin:dev": "npm run admin:assets && wrangler dev -c admin/wrangler.jsonc",
 		"build": "node tools/build-consent.mjs",
-		"check": "tsc --noEmit",
+		"check": "tsc --noEmit && tsc --noEmit -p admin",
+		"demo": "node tools/serve-demo.mjs",
 		"test": "vitest run"
 	},
 	"imports": {
 		"#lib/*": "./src/lib/*"
 	},
 	"devDependencies": {
+		"@cloudflare/workers-types": "5.20261107.1",
 		"@types/node": "26.6.6",
 		"esbuild": "0.28.2",
 		"typescript": "6.0.3",
 		"vite": "8.3.5",
-		"vitest": "5.0.5"
+		"vitest": "5.0.5",
+		"wrangler": "4.158.0"
 	}
 }

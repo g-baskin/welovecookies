@@ -5,8 +5,8 @@ As of 3 November 2026. Inputs: Cloudflare `request.cf.country` (ISO 3166-1 alpha
 
 | | opt-in | opt-in-uk | opt-in-light | opt-out-gpc | opt-out | notice |
 |---|---|---|---|---|---|---|
-| Loads before choice | Strictly necessary only | Strictly necessary + first-party aggregate analytics + functional/appearance prefs (no third-party sharing, no ad use) | Strictly necessary only (default; prefer blocking) | All categories, except ad/sale tags are suppressed if GPC=1 | All categories | All categories |
-| First-layer buttons | Accept all, Reject all, Customize | Accept all, Reject all, Customize, plus an "object to analytics" control | Accept, Reject (or Settings), Customize | None required; banner optional. Footer link "Do Not Sell or Share My Personal Information" / "Your Privacy Choices" | Footer link "Your Privacy Choices" / opt-out of targeted ads and sale | Footer link to cookie notice |
+| Loads before choice | Strictly necessary only | Strictly necessary + first-party aggregate analytics + preferences (functional/appearance; no third-party sharing, no ad use) | Strictly necessary only (default; prefer blocking) | All categories, except ad/sale tags are suppressed if GPC=1 | All categories | All categories |
+| First-layer buttons | Accept all, Reject all, Choose | Accept all, Reject all, Choose, plus an "object to analytics" control | Accept, Reject (or Settings), Choose | None required; banner optional. Footer link "Do Not Sell or Share My Personal Information" / "Your Privacy Choices" | Footer link "Your Privacy Choices" / opt-out of targeted ads and sale | Footer link to cookie notice |
 | Reject on first layer, as easy as Accept | Yes | Yes | Yes (recommended; mandatory in BR per ANPD guidance) | n/a (opt-out must be symmetric, no dark patterns, CCPA regs 7004) | n/a | n/a |
 | Granular categories | Yes | Yes | Yes | Opt-out per purpose | Opt-out per purpose | No |
 | Honor GPC | Recommended: treat as Reject for ads | Recommended | Recommended | **Legally required**; display "opt-out honored" status (CA) | Recommended (default on for all US) | Recommended |
@@ -63,10 +63,10 @@ Implementation default: always block ad/sale tags when `navigator.globalPrivacyC
 Recommendation: honor GPC for all US visitors (most teams do; avoids state misdetection).
 
 ## 3. Proof-of-consent log
-Fields: consent ID (random UUID, stored in first-party cookie), timestamp (UTC ISO 8601), country + regionCode, mode applied, banner/config version and cookie-policy version hash, language, choice per category (necessary/analytics/functional/marketing), action (accept_all, reject_all, custom, withdraw, gpc_auto), GPC/Sec-GPC value, user agent, truncated IP or hash (avoid full IP), page URL, customer ID if logged in.
+Fields: consent ID (random UUID, stored in first-party cookie), timestamp (UTC ISO 8601), country + regionCode, mode applied, banner/config version and cookie-policy version hash, language, choice per category (preferences/analytics/marketing; necessary is always on), action (accept_all, reject_all, custom, acknowledge, withdraw, gpc), GPC/Sec-GPC value, user agent, truncated IP or hash (avoid full IP), page URL, customer ID if logged in.
 Retention: keep each record for the life of the consent plus a limitation buffer; engineering default 5 years for opt-in regions (burden of proof under GDPR Art. 7(1), LGPD, POPIA, India). US opt-out request records: 24 months (CCPA regs 7101) [unverified]. Consent cookie itself: 6 months (opt-in), 12 months (others).
 
-## 4. Required shopper-facing pages/links
+## 4. Required visitor-facing pages/links
 - Cookie policy/list: every cookie/tag, purpose, provider, lifetime, third-party recipients (EU, UK, BR, JP external transmission, KR, all opt-in).
 - Privacy policy with notice at collection (all; CA, Quebec in French, BR in Portuguese, SA in Arabic recommended).
 - Persistent "Cookie settings" link to reopen preferences and withdraw (all opt-in modes; UK objection control).

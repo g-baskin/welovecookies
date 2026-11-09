@@ -31,7 +31,7 @@ describe('cookie button auto-hide', () => {
 		expect(hide).toHaveBeenCalledOnce();
 	});
 
-	it('hides as soon as the shopper scrolls the page, ignoring tiny jitter', () => {
+	it('hides as soon as the visitor scrolls the page, ignoring tiny jitter', () => {
 		const win = fakeWin();
 		const hide = vi.fn();
 		autoHide(win, hide);

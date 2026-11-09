@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>We Love Cookies demo</title>
+<style>
+	:root { --color-bg:#fff; --color-fg:#1c1917; --color-muted:#f5f5f4; --color-muted-fg:#57534e; --color-primary:#14532d; --color-primary-fg:#fff; --color-border:#e7e5e4; --radius-theme:16px; --radius-button:999px; --font-body:system-ui,sans-serif; }
+	body { margin:0; font-family:var(--font-body); color:var(--color-fg); background:var(--color-muted); }
+	main { max-width:960px; margin:0 auto; padding:24px 16px 160px; }
+	.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; }
+	.card { background:#fff; border-radius:12px; height:220px; display:grid; place-items:end start; padding:12px; }
+	[data-sticky-cta] { position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--color-border); padding:12px 16px; display:flex; gap:12px; align-items:center; justify-content:space-between; }
+	[data-sticky-cta] button { background:var(--color-primary); color:#fff; border:0; border-radius:999px; padding:12px 20px; font-weight:600; }
+	@media (min-width:900px) { [data-sticky-cta] { display:none; } }
+</style>
+<script>
+	// ?mode=opt-in|opt-in-uk|opt-out-gpc|opt-out|notice|auto &lang=de &gpc=1 &reset=1 &prefs=1 &compact=1 &logo=1
+	(function () {
+		var q = new URLSearchParams(location.search);
+		if (q.get('reset') !== '0') document.cookie = 'wlc_consent=; path=/; max-age=0';
+		window.WeLoveCookiesConfig = {
+			mode: q.get('mode') || 'opt-in',
+			rev: 1,
+			lang: q.get('lang') || undefined,
+			gpc: q.get('gpc') === '1',
+			floatingButton: true,
+			preferencesCategory: true,
+			position: q.get('pos') || 'auto',
+			logoUrl: q.get('logo') === '1' ? '/favicon.png' : q.get('logo') === 'broken' ? '/no-such-logo.png' : null,
+			brandName: 'Demo site',
+			avoidSelector: '[data-sticky-cta]',
+			compactOn: q.get('compact') ? ['/demo/'] : [],
+			links: { privacyPolicy: '/privacy', cookiePolicy: '/cookies', privacyChoices: '/privacy#choices' },
+			cookies: [
+				{ name: 'Cookie choice', provider: 'This website', category: 'necessary', purpose: 'Remembers your cookie choice.', duration: '6-12 months' },
+				{ name: 'Sign-in', provider: 'This website', category: 'necessary', purpose: 'Keeps you signed in.', duration: '30 days' },
+				{ name: 'Visit counter', provider: 'PostHog', category: 'analytics', purpose: 'Counts visits and popular pages.', duration: '1 year' },
+				{ name: 'Ad click', provider: 'Google Ads', category: 'marketing', purpose: 'Measures ad clicks.', duration: '90 days' },
+				{ name: 'Ad visit', provider: 'Meta', category: 'marketing', purpose: 'Measures ads on Facebook and Instagram.', duration: '90 days' }
+			]
+		};
+		window.dataLayer = [];
+	})();
+</script>
+<script src="../dist/welovecookies.min.js"></script>
+</head>
+<body>
+<main>
+	<h1>Demo site</h1>
+	<p>Try <code>?mode=opt-out-gpc&amp;gpc=1</code>, <code>?mode=notice</code>, <code>?lang=ar</code>, <code>?prefs=1</code>, <code>?logo=1</code>.</p>
+	<div class="grid">
+		<div class="card">Features</div><div class="card">Pricing</div><div class="card">Blog</div>
+		<div class="card">Docs</div><div class="card">About us</div><div class="card">Contact</div>
+	</div>
+	<p><button type="button" onclick="WeLoveCookies.openPreferences()">Cookie settings</button></p>
+	<script type="text/plain" data-consent="analytics">console.log('[demo] analytics script ran');</script>
+</main>
+<div data-sticky-cta><span>Ready to get started?</span><button type="button">Sign up</button></div>
+<script>
+	if (new URLSearchParams(location.search).get('prefs') === '1') addEventListener('load', function () { WeLoveCookies.openPreferences(); });
+	addEventListener('welovecookies:change', function (e) { console.log('[demo] change', e.detail); });
+</script>
+</body>
+</html>

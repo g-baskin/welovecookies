@@ -11,17 +11,17 @@ describe('hosted install', () => {
 		const calls: { url: string; init?: RequestInit }[] = [];
 		const f = (async (url: string, init?: RequestInit) => {
 			calls.push({ url, init });
-			return { ok: true, json: async () => ({ mode: 'opt-in', rev: 3, endpoints: { record: 'https://store.test/api/consent' } }) };
+			return { ok: true, json: async () => ({ mode: 'opt-in', rev: 3, endpoints: { record: 'https://example.test/api/consent' } }) };
 		}) as unknown as typeof fetch; // prettier-ignore
-		const c = await loadHosted('site_1', 'https://store.test/consent/welovecookies.min.js', f);
-		expect(calls[0]?.url).toBe('https://store.test/api/consent/config?site=site_1');
+		const c = await loadHosted('site_1', 'https://example.test/consent/welovecookies.min.js', f);
+		expect(calls[0]?.url).toBe('https://example.test/api/consent/config?site=site_1');
 		expect(calls[0]?.init).toMatchObject({ credentials: 'omit', mode: 'cors' });
 		expect(c).toMatchObject({ mode: 'opt-in', rev: 3, site: 'site_1' });
 	});
 	it('falls back to auto mode with no endpoints on failure', async () => {
 		const bad = (async () => { throw new Error('offline'); }) as unknown as typeof fetch; // prettier-ignore
 		for (const f of [bad, ok(null), ok('x'), undefined]) {
-			const c = await loadHosted('s', 'https://store.test/x.js', f);
+			const c = await loadHosted('s', 'https://example.test/x.js', f);
 			expect(c).toEqual({ mode: 'auto', rev: 1, floatingButton: true, site: 's' });
 		}
 	});
@@ -50,8 +50,8 @@ describe('hosted install', () => {
 			rev: 1,
 			site: 'site_1',
 			endpoints: {
-				record: 'https://store.test/api/consent',
-				seen: 'https://store.test/api/consent/seen'
+				record: 'https://example.test/api/consent',
+				seen: 'https://example.test/api/consent/seen'
 			}
 		};
 		const m = createConsent(cfg, { root: w, fetch: f, ui: false });

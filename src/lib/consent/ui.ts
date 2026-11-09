@@ -71,7 +71,7 @@ export function createUi(doc: Document, config: ConsentConfig, st: UiState, h: U
 		d.innerHTML = html.trim();
 		return d.firstElementChild as HTMLElement;
 	};
-	// Store logo (banner and panel header); falls back to the cookie when it fails to load.
+	// Site logo (banner and panel header); falls back to the cookie when it fails to load.
 	const logoSrc = safeImg(config.logoUrl);
 	const brand = config.brandName?.trim() ?? '';
 	const logo = (cls: string) =>

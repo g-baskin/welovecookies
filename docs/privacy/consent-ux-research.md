@@ -23,14 +23,14 @@ Researched 3 Nov 2026. Every claim links to a source in the Sources section, key
 |---|---|---|
 | Phone ≤ 600px (390px target) | **Bottom sheet**, full width, max height about 45vh, rounded top corners, `padding-bottom: max(16px, env(safe-area-inset-bottom))` | Buttons stacked full width, each at least 48px tall: **[Accept all] [Reject all]** side by side as two equal halves, with **"Choose" / "Settings"** as a third full-width secondary button below. No backdrop and no scroll lock. |
 | Tablet portrait (768-834px) | **Floating card**, bottom centre, max-width 560px, 16px from the edges plus the safe area | Three buttons in one row if they fit, otherwise 2+1. |
-| Tablet landscape / small desktop (1024-1366px) | **Floating card, bottom-left**, max-width 420-480px | Bottom-left keeps it away from the usual right-side cart drawer, chat widget and sticky "Add to cart". |
+| Tablet landscape / small desktop (1024-1366px) | **Floating card, bottom-left**, max-width 420-480px | Bottom-left keeps it away from the usual right-side chat and cart widgets drawer, chat widget and sticky "Add to cart". |
 | Desktop 1440px | Same bottom-left card, 440px | Do not use a thin full-width strip, because desktop users ignore it [S22]. |
 
 Cookiebot's Swift banner uses the same responsive logic: edge-to-edge above about 1280px, a dialog below that, and a dedicated mobile banner under 600px [S15].
 
 **Do not cover what people came for:**
-- On product pages with a sticky "Add to cart" bar, place the sheet **above** that bar (measure the bar and set `bottom` from it) so the main action stays visible. Never set `inert` on the page.
-- On `/checkout` and `/cart`, show the compact version only.
+- On pages with a sticky call-to-action bar, place the sheet **above** that bar (measure the bar and set `bottom` from it) so the main action stays visible. Never set `inert` on the page.
+- In checkout and sign-up flows, show the compact version only.
 - Set `scroll-padding-bottom` to the banner height so focused fields are never hidden underneath it (WCAG 2.4.11 [S24]).
 
 **CLS/INP:**
@@ -46,15 +46,15 @@ Cookiebot's Swift banner uses the same responsive logic: edge-to-edge above abou
 - Do not add a close "X" that silently means reject in the EU. An "X" equal to Reject is acceptable only if Reject all is also present. Research shows users use the X as a fast reject [S25].
 
 ### Copy tone (warm, short, specific, no guilt)
-- **Example A (default, EN):** *"Cookies, the useful kind 🍪 · We'd like to use analytics to see which products you love, and ads cookies to show you our stuff elsewhere. Totally your call: the shop works the same either way."*
-- **Example B (minimal):** *"Help us make the shop better? With your OK we measure visits and improve our ads. You can change this anytime from the 🍪 button."*
-- **Example C (DE tone, formal):** *"Dürfen wir Statistik- und Marketing-Cookies nutzen? Damit verbessern wir den Shop und unsere Werbung. Ihre Wahl gilt, bis Sie sie ändern."*
+- **Example A (default, EN):** *"Cookies, the useful kind 🍪 · We'd like to use analytics to see what you enjoy here, and ad cookies to show you our ads on other sites. Totally your call: the site works the same either way."*
+- **Example B (minimal):** *"Help us make this site better? With your OK we measure visits and improve our ads. You can change this anytime from the 🍪 button."*
+- **Example C (DE tone, formal):** *"Dürfen wir Statistik- und Marketing-Cookies nutzen? Damit verbessern wir die Website und unsere Werbung. Ihre Wahl gilt, bis Sie sie ändern."*
 - Rules: name the purposes in plain words, state that refusing has no penalty, link to the cookie policy, keep the text under 40 words. No guilt-tripping or emotional pressure, which the ICO calls out [S16]. No perks (owner decision).
 
 ### Preferences panel
 - Desktop/tablet: a side drawer (right, 420px). Phone: a full-height sheet. Use `role="dialog"`, `aria-modal="true"`, trap focus, close with Esc, and return focus to the trigger on close.
 - Categories, each with a one-line plain description and a switch (`role="switch"`, all off by default):
-  1. **Necessary** (always on, locked, explains cart/checkout/security)
+  1. **Necessary** (always on, locked, explains sign-in, security and the consent cookie)
   2. **Analytics** (PostHog/GA4)
   3. **Marketing** (Google Ads, Meta, TikTok, Microsoft Ads)
   4. optional **Preferences**
@@ -62,7 +62,7 @@ Cookiebot's Swift banner uses the same responsive logic: edge-to-edge above abou
 - Footer buttons: **Reject all · Save choices · Accept all**, all the same visual weight.
 
 ### Re-open control
-- A small 44×44 floating 🍪 button, bottom-left, `aria-label="Cookie settings"`. Show it after a choice is made, hide it on checkout, and keep it out of the sticky CTA's way.
+- A small 44×44 floating 🍪 button, bottom-left, `aria-label="Cookie settings"`. Show it after a choice is made, hide it in checkout and sign-up flows, and keep it out of the sticky CTA's way.
 - **Plus** a "Cookie settings" link in the footer. ICO-oriented guidance expects a persistent footer link or icon [S17].
 - Remember the choice for 6-12 months, and reprompt when categories or vendors change (store a `revision`).
 
@@ -74,7 +74,7 @@ Cookiebot's Swift banner uses the same responsive logic: edge-to-edge above abou
 - `lang` attribute per translation.
 
 ### Languages and regions
-- Use i18n strings per locale. At minimum EN, DE, FR, ES, IT, NL, PL, SV, DA, plus the store's locales.
+- Use i18n strings per locale. At minimum EN, DE, FR, ES, IT, NL, PL, SV, DA, plus your site's languages.
 - Geo mode:
   - EEA/UK/CH: opt-in, banner shown.
   - US: no blocking banner; honour GPC, and show a "Your privacy choices" link.
@@ -188,12 +188,12 @@ if (posthog.get_explicit_consent_status() === 'pending') showBanner();
 - In the EU, treat GPC as a hint to preselect nothing (everything is already off by default) and still show the banner.
 - Optionally publish `/.well-known/gpc.json` [S66].
 
-### Shopify (if the store uses Shopify checkout or Hydrogen)
+### Shopify (if the site runs on Shopify or Hydrogen)
 Pass the same choice to `window.Shopify.customerPrivacy.setTrackingConsent({...})`, and use `shouldShowBanner()` to decide whether to show the banner [S41]. This is required for Shopify's own pixels and checkout to respect the choice [S40].
 
 ### IAB TCF v2.2 and GPP: do we need them?
-- **TCF: no.** Google's certified-CMP/TCF requirement applies to **publishers** showing AdSense, Ad Manager or AdMob ads in the EEA/UK/CH [S52, S67]. An advertiser running Google Ads to its own store is not covered; it must send Consent Mode signals instead [S52, S67].
-- **GPP:** this was not checked against a primary source. GPP (IAB Tech Lab's multi-jurisdiction string) is used to pass US opt-out signals to ad-tech vendors in programmatic chains. A store that sells no ad space has no downstream bidders to signal. Skip it, and revisit only if an ad partner explicitly requires a GPP/TCF string.
+- **TCF: no.** Google's certified-CMP/TCF requirement applies to **publishers** showing AdSense, Ad Manager or AdMob ads in the EEA/UK/CH [S52, S67]. An advertiser running Google Ads to its own website is not covered; it must send Consent Mode signals instead [S52, S67].
+- **GPP:** this was not checked against a primary source. GPP (IAB Tech Lab's multi-jurisdiction string) is used to pass US opt-out signals to ad-tech vendors in programmatic chains. A site that sells no ad space has no downstream bidders to signal. Skip it, and revisit only if an ad partner explicitly requires a GPP/TCF string.
 
 ## 4. Sources
 - [S1] Lexology, EDPB Taskforce summary: https://www.lexology.com/library/detail.aspx?g=cef8acc5-c5b9-45ae-9223-3a9e38e96354

@@ -76,8 +76,8 @@ export function isLocalOrIp(hostname: string): boolean {
 }
 
 /**
- * Root-domain candidates, shortest first: shop.example.co.uk -> co.uk, example.co.uk,
- * shop.example.co.uk. Browsers refuse public suffixes, so the first that sticks is the root.
+ * Root-domain candidates, shortest first: blog.example.co.uk -> co.uk, example.co.uk,
+ * blog.example.co.uk. Browsers refuse public suffixes, so the first that sticks is the root.
  */
 export function rootCandidates(hostname: string): string[] {
 	if (isLocalOrIp(hostname)) return [];

@@ -11,6 +11,9 @@ import {
 	type StoredConsent
 } from './types.ts';
 
+/** When the country, region and US state tables below were last checked; re-check every 12 months. */
+export const REGIONS_CHECKED = '2026-11-03';
+
 const EU_EEA = [
 	'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV',
 	'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO'
@@ -20,7 +23,7 @@ const EU_EEA = [
 export const COUNTRY_MODES: Readonly<Record<string, ConsentMode>> = {
 	...Object.fromEntries(EU_EEA.map((c) => [c, 'opt-in' as const])),
 	GB: 'opt-in-uk',
-	// Switzerland: nFADP is opt-out by most readings, but this store has always asked first there.
+	// Switzerland: nFADP is opt-out by most readings, but asking first is the safer default.
 	CH: 'opt-in',
 	CA: 'opt-out',
 	BR: 'opt-in', MX: 'opt-in-light', AR: 'opt-in-light', CL: 'opt-in-light', CO: 'opt-in-light',
