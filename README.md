@@ -71,10 +71,13 @@ Want answer rates, proof-of-consent records with a CSV export, banner and cookie
 | `docs/INSTALL.md` | Install steps for every framework and site builder, settings, and how to check it works |
 | `admin/`, `docs/ADMIN.md` | The optional admin (Cloudflare Worker and D1) and its setup guide |
 | `docs/privacy/` | How it works, the law matrix with sources, and banner research |
+| `docs/api/openapi.json` | OpenAPI description of the admin's public endpoints, and what your own record endpoint receives |
 | `CONTEXT.md`, `docs/decisions/` | Glossary of terms, and the records of key decisions |
 | `demo/` | A demo page to try every region and language |
 | `src/lib/consent/` | Source: banner, consent manager, region rules (`regions.ts`), US wiretap rule (`wiretap.ts`) |
 | `wordpress/` | Source of the optional WordPress plugin |
+| `CHANGELOG.md` | What changed in each version |
+| `library/` | Notes for maintainers: architecture, release process, test strategy and a page per source module |
 
 ## For developers
 
@@ -88,6 +91,10 @@ npm run build   # rebuild dist/ (script, module and WordPress zip)
 npm run demo    # demo at http://localhost:4173/demo/
 npm run admin:dev   # optional admin at http://127.0.0.1:8787/admin (see docs/ADMIN.md)
 ```
+
+`npm test` covers the consent manager, region rules, cookie format (pinned so saved choices keep working), signals, auto-clear, translations, the banner UI (in happy-dom), script-tag config, the admin (its real database migration on `node:sqlite`), and that the committed `dist/` scripts match a fresh build. It also checks that the docs' file and line citations and links still point at things that exist, and that the API spec's enums match the code.
+
+After changing anything in `src/lib/consent/`, run `npm run build` and commit `dist/`. Changes go in the [CHANGELOG](CHANGELOG.md). Maintainer notes and the code wiki are in [`library/`](library/README.md) ([architecture overview](library/knowledge/private/architecture/overview.md), [release process](library/knowledge/private/build-release/release-process.md), [test strategy](library/knowledge/private/testing/test-strategy.md)). The endpoint formats are in [`docs/api/openapi.json`](docs/api/openapi.json).
 
 ## Licence
 

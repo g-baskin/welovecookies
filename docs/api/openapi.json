@@ -1,0 +1,1027 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "We Love Cookies admin: hosted-install endpoints",
+    "version": "1.0.0",
+    "summary": "Public banner endpoints of the optional Cloudflare Worker admin.",
+    "description": "Every endpoint lives on the origin that serves the script (the admin Worker). With a hosted install (`<script src=\".../welovecookies.min.js\" data-site=\"ws_...\">`) the script fetches `/api/consent/config?site=<key>` from the script's origin; the returned config carries absolute `endpoints.record` (`<origin>/api/consent`) and `endpoints.seen` (`<origin>/api/consent/seen`).\n\n## Own endpoint contract (without the admin)\n\nBuyers may set `endpoints.record` and/or `endpoints.seen` (or `data-record` / `data-seen`) to their own URLs. What the banner does (src/lib/consent/consent.ts):\n\n- **Request:** `POST <url>` with header `Content-Type: application/json` and a JSON body: `ConsentRecordPayload` for record (after every choice), `ConsentSeenPayload` for seen (at most once per page load, when a banner is shown). `site` is included only when the config has a site key. `page` is the path only.\n- **Same-origin URL** (relative, or starting with the page origin + `/`): `credentials: 'same-origin'`, `keepalive: true`. **Cross-origin URL:** `mode: 'cors'`, `credentials: 'omit'`, no keepalive; because of the JSON content type the browser sends a CORS preflight, so the endpoint must answer `OPTIONS` and send `Access-Control-Allow-Origin` (and allow the `content-type` header).\n- **Response:** the seen response is ignored. For record, only a 2xx response is parsed as JSON; if it has a `consent` object (`StoredConsent`) with the same `id` that differs from what the browser saved, the browser adopts it (rewrites the cookie, re-applies signals). Any other body is ignored.\n- **Failures never block the banner:** the banner closes and the cookie is written before the POST, which runs deferred; network errors, non-2xx and unparseable bodies are swallowed. If the hosted config fetch fails (non-2xx, network, or no string `mode`), the banner falls back to `{mode: 'auto', rev: 1, floatingButton: true, site}` (no endpoints) and logs nothing.\n\n## Admin limits\n\n- Request bodies over 8192 bytes (by `Content-Length` or while reading) or not a JSON object are treated as having no `site`, so they get **404**, not 413. `Content-Type` is not checked (no 415).\n- Optional per-IP rate limit via the `PUBLIC_LIMITER` binding (shipped wrangler.jsonc: 120 requests / 60 s, per Cloudflare location), keyed by path. When exceeded: 429 with `Retry-After: 60`, plain text, no CORS headers. OPTIONS is never limited. Without the binding there is no limit.\n- CORS: one exact origin per website, `Vary: Origin`, never credentials.",
+    "license": {
+      "name": "AGPL-3.0-only",
+      "identifier": "AGPL-3.0-only"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://consent.example.com",
+      "description": "Placeholder: the origin that serves welovecookies.min.js (your admin Worker)."
+    }
+  ],
+  "tags": [
+    {
+      "name": "Hosted install",
+      "description": "Called cross-origin by the banner script on connected websites. See info.description for the contract your own `endpoints.record` / `endpoints.seen` must follow if you do not use the admin."
+    }
+  ],
+  "paths": {
+    "/api/consent/config": {
+      "get": {
+        "tags": [
+          "Hosted install"
+        ],
+        "operationId": "getConsentConfig",
+        "summary": "Config for one visitor of a connected website",
+        "description": "Mode comes from Cloudflare's view of the visitor's connection (`request.cf` country/regionCode via regions.ts `modeFor`); missing location gives `opt-in`. `gpc` reflects the `Sec-GPC: 1` request header. The script calls this with `credentials: 'omit'`, `mode: 'cors'`.",
+        "parameters": [
+          {
+            "name": "site",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteKey"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/OriginHeader"
+          },
+          {
+            "name": "Sec-GPC",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "`1` sets `gpc: true` in the response."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Config for this visitor.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HostedConsentConfig"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Site exists and is enabled but `Origin` is missing or not its exact origin. Body `{\"error\":\"Not allowed.\"}`. No CORS headers.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown/invalid site key or disabled website (`{\"error\":\"Unknown website.\"}`, no CORS headers), or the banner is switched off in settings (`{\"error\":\"Banner is off.\"}`, with CORS headers). The script then falls back to its built-in banner.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Any other method.",
+            "headers": {
+              "Allow": {
+                "schema": {
+                  "type": "string",
+                  "const": "GET, OPTIONS"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "Hosted install"
+        ],
+        "summary": "CORS preflight for config",
+        "description": "Answered only for the exact origin of an enabled connected website (looked up by the `Origin` header alone; no site key needed). Not rate limited. Never sends `Access-Control-Allow-Credentials`.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OriginHeader"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Origin belongs to an enabled website.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string",
+                  "const": "GET"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string",
+                  "const": "content-type"
+                }
+              },
+              "Access-Control-Max-Age": {
+                "schema": {
+                  "type": "string",
+                  "const": "86400"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No enabled website has this exact origin (or no `Origin` header). Empty body, no CORS headers."
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/consent": {
+      "post": {
+        "tags": [
+          "Hosted install"
+        ],
+        "operationId": "recordConsent",
+        "summary": "Record a visitor's choice (proof of consent)",
+        "description": "The server decides `mode` (from the connection) and `rev` (the sent `rev` if it is an integer >= 1 and not above the site's current revision, else the current one); payload `mode` is ignored. GPC from the payload or `Sec-GPC: 1` forces `marketing: false`. `id` is kept if it matches `^[A-Za-z0-9_-]{16}$`, else a new one is issued. `page` is stored as path only (same origin, max 200 chars); `landing` is not read. No IP address is stored; user agent is truncated to 200 chars.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OriginHeader"
+          },
+          {
+            "name": "Sec-GPC",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "JSON object, max 8192 bytes. Content-Type is not checked.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentRecordPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved; `consent` is the server-corrected choice.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentRecordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid choice (`{\"error\":\"Invalid choice.\"}`): bad action, grants, lang, device, page or gpc.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "`Origin` missing or not the site's exact origin (`{\"error\":\"Not allowed.\"}`). No CORS headers.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown, invalid or disabled site key, or body unreadable/over 8192 bytes/not a JSON object (`{\"error\":\"Not allowed.\"}`). No CORS headers.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Any other method.",
+            "headers": {
+              "Allow": {
+                "schema": {
+                  "type": "string",
+                  "const": "POST, OPTIONS"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "description": "Database write failed (`{\"error\":\"Could not save.\"}`, with CORS headers), or an unexpected error (plain text, no CORS headers).",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "Hosted install"
+        ],
+        "summary": "CORS preflight for record",
+        "description": "Answered only for the exact origin of an enabled connected website (looked up by the `Origin` header alone; no site key needed). Not rate limited. Never sends `Access-Control-Allow-Credentials`.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OriginHeader"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Origin belongs to an enabled website.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string",
+                  "const": "POST"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string",
+                  "const": "content-type"
+                }
+              },
+              "Access-Control-Max-Age": {
+                "schema": {
+                  "type": "string",
+                  "const": "86400"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No enabled website has this exact origin (or no `Origin` header). Empty body, no CORS headers."
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/consent/seen": {
+      "post": {
+        "tags": [
+          "Hosted install"
+        ],
+        "operationId": "countBannerView",
+        "summary": "Count one banner view (cookieless aggregate)",
+        "description": "Only `site` and `device` are read; the server derives mode and country from the connection. User agents matching `/bot|crawl|spider|slurp|headless|lighthouse|preview/i` are not counted (still 204). A failed count is logged and still answers 204.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OriginHeader"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "JSON object, max 8192 bytes.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentSeenPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Counted (or ignored as a bot).",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            }
+          },
+          "400": {
+            "description": "`device` missing or not a valid Device. Empty body.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              }
+            }
+          },
+          "403": {
+            "description": "`Origin` missing or not the site's exact origin. Empty body, no CORS headers."
+          },
+          "404": {
+            "description": "Unknown/invalid/disabled site key, or unreadable/oversized/non-object body. Empty body, no CORS headers."
+          },
+          "405": {
+            "description": "Any other method.",
+            "headers": {
+              "Allow": {
+                "schema": {
+                  "type": "string",
+                  "const": "POST, OPTIONS"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "Hosted install"
+        ],
+        "summary": "CORS preflight for seen",
+        "description": "Answered only for the exact origin of an enabled connected website (looked up by the `Origin` header alone; no site key needed). Not rate limited. Never sends `Access-Control-Allow-Credentials`.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OriginHeader"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Origin belongs to an enabled website.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Vary": {
+                "$ref": "#/components/headers/Vary"
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string",
+                  "const": "POST"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string",
+                  "const": "content-type"
+                }
+              },
+              "Access-Control-Max-Age": {
+                "schema": {
+                  "type": "string",
+                  "const": "86400"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No enabled website has this exact origin (or no `Origin` header). Empty body, no CORS headers."
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "OriginHeader": {
+        "name": "Origin",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Must equal the connected website's stored origin exactly."
+      }
+    },
+    "headers": {
+      "AllowOrigin": {
+        "description": "The connected website's exact origin.",
+        "schema": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "Vary": {
+        "schema": {
+          "type": "string",
+          "const": "Origin"
+        }
+      },
+      "NoStore": {
+        "schema": {
+          "type": "string",
+          "const": "private, no-store"
+        }
+      }
+    },
+    "responses": {
+      "TooManyRequests": {
+        "description": "Per-IP limit hit (only when `PUBLIC_LIMITER` is bound). Plain text, no CORS headers.",
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "string",
+              "const": "60"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Unexpected error: plain text `Something went wrong.`, no CORS headers.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ConsentMode": {
+        "type": "string",
+        "enum": [
+          "opt-in",
+          "opt-in-uk",
+          "opt-in-light",
+          "opt-out-gpc",
+          "opt-out",
+          "notice"
+        ]
+      },
+      "ConsentAction": {
+        "type": "string",
+        "enum": [
+          "accept_all",
+          "reject_all",
+          "custom",
+          "acknowledge",
+          "withdraw",
+          "gpc"
+        ]
+      },
+      "Device": {
+        "type": "string",
+        "enum": [
+          "phone",
+          "tablet",
+          "desktop"
+        ]
+      },
+      "SiteKey": {
+        "type": "string",
+        "pattern": "^ws_[A-Za-z0-9_-]{12}$"
+      },
+      "ConsentId": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_-]{16}$"
+      },
+      "Grants": {
+        "type": "object",
+        "required": [
+          "preferences",
+          "analytics",
+          "marketing"
+        ],
+        "properties": {
+          "preferences": {
+            "type": "boolean"
+          },
+          "analytics": {
+            "type": "boolean"
+          },
+          "marketing": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "StoredConsent": {
+        "type": "object",
+        "required": [
+          "id",
+          "at",
+          "mode",
+          "rev",
+          "grants",
+          "action"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ConsentId"
+          },
+          "at": {
+            "type": "integer",
+            "description": "ms since epoch"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ConsentMode"
+          },
+          "rev": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "grants": {
+            "$ref": "#/components/schemas/Grants"
+          },
+          "action": {
+            "$ref": "#/components/schemas/ConsentAction"
+          }
+        }
+      },
+      "ConsentRecordPayload": {
+        "type": "object",
+        "required": [
+          "id",
+          "action",
+          "grants",
+          "mode",
+          "rev",
+          "lang",
+          "device",
+          "gpc",
+          "page"
+        ],
+        "description": "What the banner sends. The admin validates action, grants, lang, device, page (string <= 500), gpc (boolean if present) and requires `site`.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Kept if 16 url-safe chars, else replaced."
+          },
+          "action": {
+            "$ref": "#/components/schemas/ConsentAction"
+          },
+          "grants": {
+            "$ref": "#/components/schemas/Grants"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ConsentMode",
+            "description": "Ignored by the admin."
+          },
+          "rev": {
+            "type": "integer"
+          },
+          "lang": {
+            "type": "string",
+            "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$"
+          },
+          "device": {
+            "$ref": "#/components/schemas/Device"
+          },
+          "gpc": {
+            "type": "boolean"
+          },
+          "page": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "site": {
+            "$ref": "#/components/schemas/SiteKey"
+          },
+          "landing": {
+            "type": "string",
+            "description": "Optional; not read by the admin."
+          }
+        }
+      },
+      "ConsentSeenPayload": {
+        "type": "object",
+        "required": [
+          "mode",
+          "device",
+          "lang"
+        ],
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/ConsentMode"
+          },
+          "device": {
+            "$ref": "#/components/schemas/Device"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "site": {
+            "$ref": "#/components/schemas/SiteKey"
+          }
+        }
+      },
+      "ConsentRecordResponse": {
+        "type": "object",
+        "required": [
+          "ok",
+          "consent"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "consent": {
+            "$ref": "#/components/schemas/StoredConsent"
+          }
+        }
+      },
+      "ConsentConfig": {
+        "type": "object",
+        "required": [
+          "mode",
+          "rev"
+        ],
+        "description": "Full browser config (types.ts). `mode` may be 'auto' in standalone use.",
+        "properties": {
+          "mode": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ConsentMode"
+              },
+              {
+                "const": "auto"
+              }
+            ]
+          },
+          "country": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "region": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gpc": {
+            "type": "boolean"
+          },
+          "rev": {
+            "type": "integer"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "texts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            },
+            "description": "Overrides per language code; '*' for all."
+          },
+          "theme": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "position": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "bottom-left",
+              "bottom-right",
+              "bottom-center"
+            ]
+          },
+          "preferencesCategory": {
+            "type": "boolean"
+          },
+          "floatingButton": {
+            "type": "boolean"
+          },
+          "noticeBanner": {
+            "type": "object",
+            "required": [
+              "optOut",
+              "notice"
+            ],
+            "properties": {
+              "optOut": {
+                "type": "boolean"
+              },
+              "notice": {
+                "type": "boolean"
+              }
+            }
+          },
+          "cookies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "provider",
+                "category",
+                "purpose",
+                "duration"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "provider": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "purpose": {
+                  "type": "string"
+                },
+                "duration": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "privacyPolicy": {
+                "type": "string"
+              },
+              "cookiePolicy": {
+                "type": "string"
+              },
+              "privacyChoices": {
+                "type": "string"
+              }
+            }
+          },
+          "endpoints": {
+            "type": "object",
+            "properties": {
+              "record": {
+                "type": "string"
+              },
+              "seen": {
+                "type": "string"
+              }
+            }
+          },
+          "cookieName": {
+            "type": "string"
+          },
+          "cookieDomain": {
+            "type": "string"
+          },
+          "integrations": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "logoUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "brandName": {
+            "type": "string"
+          },
+          "autoClear": {
+            "type": "object"
+          },
+          "site": {
+            "type": "string"
+          },
+          "compactOn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "avoidSelector": {
+            "type": "string"
+          }
+        }
+      },
+      "HostedConsentConfig": {
+        "description": "What GET /api/consent/config returns (config.ts buildConfig): mode is always resolved (never 'auto'); cookieName is wlc_consent; cookieDomain 'auto'; endpoints are absolute on this origin.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ConsentConfig"
+          },
+          {
+            "type": "object",
+            "required": [
+              "mode",
+              "country",
+              "region",
+              "gpc",
+              "rev",
+              "texts",
+              "theme",
+              "position",
+              "preferencesCategory",
+              "floatingButton",
+              "noticeBanner",
+              "cookies",
+              "links",
+              "endpoints",
+              "cookieName",
+              "cookieDomain",
+              "integrations",
+              "brandName",
+              "site"
+            ],
+            "properties": {
+              "mode": {
+                "$ref": "#/components/schemas/ConsentMode"
+              },
+              "cookieName": {
+                "const": "wlc_consent"
+              },
+              "cookieDomain": {
+                "const": "auto"
+              },
+              "site": {
+                "$ref": "#/components/schemas/SiteKey"
+              },
+              "links": {
+                "type": "object",
+                "required": [
+                  "privacyChoices"
+                ],
+                "properties": {
+                  "privacyChoices": {
+                    "type": "string",
+                    "description": "<origin>/privacy/<site>?kind=stop_selling"
+                  }
+                }
+              },
+              "endpoints": {
+                "type": "object",
+                "required": [
+                  "record",
+                  "seen"
+                ]
+              }
+            }
+          }
+        ],
+        "example": {
+          "mode": "opt-in",
+          "country": "DE",
+          "region": "BE",
+          "gpc": false,
+          "rev": 1,
+          "texts": {},
+          "theme": {},
+          "position": "auto",
+          "preferencesCategory": true,
+          "floatingButton": true,
+          "noticeBanner": {
+            "optOut": true,
+            "notice": false
+          },
+          "cookies": [],
+          "links": {
+            "privacyPolicy": "https://www.example.com/privacy",
+            "privacyChoices": "https://consent.example.com/privacy/ws_AbCdEfGhIjKl?kind=stop_selling"
+          },
+          "endpoints": {
+            "record": "https://consent.example.com/api/consent",
+            "seen": "https://consent.example.com/api/consent/seen"
+          },
+          "cookieName": "wlc_consent",
+          "cookieDomain": "auto",
+          "integrations": {
+            "googleConsentMode": true
+          },
+          "brandName": "Example",
+          "site": "ws_AbCdEfGhIjKl"
+        }
+      }
+    }
+  }
+}

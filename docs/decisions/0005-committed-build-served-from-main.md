@@ -31,6 +31,10 @@ Buyers should be able to download one file, or load it from a CDN, without insta
 ### Alternative: Publish to npm only
 Needs a build step for buyers and doesn't help plain HTML sites.
 
+## Notes
+
+- 2026-11-09: `src/lib/consent/dist.test.ts` now fails when the committed `welovecookies.min.js` or `welovecookies.mjs` differs from a fresh build, so "No test checks this" above no longer holds for the two scripts. The WordPress zip is still not compared, and `dist/` must still be rebuilt and committed. The decision itself is unchanged.
+
 ---
 
-*Linked from:* `tools/build-consent.mjs`, `docs/INSTALL.md`
+*Linked from:* `tools/build-consent.mjs`, `docs/INSTALL.md`, `src/lib/consent/dist.test.ts`
