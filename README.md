@@ -66,6 +66,7 @@ Single-page apps need nothing extra: the banner keeps working across client-side
 | `dist/` | Ready to use: `welovecookies.min.js` (script tag, works on any site), `welovecookies.mjs` (JavaScript module), `welovecookies-wordpress.zip` (optional WordPress plugin) |
 | `docs/INSTALL.md` | Install steps for every framework and site builder, settings, and how to check it works |
 | `docs/privacy/` | How it works, the law matrix with sources, and banner research |
+| `CONTEXT.md`, `docs/decisions/` | Glossary of terms, and the records of key decisions |
 | `demo/` | A demo page to try every region and language |
 | `src/lib/consent/` | Source: banner, consent manager, region rules (`regions.ts`), US wiretap rule (`wiretap.ts`) |
 | `wordpress/` | Source of the optional WordPress plugin |

@@ -27,6 +27,7 @@ A cookie consent banner sold as a product for any website. It is framework-free 
 - **It is not a WordPress plugin** (owner's explicit direction). README and docs must lead with the plain script-tag install for any site or framework (`docs/INSTALL.md` has per-framework sections). WordPress is one optional row among many; never frame the product around it.
 
 ## Workflow
+- Domain terms are defined in `CONTEXT.md`; use those names. Record new hard-to-reverse decisions as the next numbered ADR in `docs/decisions/`.
 - Branches: `feature/*` → PR into `dev`. `main` is the release branch the CDN URL follows. There is no CI and there are no tags yet.
 - `npm run demo` serves `/demo/`, `/dist/` and `/docs/assets/` only, on http://localhost:4173/demo/ (cookies need http). It loads `../dist/`, so build first. Preview other regions and languages with `?mode=opt-in|opt-out-gpc|notice&lang=xx&gpc=1&prefs=1`.
 <!-- gg:init:end -->
