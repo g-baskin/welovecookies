@@ -54,7 +54,7 @@ export function modeFromTimeZone(tz): ConsentMode;                           // 
 
 ## Behavior
 
-- **Dated tables:** `REGIONS_CHECKED = '2026-11-03'`, re-checked every 12 months (`src/lib/consent/regions.ts:14-15`). The admin tracking check reads it (`src/lib/consent/contract.test.ts:123`).
+- **Dated tables:** `REGIONS_CHECKED = '2026-11-03'`, re-checked every 12 months (`src/lib/consent/regions.ts:14-15`). The admin tracking check reads it (`src/lib/consent/contract.test.ts:125`).
 - **Country table:** EU/EEA, plus IS/LI/NO, are `opt-in`. GB is `opt-in-uk`. **CH is `opt-in` on purpose**, even though most readings of nFADP allow opt-out (ADR 0003) (`src/lib/consent/regions.ts:17-35`). `CA-QC` is overridden to `opt-in` (`src/lib/consent/regions.ts:38`).
 - **US:** 12 states are `opt-out-gpc` and 8 are `opt-out`. Other states and DC are `notice`. A US visitor with no state gets `opt-out-gpc` (`src/lib/consent/regions.ts:40-54`).
 - **Unknown:** missing, invalid, `XX` or `T1` codes give `DEFAULT_MODE = 'opt-in'` (ADR 0002) (`src/lib/consent/regions.ts:56-62`).

@@ -8,7 +8,14 @@ describe('exact-origin CORS', () => {
 		const db = testDb();
 		addTestSite(db);
 		expect((await siteForRequest(db, TEST_KEY, TEST_ORIGIN)).ok).toBe(true);
-		for (const o of ['http://example.com', 'https://www.example.com', 'https://example.com.evil.test', 'https://example.com/', 'null', null])
+		for (const o of [
+			'http://example.com',
+			'https://www.example.com',
+			'https://example.com.evil.test',
+			'https://example.com/',
+			'null',
+			null
+		])
 			expect(await siteForRequest(db, TEST_KEY, o)).toEqual({ ok: false, status: 403 });
 	});
 	it('treats unknown, malformed and switched-off sites as unknown', async () => {
@@ -16,7 +23,10 @@ describe('exact-origin CORS', () => {
 		addTestSite(db, { enabled: 0 });
 		expect(await siteForRequest(db, TEST_KEY, TEST_ORIGIN)).toEqual({ ok: false, status: 404 });
 		expect(await siteForRequest(db, 'ws_nope', TEST_ORIGIN)).toEqual({ ok: false, status: 404 });
-		expect(await siteForRequest(db, { key: TEST_KEY }, TEST_ORIGIN)).toEqual({ ok: false, status: 404 });
+		expect(await siteForRequest(db, { key: TEST_KEY }, TEST_ORIGIN)).toEqual({
+			ok: false,
+			status: 404
+		});
 		expect(await enabledSiteByOrigin(db, TEST_ORIGIN)).toBeNull();
 	});
 	it('never allows credentials or a wildcard', () => {

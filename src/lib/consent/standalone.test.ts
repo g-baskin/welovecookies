@@ -69,7 +69,8 @@ describe('hosted install', () => {
 });
 
 describe('script tag data-* settings', () => {
-	const tag = (dataset: Record<string, string>) => fromScript({ dataset } as unknown as HTMLScriptElement);
+	const tag = (dataset: Record<string, string>) =>
+		fromScript({ dataset } as unknown as HTMLScriptElement);
 	it('reads every documented attribute', () => {
 		expect(
 			tag({
@@ -85,7 +86,11 @@ describe('script tag data-* settings', () => {
 	it('leaves out what is not set and falls back to revision 1 for junk', () => {
 		expect(fromScript(null)).toEqual({});
 		expect(tag({})).toEqual({});
-		expect(tag({ rev: 'abc', floating: 'yes', gpc: 'no' })).toEqual({ rev: 1, floatingButton: true, gpc: false });
+		expect(tag({ rev: 'abc', floating: 'yes', gpc: 'no' })).toEqual({
+			rev: 1,
+			floatingButton: true,
+			gpc: false
+		});
 		expect(tag({ seen: '/s' })).toEqual({ endpoints: { record: undefined, seen: '/s' } });
 	});
 });

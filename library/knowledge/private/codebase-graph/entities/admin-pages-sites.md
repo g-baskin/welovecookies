@@ -26,7 +26,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/pages/sites.ts:1-82
+  - admin/src/pages/sites.ts:1-99
 ---
 
 # admin/src/pages/sites.ts (Websites and Tracking check pages)
@@ -47,9 +47,9 @@ export async function checkAllSites(db, now?): Promise<number>
 
 ## Behavior
 
-- Each site card shows `snippet(ctx.url.origin, key)` and `/privacy/<key>` (`admin/src/pages/sites.ts:20-21`).
-- Add uses `parseSiteForm` + `createSite` (`admin/src/pages/sites.ts:40-46`); update can rename, change privacy link and switch on/off; there is no delete (`admin/src/pages/sites.ts:47-54`).
-- `checkAllSites` checks enabled sites only (`admin/src/pages/sites.ts:78-81`).
+- Each site card shows `snippet(ctx.url.origin, key)` and `/privacy/<key>` (`admin/src/pages/sites.ts:29-30`).
+- Add uses `parseSiteForm` + `createSite` (`admin/src/pages/sites.ts:49-55`); update can rename, change privacy link and switch on/off; there is no delete (`admin/src/pages/sites.ts:56-67`).
+- `checkAllSites` checks enabled sites only (`admin/src/pages/sites.ts:95-98`).
 
 ## Connections
 
@@ -66,4 +66,4 @@ export async function checkAllSites(db, now?): Promise<number>
 
 ## Sources
 
-- `admin/src/pages/sites.ts:1-82`
+- `admin/src/pages/sites.ts:1-99`

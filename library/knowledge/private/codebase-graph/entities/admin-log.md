@@ -25,7 +25,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/log.ts:1-129
+  - admin/src/log.ts:1-186
 ---
 
 # admin/src/log.ts (consent log reads, counters, retention purge)
@@ -50,10 +50,10 @@ export async function purgeOld(db, now?, batch = 5000, maxRounds = 8)
 
 ## Behavior
 
-- `recordsBetween` returns one extra row so the caller can detect an over-large range (`admin/src/log.ts:37-45`).
-- `tally`: `answered` = accept_all + reject_all + custom + acknowledge; `withdraw` and `gpc` counted separately (`admin/src/log.ts:59-70`); groups by region via `groupOf` and by device (`admin/src/log.ts:85-95`).
-- `overview` sums `consent_daily` for the last `days` UTC days incl. today (`admin/src/log.ts:97-105`).
-- `purgeOld` deletes records older than `RETENTION_MS`, daily counters older than its day, and `rate_events` older than 1 day, in batches of 5000 for up to 8 rounds per table; sets `more` when rounds run out (`admin/src/log.ts:107-129`). Comment: D1 free plan allows 50 queries per run (`admin/src/log.ts:111`).
+- `recordsBetween` returns one extra row so the caller can detect an over-large range (`admin/src/log.ts:53-68`).
+- `tally`: `answered` = accept_all + reject_all + custom + acknowledge; `withdraw` and `gpc` counted separately (`admin/src/log.ts:91-107`); groups by region via `groupOf` and by device (`admin/src/log.ts:122-136`).
+- `overview` sums `consent_daily` for the last `days` UTC days incl. today (`admin/src/log.ts:138-153`).
+- `purgeOld` deletes records older than `RETENTION_MS`, daily counters older than its day, and `rate_events` older than 1 day, in batches of 5000 for up to 8 rounds per table; sets `more` when rounds run out (`admin/src/log.ts:155-186`). Comment: D1 free plan allows 50 queries per run (`admin/src/log.ts:159`).
 
 ## Connections
 
@@ -71,4 +71,4 @@ export async function purgeOld(db, now?, batch = 5000, maxRounds = 8)
 
 ## Sources
 
-- `admin/src/log.ts:1-129`
+- `admin/src/log.ts:1-186`

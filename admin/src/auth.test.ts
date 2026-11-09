@@ -38,14 +38,23 @@ describe('admin session', () => {
 	});
 	it('sets a host-only, HttpOnly, Secure, SameSite=Strict cookie', () => {
 		const c = sessionCookie('v');
-		for (const part of ['__Host-', 'HttpOnly', 'Secure', 'SameSite=Strict', 'Path=/', 'Max-Age=43200'])
+		for (const part of [
+			'__Host-',
+			'HttpOnly',
+			'Secure',
+			'SameSite=Strict',
+			'Path=/',
+			'Max-Age=43200'
+		])
 			expect(c).toContain(part);
 		expect(c).not.toContain('Domain');
 	});
 	it('refuses to run without strong secrets', () => {
 		expect(setupProblem({})).toMatch(/ADMIN_PASSWORD/);
 		expect(setupProblem({ ADMIN_PASSWORD: 'short' })).toMatch(/ADMIN_PASSWORD/);
-		expect(setupProblem({ ADMIN_PASSWORD: env.ADMIN_PASSWORD, SESSION_SECRET: 'short' })).toMatch(/SESSION_SECRET/);
+		expect(setupProblem({ ADMIN_PASSWORD: env.ADMIN_PASSWORD, SESSION_SECRET: 'short' })).toMatch(
+			/SESSION_SECRET/
+		);
 		expect(setupProblem(env)).toBeNull();
 	});
 });
@@ -58,7 +67,9 @@ describe('password and sign-in limit', () => {
 	});
 	it('blocks after 5 failures in 15 minutes and stores only a hash', async () => {
 		const db = testDb();
-		const req = new Request('https://admin.test/admin/login', { headers: { 'cf-connecting-ip': '203.0.113.9' } });
+		const req = new Request('https://admin.test/admin/login', {
+			headers: { 'cf-connecting-ip': '203.0.113.9' }
+		});
 		const h = await ipHash(env.SESSION_SECRET, req);
 		expect(h).not.toContain('203.0.113.9');
 		for (let i = 0; i < LOGIN_LIMIT; i++) {

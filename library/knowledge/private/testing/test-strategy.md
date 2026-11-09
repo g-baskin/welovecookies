@@ -15,7 +15,7 @@ For maintainers: what the test suite covers, how it runs and which tests guard c
 
 ## How it runs
 
-`npm run test` is `vitest run` over `src/**/*.test.ts` and `admin/src/**/*.test.ts` (`vitest.config.ts:3`). `npm run check` runs `tsc --noEmit` for the root and for `admin/`. There is no CI, so both are run by hand before merging.
+`npm run test` is `vitest run` over `src/**/*.test.ts` and `admin/src/**/*.test.ts` (`vitest.config.ts:3`). `npm run check` runs `tsc --noEmit` for the root, `admin/` and `tools/` (JavaScript checked with `checkJs`), then `svelte-check` on `svelte/CookieConsent.svelte`. `npm run lint` runs ESLint with typescript-eslint, and `npm run format:check` runs Prettier. There is no CI, so all four are run by hand before merging.
 
 ## Consent core
 

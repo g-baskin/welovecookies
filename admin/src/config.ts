@@ -61,17 +61,33 @@ export function buildConfig(
 
 export async function handleConfig(request: Request, env: Env): Promise<Response> {
 	const url = new URL(request.url);
-	const found = await siteForRequest(env.DB, url.searchParams.get('site'), request.headers.get('origin'));
-	if (!found.ok) return json({ error: found.status === 404 ? 'Unknown website.' : 'Not allowed.' }, found.status);
+	const found = await siteForRequest(
+		env.DB,
+		url.searchParams.get('site'),
+		request.headers.get('origin')
+	);
+	if (!found.ok)
+		return json(
+			{ error: found.status === 404 ? 'Unknown website.' : 'Not allowed.' },
+			found.status
+		);
 	const headers = corsHeaders(found.site.origin);
 	const s = siteSettings(found.site);
 	// Off: the script falls back to its built-in banner (time-zone guess, no records).
 	if (!s.enabled) return json({ error: 'Banner is off.' }, 404, headers);
-	return json(buildConfig(found.site, s, placeOf(request), browserGpc(request), url.origin), 200, headers);
+	return json(
+		buildConfig(found.site, s, placeOf(request), browserGpc(request), url.origin),
+		200,
+		headers
+	);
 }
 
 /** OPTIONS for the banner endpoints: only an enabled site's exact origin gets an answer. */
-export async function handlePreflight(request: Request, env: Env, methods: string): Promise<Response> {
+export async function handlePreflight(
+	request: Request,
+	env: Env,
+	methods: string
+): Promise<Response> {
 	const site = await enabledSiteByOrigin(env.DB, request.headers.get('origin'));
 	if (!site) return new Response(null, { status: 403 });
 	return new Response(null, { status: 204, headers: preflightHeaders(site.origin, methods) });

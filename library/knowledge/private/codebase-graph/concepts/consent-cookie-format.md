@@ -17,7 +17,7 @@ sources:
   - "src/lib/consent/cookie.ts:1-77"
   - "src/lib/consent/types.ts:57-69"
   - "src/lib/consent/types.ts:255-256"
-  - "src/lib/consent/contract.test.ts:23-38"
+  - "src/lib/consent/contract.test.ts:23-40"
   - "src/lib/consent/consent.ts:177-190"
 ---
 # Consent cookie format
@@ -50,6 +50,6 @@ Values longer than 80 characters or with any malformed part read as **no choice*
 
 ## Gotcha
 
-Changing the layout, any code letter or the cookie name makes every existing choice decode as null, so **every visitor is asked again**. `src/lib/consent/contract.test.ts:23-38` pins the format. Change the `1` version only together with a migration plan.
+Changing the layout, any code letter or the cookie name makes every existing choice decode as null, so **every visitor is asked again**. `src/lib/consent/contract.test.ts:23-40` pins the format. Change the `1` version only together with a migration plan.
 
 Related: [[entities/consent-cookie]], [[entities/consent-manager]].

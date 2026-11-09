@@ -28,7 +28,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/requests.ts:1-167
+  - admin/src/requests.ts:1-229
 ---
 
 # admin/src/requests.ts (privacy request records)
@@ -55,10 +55,10 @@ export async function requestCounts(db, site, now?); export function dueLabel(du
 
 ## Behavior
 
-- `EMAIL_RE` rejects `? & = # /` and `%` so a `mailto:` link cannot carry extra headers (`admin/src/requests.ts:47-48`).
-- `createRequest` limits: 5/day per IP hash via `rate_events`, 3/day per email, 100/day per site (`admin/src/requests.ts:79-92`). Id is `pr_` + `newConsentId()` (`admin/src/requests.ts:94`). With an IP hash, the insert and the rate event go in one `db.batch` (`admin/src/requests.ts:100-101`).
-- `updateRequest` stamps `closed_at` once on done/declined, clears it on reopen; note cut to 2000 (`admin/src/requests.ts:134-142`).
-- Overdue uses UTC calendar days; due today is not overdue (`admin/src/requests.ts:150-167`).
+- `EMAIL_RE` rejects `? & = # /` and `%` so a `mailto:` link cannot carry extra headers (`admin/src/requests.ts:50-51`).
+- `createRequest` limits: 5/day per IP hash via `rate_events`, 3/day per email, 100/day per site (`admin/src/requests.ts:84-109`). Id is `pr_` + `newConsentId()` (`admin/src/requests.ts:111`). With an IP hash, the insert and the rate event go in one `db.batch` (`admin/src/requests.ts:128-135`).
+- `updateRequest` stamps `closed_at` once on done/declined, clears it on reopen; note cut to 2000 (`admin/src/requests.ts:181-204`).
+- Overdue uses UTC calendar days; due today is not overdue (`admin/src/requests.ts:212-229`).
 
 ## Connections
 
@@ -76,4 +76,4 @@ export async function requestCounts(db, site, now?); export function dueLabel(du
 
 ## Sources
 
-- `admin/src/requests.ts:1-167`
+- `admin/src/requests.ts:1-229`

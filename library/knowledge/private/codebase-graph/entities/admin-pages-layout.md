@@ -26,7 +26,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/pages/layout.ts:1-58
+  - admin/src/pages/layout.ts:1-65
 ---
 
 # admin/src/pages/layout.ts (admin page frame and Ctx)
@@ -48,9 +48,9 @@ export const noSitePrompt = () => Html
 
 ## Behavior
 
-- Flash text is chosen from a fixed map by `?ok=`, never echoed (`admin/src/pages/layout.ts:29-36`, `admin/src/pages/layout.ts:41`).
-- Requests nav item shows the open-request count (`admin/src/pages/layout.ts:49`).
-- Status defaults to 400 when an error is passed, else 200 (`admin/src/pages/layout.ts:53`).
+- Flash text is chosen from a fixed map by `?ok=`, never echoed (`admin/src/pages/layout.ts:29-36`, `admin/src/pages/layout.ts:48`).
+- Requests nav item shows the open-request count (`admin/src/pages/layout.ts:56`).
+- Status defaults to 400 when an error is passed, else 200 (`admin/src/pages/layout.ts:60`).
 
 ## Connections
 
@@ -67,4 +67,4 @@ export const noSitePrompt = () => Html
 
 ## Sources
 
-- `admin/src/pages/layout.ts:1-58`
+- `admin/src/pages/layout.ts:1-65`

@@ -18,7 +18,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - tools/serve-demo.mjs:1-21
+  - tools/serve-demo.mjs:1-33
   - package.json:17
 ---
 
@@ -28,12 +28,12 @@ sources:
 
 ## Overview
 
-Static server on `127.0.0.1:4173` so `demo/` can load `dist/` over http (cookies need http) (`tools/serve-demo.mjs:1`, `tools/serve-demo.mjs:21`). Run as `npm run demo` (`package.json:17`).
+Static server on `127.0.0.1:4173` so `demo/` can load `dist/` over http (cookies need http) (`tools/serve-demo.mjs:1`, `tools/serve-demo.mjs:33`). Run as `npm run demo` (`package.json:17`).
 
 ## Behavior
 
-- Serves only paths under the repo containing `/demo/`, `/dist/` or `/docs/assets/`; everything else 404 (`tools/serve-demo.mjs:9-14`).
-- Directory paths map to `index.html` (`tools/serve-demo.mjs:10`).
+- Serves only paths under the repo containing `/demo/`, `/dist/` or `/docs/assets/`; everything else 404 (`tools/serve-demo.mjs:16-24`).
+- Directory paths map to `index.html` (`tools/serve-demo.mjs:17`).
 
 ## Gotchas
 
@@ -54,5 +54,5 @@ Static server on `127.0.0.1:4173` so `demo/` can load `dist/` over http (cookies
 
 ## Sources
 
-- `tools/serve-demo.mjs:1-21`
+- `tools/serve-demo.mjs:1-33`
 - `package.json:17`

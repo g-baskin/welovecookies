@@ -62,7 +62,7 @@ export function textsFor(lang, overrides?): ConsentTexts;
 
 ## Tested by
 
-- `src/lib/consent/i18n.test.ts`, `src/lib/consent/ui.test.ts`, `src/lib/consent/contract.test.ts:109-121` (overrides)
+- `src/lib/consent/i18n.test.ts`, `src/lib/consent/ui.test.ts`, `src/lib/consent/contract.test.ts:111-123` (overrides)
 
 ## History
 

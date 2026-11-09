@@ -97,7 +97,9 @@ export function ipKey(ip: string): string {
 	const [head, tail = ''] = ip.toLowerCase().split('::');
 	const h = head ? head.split(':') : [];
 	const t = tail ? tail.split(':') : [];
-	const full = ip.includes('::') ? [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill('0'), ...t] : h;
+	const full = ip.includes('::')
+		? [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill('0'), ...t]
+		: h;
 	return `${full.slice(0, 4).join(':')}::/64`;
 }
 
@@ -108,7 +110,12 @@ export async function ipHash(secret: string, request: Request): Promise<string> 
 
 export type RateKind = 'login' | 'request';
 
-export async function countEvents(db: Db, kind: RateKind, hash: string, since: number): Promise<number> {
+export async function countEvents(
+	db: Db,
+	kind: RateKind,
+	hash: string,
+	since: number
+): Promise<number> {
 	const row = await db
 		.prepare('SELECT count(*) AS n FROM rate_events WHERE kind = ? AND ip_hash = ? AND at > ?')
 		.bind(kind, hash, since)
@@ -117,13 +124,17 @@ export async function countEvents(db: Db, kind: RateKind, hash: string, since: n
 }
 
 export async function noteEvent(db: Db, kind: RateKind, hash: string, now = Date.now()) {
-	await db.prepare('INSERT INTO rate_events (kind, ip_hash, at) VALUES (?, ?, ?)').bind(kind, hash, now).run();
+	await db
+		.prepare('INSERT INTO rate_events (kind, ip_hash, at) VALUES (?, ?, ?)')
+		.bind(kind, hash, now)
+		.run();
 }
 
 export const loginBlocked = async (db: Db, hash: string, now = Date.now()) =>
 	(await countEvents(db, 'login', hash, now - LOGIN_WINDOW_MS)) >= LOGIN_LIMIT;
 
-export const noteFailedLogin = (db: Db, hash: string, now = Date.now()) => noteEvent(db, 'login', hash, now);
+export const noteFailedLogin = (db: Db, hash: string, now = Date.now()) =>
+	noteEvent(db, 'login', hash, now);
 
 export async function clearFailedLogins(db: Db, hash: string) {
 	await db.prepare("DELETE FROM rate_events WHERE kind = 'login' AND ip_hash = ?").bind(hash).run();
@@ -156,8 +167,12 @@ export async function readCapped(request: Request, max: number): Promise<string 
 }
 
 /** URL-encoded form fields (the only kind these pages send), or null when too big or another type. */
-export async function readFormFields(request: Request, max: number): Promise<Record<string, string> | null> {
-	if (!(request.headers.get('content-type') ?? '').startsWith('application/x-www-form-urlencoded')) return null;
+export async function readFormFields(
+	request: Request,
+	max: number
+): Promise<Record<string, string> | null> {
+	if (!(request.headers.get('content-type') ?? '').startsWith('application/x-www-form-urlencoded'))
+		return null;
 	const t = await readCapped(request, max).catch(() => null);
 	if (t === null) return null;
 	const out: Record<string, string> = {};

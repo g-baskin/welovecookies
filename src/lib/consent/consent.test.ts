@@ -53,7 +53,9 @@ describe('consent manager', () => {
 		let seen = 0;
 		t.m.onChange(() => seen++);
 		t.m.acceptAll();
-		expect(t.writes[0]).toMatch(/^wlc_consent=1\..+; path=\/; SameSite=Lax; max-age=15552000; Secure$/);
+		expect(t.writes[0]).toMatch(
+			/^wlc_consent=1\..+; path=\/; SameSite=Lax; max-age=15552000; Secure$/
+		);
 		const c = decodeConsent(readCookie(t.jar(), 'wlc_consent'));
 		expect(c).toMatchObject({
 			action: 'accept_all',

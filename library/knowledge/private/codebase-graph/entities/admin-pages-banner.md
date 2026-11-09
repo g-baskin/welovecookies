@@ -24,7 +24,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/pages/banner.ts:1-175
+  - admin/src/pages/banner.ts:1-207
 ---
 
 # admin/src/pages/banner.ts (Banner and Cookies pages)
@@ -44,11 +44,11 @@ export function cookiesPage(ctx, error?); export async function saveCookies(ctx)
 
 ## Behavior
 
-- Shows the current revision and the latest snapshots table (`admin/src/pages/banner.ts:36`, `admin/src/pages/banner.ts:65-76`).
-- `ask_again` action raises the revision without changes (`admin/src/pages/banner.ts:87-90`).
-- Wording over its max, or an unsafe theme value (`safeCssValue`), re-renders with an error (`admin/src/pages/banner.ts:92-103`). Empty wording for a language deletes its override (`admin/src/pages/banner.ts:104-106`).
-- Redirects with `ok=asked` when the save bumped the revision, else `ok=saved` (`admin/src/pages/banner.ts:118-119`).
-- Cookies: a hidden `count` guards against edits from another tab (`admin/src/pages/banner.ts:158`); max `MAX_COOKIES` (`admin/src/pages/banner.ts:169`).
+- Shows the current revision and the latest snapshots table (`admin/src/pages/banner.ts:41`, `admin/src/pages/banner.ts:70-85`).
+- `ask_again` action raises the revision without changes (`admin/src/pages/banner.ts:96-99`).
+- Wording over its max, or an unsafe theme value (`safeCssValue`), re-renders with an error (`admin/src/pages/banner.ts:101-116`). Empty wording for a language deletes its override (`admin/src/pages/banner.ts:117-119`).
+- Redirects with `ok=asked` when the save bumped the revision, else `ok=saved` (`admin/src/pages/banner.ts:135-138`).
+- Cookies: a hidden `count` guards against edits from another tab (`admin/src/pages/banner.ts:180-181`); max `MAX_COOKIES` (`admin/src/pages/banner.ts:200-201`).
 
 ## Connections
 
@@ -65,4 +65,4 @@ export function cookiesPage(ctx, error?); export async function saveCookies(ctx)
 
 ## Sources
 
-- `admin/src/pages/banner.ts:1-175`
+- `admin/src/pages/banner.ts:1-207`

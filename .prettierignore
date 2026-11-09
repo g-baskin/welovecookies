@@ -1,0 +1,11 @@
+# Only code is formatted (see the format scripts); keep a bare `prettier --write .` off these.
+dist/
+admin/public/
+admin/.wrangler/
+admin/wrangler.jsonc
+wordpress/
+library/
+docs/
+demo/
+*.md
+package-lock.json

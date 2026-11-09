@@ -29,9 +29,15 @@ published to any package registry.
 - A docs test (`src/docs.test.ts`) that checks wiki citations, relative
   Markdown links and that the OpenAPI enums match the code.
 - This changelog.
+- Lint and format checks: `npm run lint` (ESLint with typescript-eslint) and
+  `npm run format:check` / `npm run format` (Prettier). `npm run check` now
+  also typechecks the build and demo scripts in `tools/` and the Svelte
+  wrapper.
 
 ### Changed
 
+- The admin, tools and tests were reformatted with Prettier (layout only; the
+  served markup is unchanged).
 - The consent law matrix now uses the same region and mode names as the code.
 - The README developer section and the `dist/` note in `CLAUDE.md` now say
   that `dist.test.ts` checks `dist/` matches the source.

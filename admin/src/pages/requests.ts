@@ -19,7 +19,8 @@ import { adminPage, noSitePrompt, type Ctx } from './layout.ts';
 
 const FILTER_LABEL: Record<RequestFilter, string> = { open: 'Open', closed: 'Closed', all: 'All' };
 const due = (r: RequestRow, now: number) => {
-	if (r.status === 'done' || r.status === 'declined') return html`<span class="tag ok">${STATUS_LABEL[r.status]}</span>`;
+	if (r.status === 'done' || r.status === 'declined')
+		return html`<span class="tag ok">${STATUS_LABEL[r.status]}</span>`;
 	const d = dueLabel(r.due_at, now);
 	return html`<span class="tag ${d.overdue ? 'fix' : ''}">${d.text}</span>`;
 };
@@ -27,7 +28,11 @@ const due = (r: RequestRow, now: number) => {
 export async function requestsPage(ctx: Ctx) {
 	const site = ctx.site;
 	if (!site) return adminPage(ctx, 'Privacy requests', '/admin/requests', noSitePrompt());
-	const filter = (REQUEST_FILTERS as readonly string[]).includes(ctx.url.searchParams.get('show') ?? '') ? (ctx.url.searchParams.get('show') as RequestFilter) : 'open';
+	const filter = (REQUEST_FILTERS as readonly string[]).includes(
+		ctx.url.searchParams.get('show') ?? ''
+	)
+		? (ctx.url.searchParams.get('show') as RequestFilter)
+		: 'open';
 	const rows = await listRequests(ctx.db, site.key, filter);
 	const formUrl = `${ctx.url.origin}/privacy/${site.key}`;
 	return adminPage(
@@ -42,7 +47,14 @@ ${rows.length ? html`<table><thead><tr><th scope="col">Received (UTC)</th><th sc
 
 export async function requestPage(ctx: Ctx, id: string, error = '') {
 	const r = await getRequest(ctx.db, id);
-	if (!r) return adminPage(ctx, 'Request not found', '/admin/requests', html`<p><a href="/admin/requests">Back to requests</a></p>`, { status: 404 });
+	if (!r)
+		return adminPage(
+			ctx,
+			'Request not found',
+			'/admin/requests',
+			html`<p><a href="/admin/requests">Back to requests</a></p>`,
+			{ status: 404 }
+		);
 	ctx.site = ctx.sites.find((s) => s.key === r.site) ?? ctx.site;
 	return adminPage(
 		ctx,

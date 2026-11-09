@@ -40,7 +40,14 @@ export const TEST_ORIGIN = 'https://example.com';
 
 export function addTestSite(
 	db: ReturnType<typeof testDb>,
-	o: { key?: string; origin?: string; enabled?: number; settings?: object; privacyUrl?: string; createdAt?: number } = {}
+	o: {
+		key?: string;
+		origin?: string;
+		enabled?: number;
+		settings?: object;
+		privacyUrl?: string;
+		createdAt?: number;
+	} = {}
 ) {
 	const now = o.createdAt ?? Date.now();
 	db.sql
