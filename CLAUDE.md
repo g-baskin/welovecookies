@@ -15,7 +15,7 @@ A cookie consent banner sold as a product for any website. It is framework-free 
 - `mode: 'auto'` guesses from the browser's IANA time zone and falls back to `opt-in`. There is no IP/country lookup in the browser.
 
 ## Gotchas
-- **`dist/` is committed build output.** After any change in `src/lib/consent/`, run `npm run build` and commit `dist/`. No test checks that `dist` matches `src`, and the jsDelivr URL in docs serves `dist/` straight from the `main` branch.
+- **`dist/` is committed build output.** After any change in `src/lib/consent/`, run `npm run build` and commit `dist/`. `src/lib/consent/dist.test.ts` fails when the committed `welovecookies.min.js`/`welovecookies.mjs` differ from a fresh build (the WordPress zip isn't compared). The jsDelivr URL in docs serves `dist/` straight from the `main` branch.
 - **The WordPress plugin JS exists only inside the zip.** `wordpress/welovecookies/assets/` is gitignored and filled by the build. The build needs the system `zip` binary.
 - **Bump `Version:` and `WELOVECOOKIES_VERSION` in welovecookies.php together** when shipping new JS. The script URL uses `?ver=` for caching, so WordPress sites keep the old file otherwise.
 - **i18n rows are positional 32-field tuples** (`i18n/row.ts`, mapped by index in `i18n.ts` `toTexts`). Adding or reordering a field means editing `row.ts`, `toTexts` and every row in `i18n/a.ts`–`d.ts`. Swapped strings still typecheck. Any wording change must cover all 20 languages. Rows are `// prettier-ignore`; don't reformat them.
@@ -32,6 +32,8 @@ A cookie consent banner sold as a product for any website. It is framework-free 
 
 ## Workflow
 - Domain terms are defined in `CONTEXT.md`; use those names. Record new hard-to-reverse decisions as the next numbered ADR in `docs/decisions/`.
+- Docs layout: buyer docs in `docs/`, the hosted endpoint spec in `docs/api/openapi.json`, user-visible changes under `[Unreleased]` in `CHANGELOG.md`. `library/` (Library Schema v2) holds maintainer notes and the code wiki (`library/knowledge/private/codebase-graph/`, one page per module, navigation in its `README.md`). ADRs stay in `docs/decisions/`, not `library/`. `library/notes/` is human-only.
+- `src/docs.test.ts` fails when a wiki citation (`path:`/`sources:`/`tested_by:` or a backticked `dir/file:line`) points past the file, a `[[wiki link]]` or relative Markdown link breaks, or the OpenAPI mode/action/device enums differ from `CONSENT_MODES`/`CONSENT_ACTIONS`/`DEVICES`. When you change a module, update its wiki page (and the spec for admin endpoint changes).
 - Branches: `feature/*` → PR into `dev`. `main` is the release branch the CDN URL follows. There is no CI and there are no tags yet.
 - `npm run demo` serves `/demo/`, `/dist/` and `/docs/assets/` only, on http://localhost:4173/demo/ (cookies need http). It loads `../dist/`, so build first. Preview other regions and languages with `?mode=opt-in|opt-out-gpc|notice&lang=xx&gpc=1&prefs=1`.
 <!-- gg:init:end -->
