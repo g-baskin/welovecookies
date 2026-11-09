@@ -26,7 +26,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/pages/records.ts:1-66
+  - admin/src/pages/records.ts:1-105
 ---
 
 # admin/src/pages/records.ts (Consent records page and CSV)
@@ -45,9 +45,9 @@ export async function recordsPage(ctx: Ctx); export async function recordsCsv(ct
 
 ## Behavior
 
-- Lookup only runs when the id matches `CONSENT_ID_RE` (`admin/src/pages/records.ts:20-21`).
-- CSV dates must be real `YYYY-MM-DD` UTC days with from <= to (`admin/src/pages/records.ts:41-46`); more than `CSV_MAX_ROWS` rows -> error asking for a shorter range (`admin/src/pages/records.ts:47-49`).
-- 15 columns incl. browser name (from UA) and website name (`admin/src/pages/records.ts:50-57`); served as attachment, `private, no-store`, `nosniff` (`admin/src/pages/records.ts:58-65`).
+- Lookup only runs when the id matches `CONSENT_ID_RE` (`admin/src/pages/records.ts:35-40`).
+- CSV dates must be real `YYYY-MM-DD` UTC days with from <= to (`admin/src/pages/records.ts:60-67`); more than `CSV_MAX_ROWS` rows -> error asking for a shorter range (`admin/src/pages/records.ts:68-72`).
+- 15 columns incl. browser name (from UA) and website name (`admin/src/pages/records.ts:73-96`); served as attachment, `private, no-store`, `nosniff` (`admin/src/pages/records.ts:97-104`).
 
 ## Connections
 
@@ -64,4 +64,4 @@ export async function recordsPage(ctx: Ctx); export async function recordsCsv(ct
 
 ## Sources
 
-- `admin/src/pages/records.ts:1-66`
+- `admin/src/pages/records.ts:1-105`

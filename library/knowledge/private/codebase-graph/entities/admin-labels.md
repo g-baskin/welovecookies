@@ -27,7 +27,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/labels.ts:1-61
+  - admin/src/labels.ts:1-81
 ---
 
 # admin/src/labels.ts (plain-words labels)
@@ -50,10 +50,10 @@ export const utc = (ms) => 'YYYY-MM-DD HH:MM'; export const pct = (n, of) => str
 
 ## Behavior
 
-- `CATEGORY_LABEL.analytics` is shown as "Statistics" (`admin/src/labels.ts:22-27`).
-- `groupOf` puts unknown modes and any `MODE_RULES[mode].optIn` mode in `ask`; `notice` in `notice`; the rest in `optout` (`admin/src/labels.ts:35-36`).
-- `placeName` uses `Intl.DisplayNames` and falls back to the code (`admin/src/labels.ts:40-49`).
-- `pct` returns an en dash when the denominator is 0 (`admin/src/labels.ts:61`).
+- `CATEGORY_LABEL.analytics` is shown as "Statistics" (`admin/src/labels.ts:26-31`).
+- `groupOf` puts unknown modes and any `MODE_RULES[mode].optIn` mode in `ask`; `notice` in `notice`; the rest in `optout` (`admin/src/labels.ts:51-56`).
+- `placeName` uses `Intl.DisplayNames` and falls back to the code (`admin/src/labels.ts:60-69`).
+- `pct` returns an en dash when the denominator is 0 (`admin/src/labels.ts:81`).
 
 ## Connections
 
@@ -70,4 +70,4 @@ export const utc = (ms) => 'YYYY-MM-DD HH:MM'; export const pct = (n, of) => str
 
 ## Sources
 
-- `admin/src/labels.ts:1-61`
+- `admin/src/labels.ts:1-81`

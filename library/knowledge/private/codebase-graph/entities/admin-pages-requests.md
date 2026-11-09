@@ -23,7 +23,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/pages/requests.ts:1-79
+  - admin/src/pages/requests.ts:1-91
 ---
 
 # admin/src/pages/requests.ts (Privacy requests pages)
@@ -42,10 +42,10 @@ export async function requestsPage(ctx); requestPage(ctx, id, error?); saveReque
 
 ## Behavior
 
-- Filter from `?show=`, default `open` (`admin/src/pages/requests.ts:30`).
-- No emails are sent; the page says to check regularly (`admin/src/pages/requests.ts:37`).
-- Detail page switches `ctx.site` to the request's site (`admin/src/pages/requests.ts:46`).
-- Delete requires the `confirm=yes` checkbox (`admin/src/pages/requests.ts:71-75`); status must be valid (`admin/src/pages/requests.ts:76`).
+- Filter from `?show=`, default `open` (`admin/src/pages/requests.ts:31-35`).
+- No emails are sent; the page says to check regularly (`admin/src/pages/requests.ts:42`).
+- Detail page switches `ctx.site` to the request's site (`admin/src/pages/requests.ts:58`).
+- Delete requires the `confirm=yes` checkbox (`admin/src/pages/requests.ts:83-87`); status must be valid (`admin/src/pages/requests.ts:88`).
 
 ## Connections
 
@@ -62,4 +62,4 @@ export async function requestsPage(ctx); requestPage(ctx, id, error?); saveReque
 
 ## Sources
 
-- `admin/src/pages/requests.ts:1-79`
+- `admin/src/pages/requests.ts:1-91`

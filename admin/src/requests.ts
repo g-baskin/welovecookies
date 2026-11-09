@@ -24,13 +24,16 @@ export const STATUS_LABEL: Record<RequestStatus, string> = {
 	declined: 'Declined'
 };
 export const KIND_GUIDANCE: Record<RequestKind, string> = {
-	delete: "Check it's really them, then delete their personal details from your systems. Keep only what a law requires you to keep, and tell them what you kept and why.",
+	delete:
+		"Check it's really them, then delete their personal details from your systems. Keep only what a law requires you to keep, and tell them what you kept and why.",
 	copy: "Check it's really them, then send them a copy of the personal details you hold about them.",
 	correct: "Check it's really them and what they want changed, then update their details.",
-	stop_selling: 'Stop selling or sharing their details with advertising partners. No identity check is needed for this one.'
+	stop_selling:
+		'Stop selling or sharing their details with advertising partners. No identity check is needed for this one.'
 };
 
-export const isKind = (v: unknown): v is RequestKind => (REQUEST_KINDS as readonly unknown[]).includes(v);
+export const isKind = (v: unknown): v is RequestKind =>
+	(REQUEST_KINDS as readonly unknown[]).includes(v);
 export const isStatus = (v: unknown): v is RequestStatus =>
 	(REQUEST_STATUSES as readonly unknown[]).includes(v);
 
@@ -60,11 +63,13 @@ export function parseRequestForm(
 ): { ok: true; value: RequestInput } | { ok: false; error: string } {
 	if (!isKind(f.kind)) return { ok: false, error: 'Choose what you would like the website to do.' };
 	const email = text(f.email, 254)?.toLowerCase() ?? '';
-	if (!EMAIL_RE.test(email)) return { ok: false, error: 'Enter a valid email address, like name@example.com.' };
+	if (!EMAIL_RE.test(email))
+		return { ok: false, error: 'Enter a valid email address, like name@example.com.' };
 	const name = text(f.name ?? '', 120);
 	if (name === null) return { ok: false, error: 'Please keep your name under 120 characters.' };
 	const message = text(f.message ?? '', 1000);
-	if (message === null) return { ok: false, error: 'Please keep your message under 1,000 characters.' };
+	if (message === null)
+		return { ok: false, error: 'Please keep your message under 1,000 characters.' };
 	return { ok: true, value: { kind: f.kind, email, name, message } };
 }
 
@@ -77,7 +82,11 @@ export async function createRequest(
 	ipHash = ''
 ): Promise<{ ok: true; id: string; dueDays: number } | { ok: false; error: string }> {
 	if (ipHash && (await countEvents(db, 'request', ipHash, now - DAY_MS)) >= IP_DAILY_LIMIT)
-		return { ok: false, error: "You've already sent several requests today. They will be answered first; please try again tomorrow." };
+		return {
+			ok: false,
+			error:
+				"You've already sent several requests today. They will be answered first; please try again tomorrow."
+		};
 	const counts = await db
 		.prepare(
 			`SELECT
@@ -87,17 +96,42 @@ export async function createRequest(
 		.bind(input.email, now - DAY_MS, site, now - DAY_MS)
 		.first<{ byEmail: number; bySite: number }>();
 	if ((counts?.byEmail ?? 0) >= EMAIL_DAILY_LIMIT)
-		return { ok: false, error: "You've already sent several requests today. They will be answered first; please try again tomorrow." };
+		return {
+			ok: false,
+			error:
+				"You've already sent several requests today. They will be answered first; please try again tomorrow."
+		};
 	if ((counts?.bySite ?? 0) >= SITE_DAILY_LIMIT)
-		return { ok: false, error: 'This form is getting too many requests right now. Please try again tomorrow, or contact the website directly.' };
+		return {
+			ok: false,
+			error:
+				'This form is getting too many requests right now. Please try again tomorrow, or contact the website directly.'
+		};
 	const dueDays = dueDaysFor(place.country);
 	const id = `pr_${newConsentId()}`;
 	const insert = db
 		.prepare(
 			'INSERT INTO privacy_requests (id, site, created_at, kind, email, name, message, country, region_code, due_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 		)
-		.bind(id, site, now, input.kind, input.email, input.name, input.message, place.country, place.regionCode, now + dueDays * DAY_MS);
-	if (ipHash) await db.batch([insert, db.prepare("INSERT INTO rate_events (kind, ip_hash, at) VALUES ('request', ?, ?)").bind(ipHash, now)]);
+		.bind(
+			id,
+			site,
+			now,
+			input.kind,
+			input.email,
+			input.name,
+			input.message,
+			place.country,
+			place.regionCode,
+			now + dueDays * DAY_MS
+		);
+	if (ipHash)
+		await db.batch([
+			insert,
+			db
+				.prepare("INSERT INTO rate_events (kind, ip_hash, at) VALUES ('request', ?, ?)")
+				.bind(ipHash, now)
+		]);
 	else await insert.run();
 	return { ok: true, id, dueDays };
 }
@@ -121,22 +155,50 @@ export interface RequestRow {
 export const REQUEST_FILTERS = ['open', 'closed', 'all'] as const;
 export type RequestFilter = (typeof REQUEST_FILTERS)[number];
 
-export async function listRequests(db: Db, site: string, filter: RequestFilter): Promise<RequestRow[]> {
+export async function listRequests(
+	db: Db,
+	site: string,
+	filter: RequestFilter
+): Promise<RequestRow[]> {
 	const where =
-		filter === 'open' ? "AND status IN ('new', 'in_progress') ORDER BY due_at" : filter === 'closed' ? "AND status IN ('done', 'declined') ORDER BY created_at DESC" : 'ORDER BY created_at DESC';
-	return (await db.prepare(`SELECT * FROM privacy_requests WHERE site = ? ${where} LIMIT 500`).bind(site).all<RequestRow>()).results;
+		filter === 'open'
+			? "AND status IN ('new', 'in_progress') ORDER BY due_at"
+			: filter === 'closed'
+				? "AND status IN ('done', 'declined') ORDER BY created_at DESC"
+				: 'ORDER BY created_at DESC';
+	return (
+		await db
+			.prepare(`SELECT * FROM privacy_requests WHERE site = ? ${where} LIMIT 500`)
+			.bind(site)
+			.all<RequestRow>()
+	).results;
 }
 
 export const getRequest = (db: Db, id: string) =>
 	db.prepare('SELECT * FROM privacy_requests WHERE id = ?').bind(id).first<RequestRow>();
 
 /** Closing (done or declined) stamps closed_at once; reopening clears it. */
-export async function updateRequest(db: Db, id: string, status: RequestStatus, note: string, now = Date.now()) {
+export async function updateRequest(
+	db: Db,
+	id: string,
+	status: RequestStatus,
+	note: string,
+	now = Date.now()
+) {
 	const closing = status === 'done' || status === 'declined';
 	const n = note.slice(0, 2000);
-	const r = await (closing
-		? db.prepare('UPDATE privacy_requests SET status = ?, note = ?, closed_at = coalesce(closed_at, ?) WHERE id = ?').bind(status, n, now, id)
-		: db.prepare('UPDATE privacy_requests SET status = ?, note = ?, closed_at = NULL WHERE id = ?').bind(status, n, id)
+	const r = await (
+		closing
+			? db
+					.prepare(
+						'UPDATE privacy_requests SET status = ?, note = ?, closed_at = coalesce(closed_at, ?) WHERE id = ?'
+					)
+					.bind(status, n, now, id)
+			: db
+					.prepare(
+						'UPDATE privacy_requests SET status = ?, note = ?, closed_at = NULL WHERE id = ?'
+					)
+					.bind(status, n, id)
 	).run();
 	return r.meta.changes === 1;
 }

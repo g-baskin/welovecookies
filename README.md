@@ -86,7 +86,9 @@ Needs Node 22 or newer. `npm run build` also needs the `zip` command (built into
 ```sh
 npm install
 npm test        # unit tests
-npm run check   # TypeScript
+npm run check   # TypeScript (root, admin, tools and the Svelte wrapper)
+npm run lint    # ESLint
+npm run format:check   # Prettier (npm run format to fix)
 npm run build   # rebuild dist/ (script, module and WordPress zip)
 npm run demo    # demo at http://localhost:4173/demo/
 npm run admin:dev   # optional admin at http://127.0.0.1:8787/admin (see docs/ADMIN.md)

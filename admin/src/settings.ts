@@ -14,8 +14,18 @@ import type { Db, SiteRow } from './db.ts';
 /** Banner wording the owner can change (everything else keeps the built-in translations). */
 export const EDITABLE_TEXTS = [
 	{ key: 'title', label: 'Heading', max: 200, long: false },
-	{ key: 'body', label: 'Message where visitors must agree first (EU, UK, Brazil…)', max: 1000, long: true },
-	{ key: 'noticeBody', label: 'Message where visitors can opt out (most US privacy states, Canada…)', max: 1000, long: true },
+	{
+		key: 'body',
+		label: 'Message where visitors must agree first (EU, UK, Brazil…)',
+		max: 1000,
+		long: true
+	},
+	{
+		key: 'noticeBody',
+		label: 'Message where visitors can opt out (most US privacy states, Canada…)',
+		max: 1000,
+		long: true
+	},
 	{ key: 'acceptAll', label: '“Accept all” button', max: 60, long: false },
 	{ key: 'rejectAll', label: '“Reject all” button', max: 60, long: false },
 	{ key: 'customize', label: '“Choose” button', max: 60, long: false },
@@ -50,7 +60,8 @@ export const THEME_FIELDS = [
 type ThemeKey = (typeof THEME_FIELDS)[number]['key'];
 const CSS_CHARS_RE = /^[^;{}<>\\"'`@]{0,120}$/;
 /** A CSS value that cannot break out of its declaration or load anything from another server. */
-export const safeCssValue = (v: string) => CSS_CHARS_RE.test(v) && !/(url|image-set|image|element|src)\s*\(/i.test(v);
+export const safeCssValue = (v: string) =>
+	CSS_CHARS_RE.test(v) && !/(url|image-set|image|element|src)\s*\(/i.test(v);
 
 export const INTEGRATIONS = [
 	{ key: 'googleConsentMode', label: 'Google Consent Mode v2 (Google Analytics, Google Ads)' },
@@ -115,7 +126,9 @@ export const text = (v: unknown, max: number, min = 0): string | null => {
 };
 
 /** One cookie-list row, or an error message in plain words. */
-export function parseCookie(v: unknown): { ok: true; cookie: CookieInfo } | { ok: false; error: string } {
+export function parseCookie(
+	v: unknown
+): { ok: true; cookie: CookieInfo } | { ok: false; error: string } {
 	if (!isObj(v)) return { ok: false, error: 'Fill in the cookie details.' };
 	const name = text(v.name, 80, 1);
 	const provider = text(v.provider, 80, 1);
@@ -127,11 +140,23 @@ export function parseCookie(v: unknown): { ok: true; cookie: CookieInfo } | { ok
 		: null;
 	if (!name) return { ok: false, error: 'Give the cookie its name (up to 80 characters).' };
 	if (!provider) return { ok: false, error: 'Say who sets the cookie (up to 80 characters).' };
-	if (!purpose) return { ok: false, error: 'Say what the cookie is for in one sentence (up to 300 characters).' };
-	if (!duration) return { ok: false, error: 'Say how long the cookie lasts, like “1 year” (up to 40 characters).' };
-	if (label === null) return { ok: false, error: 'Use a shorter plain name (up to 80 characters).' };
+	if (!purpose)
+		return {
+			ok: false,
+			error: 'Say what the cookie is for in one sentence (up to 300 characters).'
+		};
+	if (!duration)
+		return {
+			ok: false,
+			error: 'Say how long the cookie lasts, like “1 year” (up to 40 characters).'
+		};
+	if (label === null)
+		return { ok: false, error: 'Use a shorter plain name (up to 80 characters).' };
 	if (!category) return { ok: false, error: 'Choose a category.' };
-	return { ok: true, cookie: { name, ...(label ? { label } : {}), provider, category, purpose, duration } };
+	return {
+		ok: true,
+		cookie: { name, ...(label ? { label } : {}), provider, category, purpose, duration }
+	};
 }
 
 /** Saved settings over the defaults; anything invalid falls back to its default. */
@@ -178,7 +203,10 @@ export function parseSettings(raw: unknown): SiteSettings {
 			: d.position,
 		floatingButton: bool(v.floatingButton, d.floatingButton),
 		preferencesCategory: bool(v.preferencesCategory, d.preferencesCategory),
-		noticeBanner: { optOut: bool(nb.optOut, d.noticeBanner.optOut), notice: bool(nb.notice, d.noticeBanner.notice) },
+		noticeBanner: {
+			optOut: bool(nb.optOut, d.noticeBanner.optOut),
+			notice: bool(nb.notice, d.noticeBanner.notice)
+		},
 		theme,
 		texts,
 		cookies,
@@ -188,12 +216,15 @@ export function parseSettings(raw: unknown): SiteSettings {
 	};
 }
 
-export const siteSettings = (site: Pick<SiteRow, 'settings_json'>) => parseSettings(site.settings_json);
+export const siteSettings = (site: Pick<SiteRow, 'settings_json'>) =>
+	parseSettings(site.settings_json);
 
 /** The parts whose change means visitors must be asked again. A display label changes no cookie. */
 export const askedAgainKey = (s: SiteSettings) =>
 	JSON.stringify([
-		Object.keys(s.texts).sort().map((lang) => [lang, EDITABLE_TEXTS.map(({ key }) => s.texts[lang][key] ?? '')]),
+		Object.keys(s.texts)
+			.sort()
+			.map((lang) => [lang, EDITABLE_TEXTS.map(({ key }) => s.texts[lang][key] ?? '')]),
 		s.cookies.map(({ label: _, ...c }) => c),
 		s.preferencesCategory
 	]);
@@ -233,7 +264,12 @@ export async function saveSettings(
 		.bind(JSON.stringify(value), now, site.key);
 	if (!bumped) await update.run();
 	// Keep what earlier visitors saw (if not kept yet), then the new revision, in one transaction.
-	else await db.batch([snapshotStmt(db, site.key, prev, now, site.rev), update, snapshotStmt(db, site.key, value, now)]);
+	else
+		await db.batch([
+			snapshotStmt(db, site.key, prev, now, site.rev),
+			update,
+			snapshotStmt(db, site.key, value, now)
+		]);
 	return { bumped };
 }
 
@@ -246,7 +282,9 @@ export interface VersionRow {
 export async function listVersions(db: Db, key: string): Promise<VersionRow[]> {
 	return (
 		await db
-			.prepare('SELECT rev, created_at, texts_json, cookies_json FROM consent_versions WHERE site = ? ORDER BY rev DESC LIMIT 50')
+			.prepare(
+				'SELECT rev, created_at, texts_json, cookies_json FROM consent_versions WHERE site = ? ORDER BY rev DESC LIMIT 50'
+			)
 			.bind(key)
 			.all<VersionRow>()
 	).results;

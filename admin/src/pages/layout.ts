@@ -35,9 +35,16 @@ const FLASH: Record<string, string> = {
 	checked: 'Check finished.'
 };
 
-export const siteQuery = (ctx: Ctx) => (ctx.site ? `?site=${encodeURIComponent(ctx.site.key)}` : '');
+export const siteQuery = (ctx: Ctx) =>
+	ctx.site ? `?site=${encodeURIComponent(ctx.site.key)}` : '';
 
-export function adminPage(ctx: Ctx, title: string, active: string, body: Html, opts: { error?: string; status?: number } = {}) {
+export function adminPage(
+	ctx: Ctx,
+	title: string,
+	active: string,
+	body: Html,
+	opts: { error?: string; status?: number } = {}
+) {
 	const ok = FLASH[ctx.url.searchParams.get('ok') ?? ''];
 	const q = siteQuery(ctx);
 	const switcher = ctx.sites.length

@@ -7,5 +7,5 @@ export function csvCell(v: unknown): string {
 
 /** UTF-8 with a byte-order mark so Excel reads accents correctly; CRLF line ends. */
 export function toCsv(header: readonly string[], rows: readonly (readonly unknown[])[]): string {
-	return `﻿${[header, ...rows].map((r) => r.map(csvCell).join(',')).join('\r\n')}\r\n`;
+	return `\uFEFF${[header, ...rows].map((r) => r.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }

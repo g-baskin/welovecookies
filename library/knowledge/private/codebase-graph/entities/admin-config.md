@@ -29,7 +29,7 @@ tags:
 related:
   - "[[concepts/hosted-install-flow]]"
 sources:
-  - admin/src/config.ts:1-78
+  - admin/src/config.ts:1-94
 ---
 
 # admin/src/config.ts (GET /api/consent/config)
@@ -55,8 +55,8 @@ export async function handlePreflight(request, env, methods): Promise<Response>
 
 - `placeOf` accepts a 2-letter country except `XX`/`T1`, and a 1-3 char region code (`admin/src/config.ts:17-25`).
 - `buildConfig` sets mode, place, gpc, `rev`, texts, theme, position, preferences category, floating button, notice banner, cookies, links (privacy policy if set, plus `privacyChoices` -> `/privacy/<key>?kind=stop_selling`), `endpoints.record`/`seen` on the Worker origin, `cookieName`, `cookieDomain: 'auto'`, integrations, `brandName`, `site` (`admin/src/config.ts:29-60`).
-- `handleConfig`: unknown/off site -> 404, wrong origin -> 403 (no CORS header); banner setting off -> 404 with CORS so the script falls back to its built-in banner (`admin/src/config.ts:62-71`).
-- `handlePreflight`: 204 with preflight headers only for an enabled site's exact origin, else 403 (`admin/src/config.ts:74-78`).
+- `handleConfig`: unknown/off site -> 404, wrong origin -> 403 (no CORS header); banner setting off -> 404 with CORS so the script falls back to its built-in banner (`admin/src/config.ts:62-83`).
+- `handlePreflight`: 204 with preflight headers only for an enabled site's exact origin, else 403 (`admin/src/config.ts:86-94`).
 
 ## Connections
 
@@ -74,4 +74,4 @@ export async function handlePreflight(request, env, methods): Promise<Response>
 
 ## Sources
 
-- `admin/src/config.ts:1-78`
+- `admin/src/config.ts:1-94`

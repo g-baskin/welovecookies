@@ -34,7 +34,7 @@ sources:
 
 ## Overview
 
-The entry point of the one-tag script build. It sets `window.WeLoveCookies` and starts automatically from `window.WeLoveCookiesConfig` and the script tag's `data-*` attributes (`src/lib/consent/standalone.ts:1-6`). `tools/build-consent.mjs:14` bundles it as an IIFE into `dist/welovecookies.min.js` (ADR 0005, ADR 0006).
+The entry point of the one-tag script build. It sets `window.WeLoveCookies` and starts automatically from `window.WeLoveCookiesConfig` and the script tag's `data-*` attributes (`src/lib/consent/standalone.ts:1-6`). `tools/build-consent.mjs:21-26` bundles it as an IIFE into `dist/welovecookies.min.js` (ADR 0005, ADR 0006).
 
 ## Signature / Definition
 
@@ -55,7 +55,7 @@ window.WeLoveCookies: Partial<ConsentManager> & { init(c?, o?): ConsentManager }
 ## Connections
 
 - **depends_on:** [[entities/consent-manager]], [[entities/consent-signals]], [[entities/consent-types]]
-- **used_by:** none by import; it is a build entry point (`tools/build-consent.mjs:14`)
+- **used_by:** none by import; it is a build entry point (`tools/build-consent.mjs:21-26`)
 - **related concepts:** [[concepts/config-precedence]]
 
 ## Tested by

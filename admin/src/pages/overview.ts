@@ -16,9 +16,14 @@ export async function overviewPage(ctx: Ctx) {
 	const site = ctx.site;
 	if (!site) return adminPage(ctx, 'Overview', '/admin', noSitePrompt());
 	const days = PERIODS.find((p) => String(p) === ctx.url.searchParams.get('days')) ?? 30;
-	const [o, req, check] = await Promise.all([overview(ctx.db, site.key, days, ctx.now), requestCounts(ctx.db, site.key, ctx.now), latestCheck(ctx.db, site.key)]);
+	const [o, req, check] = await Promise.all([
+		overview(ctx.db, site.key, days, ctx.now),
+		requestCounts(ctx.db, site.key, ctx.now),
+		latestCheck(ctx.db, site.key)
+	]);
 	const t = o.total;
-	const stat = (label: string, value: string | number, note = '') => html`<div class="card stat"><b>${value}</b><span>${label}${note ? html`<br>${note}` : ''}</span></div>`;
+	const stat = (label: string, value: string | number, note = '') =>
+		html`<div class="card stat"><b>${value}</b><span>${label}${note ? html`<br>${note}` : ''}</span></div>`;
 	return adminPage(
 		ctx,
 		`Overview: ${site.name}`,

@@ -19,7 +19,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - tools/build-consent.mjs:1-41
+  - tools/build-consent.mjs:1-57
   - package.json:15
 ---
 
@@ -33,14 +33,14 @@ Builds the one-tag script and ESM module with esbuild, copies the script for the
 
 ## Behavior
 
-- Optional output dir arg builds only the two scripts there (used by `src/lib/consent/dist.test.ts` to compare with `dist/`) (`tools/build-consent.mjs:7-8`, `tools/build-consent.mjs:22`).
-- Both bundles: `--minify --target=es2019 --legal-comments=none` plus the AGPL licence banner (`tools/build-consent.mjs:9-11`). IIFE from [[entities/consent-standalone]] -> `dist/welovecookies.min.js`; ESM from [[entities/consent-index]] -> `dist/welovecookies.mjs` (`tools/build-consent.mjs:12-21`).
-- Copies the IIFE to `admin/public/` (gitignored, served by the admin Worker) and `wordpress/welovecookies/assets/` (`tools/build-consent.mjs:30-34`).
-- Rebuilds `dist/welovecookies-wordpress.zip` with the system `zip` binary, run in `wordpress/` (`tools/build-consent.mjs:35-41`).
+- Optional output dir arg builds only the two scripts there (used by `src/lib/consent/dist.test.ts` to compare with `dist/`) (`tools/build-consent.mjs:7-8`, `tools/build-consent.mjs:34`).
+- Both bundles: `--minify --target=es2019 --legal-comments=none` plus the AGPL licence banner (`tools/build-consent.mjs:9-18`). IIFE from [[entities/consent-standalone]] -> `dist/welovecookies.min.js`; ESM from [[entities/consent-index]] -> `dist/welovecookies.mjs` (`tools/build-consent.mjs:19-33`).
+- Copies the IIFE to `admin/public/` (gitignored, served by the admin Worker) and `wordpress/welovecookies/assets/` (`tools/build-consent.mjs:42-46`).
+- Rebuilds `dist/welovecookies-wordpress.zip` with the system `zip` binary, run in `wordpress/` (`tools/build-consent.mjs:47-57`).
 
 ## Gotchas
 
-- Needs system `zip` on PATH (`tools/build-consent.mjs:37`).
+- Needs system `zip` on PATH (`tools/build-consent.mjs:49-52`).
 - The licence banner must stay in `dist/` files (ADR 0001).
 - `dist/` is committed and served from `main` (ADR 0005): rebuild and commit after any `src/lib/consent/` change.
 
@@ -59,5 +59,5 @@ Builds the one-tag script and ESM module with esbuild, copies the script for the
 
 ## Sources
 
-- `tools/build-consent.mjs:1-41`
+- `tools/build-consent.mjs:1-57`
 - `package.json:15`

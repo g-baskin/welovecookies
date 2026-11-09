@@ -19,7 +19,15 @@ import { dayKey, type Db, type Env } from './db.ts';
 import { json } from './html.ts';
 
 export const MAX_BODY = 8192;
-export const METRICS = ['seen', 'accept_all', 'reject_all', 'custom', 'acknowledge', 'withdraw', 'gpc'] as const;
+export const METRICS = [
+	'seen',
+	'accept_all',
+	'reject_all',
+	'custom',
+	'acknowledge',
+	'withdraw',
+	'gpc'
+] as const;
 export type Metric = (typeof METRICS)[number];
 const BOT_RE = /bot|crawl|spider|slurp|headless|lighthouse|preview/i;
 
@@ -53,9 +61,19 @@ export interface ChoiceInput {
 export function parseChoice(b: Record<string, unknown>): ChoiceInput | null {
 	const g = b.grants as Record<string, unknown> | null;
 	if (!isConsentAction(b.action) || !g || typeof g !== 'object') return null;
-	if (typeof g.preferences !== 'boolean' || typeof g.analytics !== 'boolean' || typeof g.marketing !== 'boolean') return null;
+	if (
+		typeof g.preferences !== 'boolean' ||
+		typeof g.analytics !== 'boolean' ||
+		typeof g.marketing !== 'boolean'
+	)
+		return null;
 	if (typeof b.lang !== 'string' || !LANG_RE.test(b.lang) || !isDevice(b.device)) return null;
-	if (typeof b.page !== 'string' || b.page.length > 500 || (b.gpc !== undefined && typeof b.gpc !== 'boolean')) return null;
+	if (
+		typeof b.page !== 'string' ||
+		b.page.length > 500 ||
+		(b.gpc !== undefined && typeof b.gpc !== 'boolean')
+	)
+		return null;
 	return {
 		id: b.id,
 		action: b.action,
@@ -93,7 +111,15 @@ export function correctChoice(
 	};
 }
 
-export const bumpStmt = (db: Db, site: string, metric: Metric, mode: ConsentMode, country: string | null, device: Device, now: number) =>
+export const bumpStmt = (
+	db: Db,
+	site: string,
+	metric: Metric,
+	mode: ConsentMode,
+	country: string | null,
+	device: Device,
+	now: number
+) =>
 	db
 		.prepare(
 			'INSERT INTO consent_daily (day, site, metric, mode, country, device, count) VALUES (?, ?, ?, ?, ?, ?, 1) ON CONFLICT (day, site, metric, mode, country, device) DO UPDATE SET count = count + 1'
@@ -123,13 +149,18 @@ export async function saveChoice(
 	const stmts = [insert];
 	if (!BOT_RE.test(ctx.userAgent)) {
 		stmts.push(bumpStmt(db, site.key, c.action, mode, ctx.place.country, input.device, ctx.now));
-		if (gpc && c.action !== 'gpc') stmts.push(bumpStmt(db, site.key, 'gpc', mode, ctx.place.country, input.device, ctx.now));
+		if (gpc && c.action !== 'gpc')
+			stmts.push(bumpStmt(db, site.key, 'gpc', mode, ctx.place.country, input.device, ctx.now));
 	}
 	await db.batch(stmts);
 	return c;
 }
 
-export async function handleRecord(request: Request, env: Env, now = Date.now()): Promise<Response> {
+export async function handleRecord(
+	request: Request,
+	env: Env,
+	now = Date.now()
+): Promise<Response> {
 	const body = await readJson(request);
 	const found = await siteForRequest(env.DB, body?.site, request.headers.get('origin'));
 	if (!found.ok) return json({ error: 'Not allowed.' }, found.status === 404 ? 404 : 403);
@@ -160,9 +191,20 @@ export async function handleSeen(request: Request, env: Env, now = Date.now()): 
 	if (!BOT_RE.test(ua)) {
 		const place = placeOf(request);
 		try {
-			await bumpStmt(env.DB, found.site.key, 'seen', modeFor(place.country, place.regionCode), place.country, body.device, now).run();
+			await bumpStmt(
+				env.DB,
+				found.site.key,
+				'seen',
+				modeFor(place.country, place.regionCode),
+				place.country,
+				body.device,
+				now
+			).run();
 		} catch (err) {
-			console.error('consent: could not count a banner view', err instanceof Error ? err.message : err);
+			console.error(
+				'consent: could not count a banner view',
+				err instanceof Error ? err.message : err
+			);
 		}
 	}
 	return new Response(null, { status: 204, headers });

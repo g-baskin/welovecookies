@@ -1,4 +1,8 @@
-import { BANNER_POSITIONS, CONSENT_CATEGORIES, type BannerPosition } from '../../../src/lib/consent/types.ts';
+import {
+	BANNER_POSITIONS,
+	CONSENT_CATEGORIES,
+	type BannerPosition
+} from '../../../src/lib/consent/types.ts';
 import { html, redirect } from '../html.ts';
 import { CATEGORY_LABEL, utc } from '../labels.ts';
 import {
@@ -25,7 +29,8 @@ const POSITION_LABEL: Record<BannerPosition, string> = {
 };
 const checkbox = (name: string, label: string, on: boolean, hint = '') =>
 	html`<label class="inline"><input type="checkbox" name="${name}" ${on ? html`checked` : ''}> ${label}</label>${hint ? html`<p class="small muted">${hint}</p>` : ''}`;
-const langOf = (v: string | null | undefined) => (BANNER_LANGUAGES.some((l) => l.code === v) ? (v as string) : '*');
+const langOf = (v: string | null | undefined) =>
+	BANNER_LANGUAGES.some((l) => l.code === v) ? (v as string) : '*';
 
 export async function bannerPage(ctx: Ctx, error = '') {
 	const site = ctx.site;
@@ -63,17 +68,21 @@ ${INTEGRATIONS.map((i) => checkbox(`int_${i.key}`, i.label, s.integrations[i.key
 <form method="get" action="/admin/banner" class="card" id="lang-pick"><input type="hidden" name="site" value="${site.key}"><label for="lang">Edit wording for</label><div class="row"><select id="lang" name="lang">${BANNER_LANGUAGES.map((l) => html`<option value="${l.code}" ${l.code === lang ? html`selected` : ''}>${l.name}</option>`)}</select><button type="submit" class="secondary">Show</button></div></form>
 <form method="post" action="/admin/banner" class="card"><input type="hidden" name="site" value="${site.key}"><h2>Ask everyone again</h2><p>Starts a new banner version without changing anything, so every visitor sees the banner again on their next visit.</p><button type="submit" name="action" value="ask_again" class="secondary">Ask everyone again</button></form>
 <h2>Versions shown</h2><p class="small muted">What each version said and which cookies it listed is kept as proof.</p>
-<table><thead><tr><th scope="col">Version</th><th scope="col">Started (UTC)</th><th scope="col">Cookies listed</th><th scope="col">Wording changed</th></tr></thead><tbody>${versions.map((v) => {
-			let cookies = 0;
-			let langs = '';
-			try {
-				cookies = (JSON.parse(v.cookies_json) as unknown[]).length;
-				langs = Object.keys((JSON.parse(v.texts_json) as { texts: object }).texts ?? {}).map((c) => BANNER_LANGUAGES.find((l) => l.code === c)?.name ?? c).join(', ');
-			} catch {
-				/* show what we can */
+<table><thead><tr><th scope="col">Version</th><th scope="col">Started (UTC)</th><th scope="col">Cookies listed</th><th scope="col">Wording changed</th></tr></thead><tbody>${versions.map(
+			(v) => {
+				let cookies = 0;
+				let langs = '';
+				try {
+					cookies = (JSON.parse(v.cookies_json) as unknown[]).length;
+					langs = Object.keys((JSON.parse(v.texts_json) as { texts: object }).texts ?? {})
+						.map((c) => BANNER_LANGUAGES.find((l) => l.code === c)?.name ?? c)
+						.join(', ');
+				} catch {
+					/* show what we can */
+				}
+				return html`<tr><td>${v.rev}</td><td>${utc(v.created_at)}</td><td>${cookies}</td><td>${langs || 'Built-in text'}</td></tr>`;
 			}
-			return html`<tr><td>${v.rev}</td><td>${utc(v.created_at)}</td><td>${cookies}</td><td>${langs || 'Built-in text'}</td></tr>`;
-		})}</tbody></table>`,
+		)}</tbody></table>`,
 		{ error }
 	);
 }
@@ -98,7 +107,11 @@ export async function saveBanner(ctx: Ctx) {
 	for (const { key, label } of THEME_FIELDS) {
 		const v = (f[`theme_${key}`] ?? '').trim();
 		if (!v) continue;
-		if (!safeCssValue(v)) return bannerPage(ctx, `${label}: use a plain color or size, like #1d4ed8 or 8px (no images or outside addresses).`);
+		if (!safeCssValue(v))
+			return bannerPage(
+				ctx,
+				`${label}: use a plain color or size, like #1d4ed8 or 8px (no images or outside addresses).`
+			);
 		theme[key] = v;
 	}
 	const allTexts = { ...s.texts };
@@ -107,16 +120,22 @@ export async function saveBanner(ctx: Ctx) {
 	const next: SiteSettings = {
 		...s,
 		enabled: f.enabled === 'on',
-		position: (BANNER_POSITIONS as readonly string[]).includes(f.position) ? (f.position as BannerPosition) : s.position,
+		position: (BANNER_POSITIONS as readonly string[]).includes(f.position)
+			? (f.position as BannerPosition)
+			: s.position,
 		floatingButton: f.floatingButton === 'on',
 		preferencesCategory: f.preferencesCategory === 'on',
 		noticeBanner: { optOut: f.noticeOptOut === 'on', notice: f.noticeNotice === 'on' },
 		theme,
 		texts: allTexts,
-		integrations: Object.fromEntries(INTEGRATIONS.map((i) => [i.key, f[`int_${i.key}`] === 'on'])) as unknown as SiteSettings['integrations']
+		integrations: Object.fromEntries(
+			INTEGRATIONS.map((i) => [i.key, f[`int_${i.key}`] === 'on'])
+		) as unknown as SiteSettings['integrations']
 	};
 	const { bumped } = await saveSettings(ctx.db, site, next, { now: ctx.now });
-	return redirect(`/admin/banner?site=${site.key}&lang=${encodeURIComponent(lang)}&ok=${bumped ? 'asked' : 'saved'}`);
+	return redirect(
+		`/admin/banner?site=${site.key}&lang=${encodeURIComponent(lang)}&ok=${bumped ? 'asked' : 'saved'}`
+	);
 }
 
 const categorySelect = (id: string, value: string) =>
@@ -141,10 +160,13 @@ export function cookiesPage(ctx: Ctx, error = '') {
 		'/admin/cookies',
 		html`<p>The cookie list visitors see in the banner. List every cookie this website and its tools set. Changing the list (anything but the plain name) asks every visitor again.</p>
 ${s.cookies.map(
-			(c, i) => html`<form method="post" action="/admin/cookies" class="card"><input type="hidden" name="site" value="${site.key}"><input type="hidden" name="index" value="${i}"><input type="hidden" name="count" value="${s.cookies.length}">
+	(
+		c,
+		i
+	) => html`<form method="post" action="/admin/cookies" class="card"><input type="hidden" name="site" value="${site.key}"><input type="hidden" name="index" value="${i}"><input type="hidden" name="count" value="${s.cookies.length}">
 ${cookieFields(`c${i}_`, { ...c })}
 <p class="row"><button type="submit" name="action" value="save">Save</button><button type="submit" name="action" value="remove" class="secondary">Remove</button></p></form>`
-		)}
+)}
 ${s.cookies.length < MAX_COOKIES ? html`<form method="post" action="/admin/cookies" class="card"><input type="hidden" name="site" value="${site.key}"><input type="hidden" name="count" value="${s.cookies.length}"><h2>Add a cookie</h2>${cookieFields('new_', adding)}<p><button type="submit" name="action" value="add">Add</button></p></form>` : ''}`,
 		{ error }
 	);
@@ -155,18 +177,28 @@ export async function saveCookies(ctx: Ctx) {
 	const f = ctx.form ?? {};
 	if (!site) return cookiesPage(ctx);
 	const s = siteSettings(site);
-	if (Number(f.count) !== s.cookies.length) return cookiesPage(ctx, 'The list changed in another tab. Check it below and try again.');
+	if (Number(f.count) !== s.cookies.length)
+		return cookiesPage(ctx, 'The list changed in another tab. Check it below and try again.');
 	const cookies = [...s.cookies];
 	const i = Number(f.index);
 	if (f.action === 'remove' || f.action === 'save') {
-		if (!Number.isInteger(i) || i < 0 || i >= cookies.length) return cookiesPage(ctx, 'That cookie is no longer in the list.');
+		if (!Number.isInteger(i) || i < 0 || i >= cookies.length)
+			return cookiesPage(ctx, 'That cookie is no longer in the list.');
 		if (f.action === 'remove') cookies.splice(i, 1);
 	}
 	if (f.action === 'save' || f.action === 'add') {
-		const p = parseCookie({ name: f.name, label: f.label ?? '', provider: f.provider, category: f.category, purpose: f.purpose, duration: f.duration });
+		const p = parseCookie({
+			name: f.name,
+			label: f.label ?? '',
+			provider: f.provider,
+			category: f.category,
+			purpose: f.purpose,
+			duration: f.duration
+		});
 		if (!p.ok) return cookiesPage(ctx, p.error);
 		if (f.action === 'add') {
-			if (cookies.length >= MAX_COOKIES) return cookiesPage(ctx, `The list can hold up to ${MAX_COOKIES} cookies.`);
+			if (cookies.length >= MAX_COOKIES)
+				return cookiesPage(ctx, `The list can hold up to ${MAX_COOKIES} cookies.`);
 			cookies.push(p.cookie);
 		} else cookies[i] = p.cookie;
 	}

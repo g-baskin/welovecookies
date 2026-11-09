@@ -35,7 +35,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/index.ts:1-129
+  - admin/src/index.ts:1-171
 ---
 
 # admin/src/index.ts (Worker router and daily job)
@@ -56,13 +56,13 @@ export default { fetch(request, env: WorkerEnv), scheduled(_c, env, ctx) }
 
 ## Behavior
 
-- **Public rate limit.** `/api/consent*` and `POST /privacy/*` return 429 with `retry-after: 60` when the optional `PUBLIC_LIMITER` binding refuses; key is path (or `privacy`) plus `ipHash` (`admin/src/index.ts:81-92`). OPTIONS and missing binding skip it (`admin/src/index.ts:82`).
-- **Public routes.** `/api/consent/config` (GET/OPTIONS), `/api/consent` and `/api/consent/seen` (POST/OPTIONS) (`admin/src/index.ts:93-95`); `/privacy/ws_<12>` (`admin/src/index.ts:96-97`); `/wlc.css` serves `CSS` cached 1h (`admin/src/index.ts:98`); `/` redirects to `/admin` (`admin/src/index.ts:99`).
-- **Admin gate** (`admin/src/index.ts:28-78`): setup check first (503 setup page) (`admin/src/index.ts:29-30`); only GET/HEAD/POST (`admin/src/index.ts:34`); `/admin/login` is open (`admin/src/index.ts:35`); otherwise session must verify, else POST 403 / GET redirect (`admin/src/index.ts:36-37`); every admin POST must pass `sameOrigin` (`admin/src/index.ts:38`); logout is POST only (`admin/src/index.ts:39`); form bodies capped at 65,536 bytes, 413 otherwise (`admin/src/index.ts:24`, `admin/src/index.ts:41-42`).
-- **Site selection.** `form.site` or `?site=`, else first enabled, else first site (`admin/src/index.ts:44-45`). Builds `Ctx` incl. open-request count (`admin/src/index.ts:46-56`).
-- **Admin routes** switch (`admin/src/index.ts:57-77`): request detail matches `pr_` + 16 chars (`admin/src/index.ts:57-58`).
-- **Errors.** Uncaught errors log the message and return a plain 500 (`admin/src/index.ts:118-124`).
-- **Daily job.** `purgeOld` first, then `checkAllSites`; a tracking failure is logged, not thrown (`admin/src/index.ts:105-115`). `scheduled` wraps it in `waitUntil` (`admin/src/index.ts:126-128`).
+- **Public rate limit.** `/api/consent*` and `POST /privacy/*` return 429 with `retry-after: 60` when the optional `PUBLIC_LIMITER` binding refuses; key is path (or `privacy`) plus `ipHash` (`admin/src/index.ts:93-110`). OPTIONS and missing binding skip it (`admin/src/index.ts:94`).
+- **Public routes.** `/api/consent/config` (GET/OPTIONS), `/api/consent` and `/api/consent/seen` (POST/OPTIONS) (`admin/src/index.ts:111-128`); `/privacy/ws_<12>` (`admin/src/index.ts:129-130`); `/wlc.css` serves `CSS` cached 1h (`admin/src/index.ts:131-137`); `/` redirects to `/admin` (`admin/src/index.ts:138`).
+- **Admin gate** (`admin/src/index.ts:36-90`): setup check first (503 setup page) (`admin/src/index.ts:37-38`); only GET/HEAD/POST (`admin/src/index.ts:42-43`); `/admin/login` is open (`admin/src/index.ts:44-45`); otherwise session must verify, else POST 403 / GET redirect (`admin/src/index.ts:46-47`); every admin POST must pass `sameOrigin` (`admin/src/index.ts:48-49`); logout is POST only (`admin/src/index.ts:50`); form bodies capped at 65,536 bytes, 413 otherwise (`admin/src/index.ts:32`, `admin/src/index.ts:52-53`).
+- **Site selection.** `form.site` or `?site=`, else first enabled, else first site (`admin/src/index.ts:55-57`). Builds `Ctx` incl. open-request count (`admin/src/index.ts:58-68`).
+- **Admin routes** switch (`admin/src/index.ts:69-89`): request detail matches `pr_` + 16 chars (`admin/src/index.ts:69-70`).
+- **Errors.** Uncaught errors log the message and return a plain 500 (`admin/src/index.ts:157-165`).
+- **Daily job.** `purgeOld` first, then `checkAllSites`; a tracking failure is logged, not thrown (`admin/src/index.ts:144-154`). `scheduled` wraps it in `waitUntil` (`admin/src/index.ts:168-170`).
 
 ## Gotchas
 
@@ -84,4 +84,4 @@ export default { fetch(request, env: WorkerEnv), scheduled(_c, env, ctx) }
 
 ## Sources
 
-- `admin/src/index.ts:1-129`
+- `admin/src/index.ts:1-171`

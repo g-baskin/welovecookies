@@ -28,8 +28,10 @@ export function normaliseWebsite(raw: string): string | null {
 	} catch {
 		return null;
 	}
-	if (u.username || u.password || u.search || u.hash || (u.pathname !== '/' && u.pathname !== '')) return null;
-	if (LOCAL_HOSTS.has(u.hostname) && (u.protocol === 'http:' || u.protocol === 'https:')) return `${u.protocol}//${u.host}`;
+	if (u.username || u.password || u.search || u.hash || (u.pathname !== '/' && u.pathname !== ''))
+		return null;
+	if (LOCAL_HOSTS.has(u.hostname) && (u.protocol === 'http:' || u.protocol === 'https:'))
+		return `${u.protocol}//${u.host}`;
 	if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
 	if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(u.hostname)) return null;
 	return `https://${u.host}`;
@@ -54,39 +56,70 @@ export interface SiteForm {
 	privacyUrl: string;
 }
 
-export function parseSiteForm(f: Record<string, unknown>): { ok: true; value: SiteForm } | { ok: false; error: string } {
+export function parseSiteForm(
+	f: Record<string, unknown>
+): { ok: true; value: SiteForm } | { ok: false; error: string } {
 	const name = text(f.name, 80, 1);
 	if (!name) return { ok: false, error: 'Give the website a name (up to 80 characters).' };
 	const origin = normaliseWebsite(String(f.address ?? ''));
-	if (!origin) return { ok: false, error: 'Enter just the website address, like example.com or https://www.example.com (no page after it).' };
+	if (!origin)
+		return {
+			ok: false,
+			error:
+				'Enter just the website address, like example.com or https://www.example.com (no page after it).'
+		};
 	const privacyUrl = parsePrivacyUrl(f.privacy);
-	if (privacyUrl === null) return { ok: false, error: 'The privacy policy link must be a full web address starting with https://' };
+	if (privacyUrl === null)
+		return {
+			ok: false,
+			error: 'The privacy policy link must be a full web address starting with https://'
+		};
 	return { ok: true, value: { name, origin, privacyUrl } };
 }
 
-export async function createSite(db: Db, v: SiteForm, now = Date.now()): Promise<{ ok: true; key: string } | { ok: false; error: string }> {
+export async function createSite(
+	db: Db,
+	v: SiteForm,
+	now = Date.now()
+): Promise<{ ok: true; key: string } | { ok: false; error: string }> {
 	const taken = await db.prepare('SELECT key FROM sites WHERE origin = ?').bind(v.origin).first();
-	if (taken) return { ok: false, error: 'That address is already connected. Each website address can be connected once.' };
+	if (taken)
+		return {
+			ok: false,
+			error: 'That address is already connected. Each website address can be connected once.'
+		};
 	const key = newSiteKey();
 	const s = defaultSettings();
 	await db.batch([
 		db
-			.prepare('INSERT INTO sites (key, name, origin, privacy_url, enabled, settings_json, rev, created_at, updated_at) VALUES (?, ?, ?, ?, 1, ?, 1, ?, ?)')
+			.prepare(
+				'INSERT INTO sites (key, name, origin, privacy_url, enabled, settings_json, rev, created_at, updated_at) VALUES (?, ?, ?, ?, 1, ?, 1, ?, ?)'
+			)
 			.bind(key, v.name, v.origin, v.privacyUrl, JSON.stringify(s), now, now),
 		snapshotStmt(db, key, s, now)
 	]);
 	return { ok: true, key };
 }
 
-export async function updateSite(db: Db, key: string, v: { name: string; privacyUrl: string; enabled: boolean }, now = Date.now()) {
+export async function updateSite(
+	db: Db,
+	key: string,
+	v: { name: string; privacyUrl: string; enabled: boolean },
+	now = Date.now()
+) {
 	const r = await db
-		.prepare('UPDATE sites SET name = ?, privacy_url = ?, enabled = ?, updated_at = ? WHERE key = ?')
+		.prepare(
+			'UPDATE sites SET name = ?, privacy_url = ?, enabled = ?, updated_at = ? WHERE key = ?'
+		)
 		.bind(v.name, v.privacyUrl, v.enabled ? 1 : 0, now, key)
 		.run();
 	return r.meta.changes === 1;
 }
 
-export async function listSitesWithCounts(db: Db, now = Date.now()): Promise<(SiteRow & { records30: number })[]> {
+export async function listSitesWithCounts(
+	db: Db,
+	now = Date.now()
+): Promise<(SiteRow & { records30: number })[]> {
 	return (
 		await db
 			.prepare(

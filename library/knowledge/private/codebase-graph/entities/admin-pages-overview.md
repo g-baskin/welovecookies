@@ -25,7 +25,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/pages/overview.ts:1-44
+  - admin/src/pages/overview.ts:1-49
 ---
 
 # admin/src/pages/overview.ts (Overview page)
@@ -45,8 +45,8 @@ export async function overviewPage(ctx: Ctx): Promise<Response>
 ## Behavior
 
 - Period from `?days=` limited to 7/30/90, default 30 (`admin/src/pages/overview.ts:8`, `admin/src/pages/overview.ts:18`).
-- Loads `overview`, `requestCounts` and `latestCheck` in parallel (`admin/src/pages/overview.ts:19`).
-- Rates are of `answered`; GPC count and withdrawals shown separately (`admin/src/pages/overview.ts:28-35`).
+- Loads `overview`, `requestCounts` and `latestCheck` in parallel (`admin/src/pages/overview.ts:19-23`).
+- Rates are of `answered`; GPC count and withdrawals shown separately (`admin/src/pages/overview.ts:33-40`).
 
 ## Connections
 
@@ -63,4 +63,4 @@ export async function overviewPage(ctx: Ctx): Promise<Response>
 
 ## Sources
 
-- `admin/src/pages/overview.ts:1-44`
+- `admin/src/pages/overview.ts:1-49`

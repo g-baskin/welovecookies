@@ -19,7 +19,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/test-d1.ts:1-61
+  - admin/src/test-d1.ts:1-68
   - admin/migrations/0001_init.sql
 ---
 
@@ -65,5 +65,5 @@ export function addTestSite(db, o?): string
 
 ## Sources
 
-- `admin/src/test-d1.ts:1-61`
+- `admin/src/test-d1.ts:1-68`
 - `admin/migrations/0001_init.sql`

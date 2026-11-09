@@ -26,19 +26,42 @@ export interface RecordRow {
 	user_agent: string;
 }
 
-export async function recordsForConsentId(db: Db, site: string, consentId: string): Promise<RecordRow[]> {
-	return (await db.prepare('SELECT * FROM consent_records WHERE site = ? AND consent_id = ? ORDER BY created_at DESC LIMIT 200').bind(site, consentId).all<RecordRow>()).results;
+export async function recordsForConsentId(
+	db: Db,
+	site: string,
+	consentId: string
+): Promise<RecordRow[]> {
+	return (
+		await db
+			.prepare(
+				'SELECT * FROM consent_records WHERE site = ? AND consent_id = ? ORDER BY created_at DESC LIMIT 200'
+			)
+			.bind(site, consentId)
+			.all<RecordRow>()
+	).results;
 }
 
 export async function recentRecords(db: Db, site: string, limit = 50): Promise<RecordRow[]> {
-	return (await db.prepare('SELECT * FROM consent_records WHERE site = ? ORDER BY created_at DESC LIMIT ?').bind(site, limit).all<RecordRow>()).results;
+	return (
+		await db
+			.prepare('SELECT * FROM consent_records WHERE site = ? ORDER BY created_at DESC LIMIT ?')
+			.bind(site, limit)
+			.all<RecordRow>()
+	).results;
 }
 
 /** Up to CSV_MAX_ROWS + 1 rows, so the caller can tell when the range holds too many. */
-export async function recordsBetween(db: Db, site: string, from: number, to: number): Promise<RecordRow[]> {
+export async function recordsBetween(
+	db: Db,
+	site: string,
+	from: number,
+	to: number
+): Promise<RecordRow[]> {
 	return (
 		await db
-			.prepare('SELECT * FROM consent_records WHERE site = ? AND created_at >= ? AND created_at <= ? ORDER BY created_at LIMIT ?')
+			.prepare(
+				'SELECT * FROM consent_records WHERE site = ? AND created_at >= ? AND created_at <= ? ORDER BY created_at LIMIT ?'
+			)
 			.bind(site, from, to, CSV_MAX_ROWS + 1)
 			.all<RecordRow>()
 	).results;
@@ -54,13 +77,27 @@ export interface Tally {
 	withdraw: number;
 	gpc: number;
 }
-const empty = (): Tally => ({ seen: 0, answered: 0, acceptAll: 0, rejectAll: 0, custom: 0, acknowledge: 0, withdraw: 0, gpc: 0 });
+const empty = (): Tally => ({
+	seen: 0,
+	answered: 0,
+	acceptAll: 0,
+	rejectAll: 0,
+	custom: 0,
+	acknowledge: 0,
+	withdraw: 0,
+	gpc: 0
+});
 
 function add(t: Tally, metric: string, n: number) {
 	if (metric === 'seen') t.seen += n;
 	else if (metric === 'gpc') t.gpc += n;
 	else if (metric === 'withdraw') t.withdraw += n;
-	else if (metric === 'accept_all' || metric === 'reject_all' || metric === 'custom' || metric === 'acknowledge') {
+	else if (
+		metric === 'accept_all' ||
+		metric === 'reject_all' ||
+		metric === 'custom' ||
+		metric === 'acknowledge'
+	) {
 		t.answered += n;
 		if (metric === 'accept_all') t.acceptAll += n;
 		else if (metric === 'reject_all') t.rejectAll += n;
@@ -91,14 +128,25 @@ export function tally(rows: readonly DailyRow[]): Overview {
 		add(region.get(groupOf(r.mode))!, r.metric, r.n);
 		if (byDevice[r.device]) add(byDevice[r.device], r.metric, r.n);
 	}
-	return { total, byRegion: REGION_GROUPS.map((g) => ({ ...g, tally: region.get(g.key)! })), byDevice };
+	return {
+		total,
+		byRegion: REGION_GROUPS.map((g) => ({ ...g, tally: region.get(g.key)! })),
+		byDevice
+	};
 }
 
 /** Counters for the last `days` UTC days including today. */
-export async function overview(db: Db, site: string, days: number, now = Date.now()): Promise<Overview> {
+export async function overview(
+	db: Db,
+	site: string,
+	days: number,
+	now = Date.now()
+): Promise<Overview> {
 	const from = dayKey(now - (days - 1) * DAY_MS);
 	const rows = await db
-		.prepare('SELECT metric, mode, device, sum(count) AS n FROM consent_daily WHERE site = ? AND day >= ? GROUP BY metric, mode, device')
+		.prepare(
+			'SELECT metric, mode, device, sum(count) AS n FROM consent_daily WHERE site = ? AND day >= ? GROUP BY metric, mode, device'
+		)
 		.bind(site, from)
 		.all<DailyRow>();
 	return tally(rows.results.map((r) => ({ ...r, n: Number(r.n) })));
@@ -122,8 +170,17 @@ export async function purgeOld(db: Db, now = Date.now(), batch = 5000, maxRounds
 		out.more = true;
 		return total;
 	};
-	out.records = await loop('DELETE FROM consent_records WHERE id IN (SELECT id FROM consent_records WHERE created_at < ? ORDER BY id LIMIT ?)', cutoff);
-	out.daily = await loop('DELETE FROM consent_daily WHERE rowid IN (SELECT rowid FROM consent_daily WHERE day < ? LIMIT ?)', dayKey(cutoff));
-	out.rateEvents = await loop('DELETE FROM rate_events WHERE id IN (SELECT id FROM rate_events WHERE at < ? LIMIT ?)', now - DAY_MS);
+	out.records = await loop(
+		'DELETE FROM consent_records WHERE id IN (SELECT id FROM consent_records WHERE created_at < ? ORDER BY id LIMIT ?)',
+		cutoff
+	);
+	out.daily = await loop(
+		'DELETE FROM consent_daily WHERE rowid IN (SELECT rowid FROM consent_daily WHERE day < ? LIMIT ?)',
+		dayKey(cutoff)
+	);
+	out.rateEvents = await loop(
+		'DELETE FROM rate_events WHERE id IN (SELECT id FROM rate_events WHERE at < ? LIMIT ?)',
+		now - DAY_MS
+	);
 	return out;
 }

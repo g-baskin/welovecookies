@@ -25,7 +25,9 @@ function mountUi(config: Partial<ConsentConfig> = {}, st: Partial<UiState> = {})
 }
 
 beforeEach(() => {
-	(window as unknown as { happyDOM: { setURL(u: string): void } }).happyDOM.setURL('https://example.test/pricing');
+	(window as unknown as { happyDOM: { setURL(u: string): void } }).happyDOM.setURL(
+		'https://example.test/pricing'
+	);
 });
 afterEach(() => {
 	vi.useRealTimers();
@@ -51,7 +53,10 @@ describe('banner', () => {
 	});
 
 	it('notice banner: one OK button plus choose, and the do-not-sell link when the region needs it', () => {
-		const { ui, h, q, root, click } = mountUi({ links: { privacyChoices: '/choices' } }, { doNotSell: true });
+		const { ui, h, q, root, click } = mountUi(
+			{ links: { privacyChoices: '/choices' } },
+			{ doNotSell: true }
+		);
 		ui.banner('notice');
 		expect(q('.bn .tx')!.textContent).toBe(texts.noticeBody);
 		expect(q('[data-a="accept"]')).toBeNull();
@@ -64,7 +69,10 @@ describe('banner', () => {
 	it('shows owner text as text and drops unsafe links and logos', () => {
 		const evil = '<img src=x onerror=alert(1)>';
 		const { ui, q, root } = mountUi(
-			{ links: { privacyPolicy: 'javascript:alert(1)', cookiePolicy: '/cookies' }, logoUrl: 'javascript:x' },
+			{
+				links: { privacyPolicy: 'javascript:alert(1)', cookiePolicy: '/cookies' },
+				logoUrl: 'javascript:x'
+			},
 			{ texts: { ...texts, title: evil } as ConsentTexts }
 		);
 		ui.banner('full');

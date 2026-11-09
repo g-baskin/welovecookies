@@ -22,7 +22,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/pages/login.ts:1-50
+  - admin/src/pages/login.ts:1-59
 ---
 
 # admin/src/pages/login.ts (sign-in, sign-out, setup page)
@@ -44,8 +44,8 @@ export const setupPage = (problem: string) => Response   // 503
 
 ## Behavior
 
-- `handleLogin`: same-origin check (403), then blocked check (429) (`admin/src/pages/login.ts:31-33`). The attempt is counted **before** the password check so parallel guesses can't slip past (`admin/src/pages/login.ts:34-35`). Form capped at 4096 bytes, password at 500 chars (`admin/src/pages/login.ts:36-38`). Wrong password -> 401 (`admin/src/pages/login.ts:39`); success clears failures and sets the session cookie with a 303 to `/admin` (`admin/src/pages/login.ts:40-41`).
-- `handleLogout` clears the cookie (`admin/src/pages/login.ts:44`).
+- `handleLogin`: same-origin check (403), then blocked check (429) (`admin/src/pages/login.ts:36-39`). The attempt is counted **before** the password check so parallel guesses can't slip past (`admin/src/pages/login.ts:40-41`). Form capped at 4096 bytes, password at 500 chars (`admin/src/pages/login.ts:42-44`). Wrong password -> 401 (`admin/src/pages/login.ts:45`); success clears failures and sets the session cookie with a 303 to `/admin` (`admin/src/pages/login.ts:46-47`).
+- `handleLogout` clears the cookie (`admin/src/pages/login.ts:50`).
 
 ## Connections
 
@@ -62,4 +62,4 @@ export const setupPage = (problem: string) => Response   // 503
 
 ## Sources
 
-- `admin/src/pages/login.ts:1-50`
+- `admin/src/pages/login.ts:1-59`
