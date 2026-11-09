@@ -72,6 +72,8 @@ Single-page apps need nothing extra: the banner keeps working across client-side
 
 ## For developers
 
+Needs Node 22 or newer. `npm run build` also needs the `zip` command (built into macOS and most Linux systems).
+
 ```sh
 npm install
 npm test        # unit tests
@@ -79,3 +81,7 @@ npm run check   # TypeScript
 npm run build   # rebuild dist/ (script, module and WordPress zip)
 npm run demo    # demo at http://localhost:4173/demo/
 ```
+
+## Licence
+
+Copyright (c) 2026 g-baskin. All rights reserved. We Love Cookies is commercial software: using, copying or redistributing it needs a licence from the copyright holder. See [LICENSE](LICENSE).

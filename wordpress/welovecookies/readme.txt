@@ -2,6 +2,7 @@
 Requires at least: 5.7
 Requires PHP: 7.2
 Stable tag: 1.0.0
+License: Proprietary. Copyright (c) 2026 g-baskin. All rights reserved.
 
 Cookie consent that follows the law where each visitor is.
 
