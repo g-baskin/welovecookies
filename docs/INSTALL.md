@@ -1,15 +1,15 @@
 # Install We Love Cookies
 
-Pick the way that matches your website. Every option ends the same way: the banner script loads in the page `<head>`, **before** your analytics and ad tags, so nothing tracks a visitor before the banner has had its say.
+We Love Cookies is one script file that works on any website. Pick the way that matches yours. Every option ends the same way: the banner script loads in the page `<head>`, **before** your analytics and ad tags, so nothing tracks a visitor before the banner has had its say.
 
 > Engineering defaults, not legal advice. Have your privacy policy and banner wording reviewed for your business.
 
 - [Any website: upload one file](#any-website-upload-one-file)
-- [Any website: no upload (CDN)](#any-website-no-upload-cdn)
-- [WordPress](#wordpress)
-- [Shopify](#shopify)
-- [Wix, Squarespace, Webflow](#wix-squarespace-webflow)
+- [No upload (CDN)](#no-upload-cdn)
+- [Frameworks](#frameworks): React, Vue, Svelte, Angular, Next.js, Nuxt, SvelteKit, Astro, Remix, Gatsby, Hugo, Jekyll, Eleventy, Laravel, Rails, Django, Flask, PHP
+- [Site builders](#shopify): Shopify, Wix, Squarespace, Webflow
 - [Google Tag Manager](#google-tag-manager)
+- [WordPress](#wordpress)
 - [Add a "Cookie settings" link](#add-a-cookie-settings-link)
 - [Block your own scripts until consent](#block-your-own-scripts-until-consent)
 - [Settings](#settings)
@@ -30,7 +30,9 @@ Pick the way that matches your website. Every option ends the same way: the bann
 
 That's it. The banner picks the rules for the visitor's region, the language from their browser and the colours from your page.
 
-## Any website: no upload (CDN)
+If your site has a strict Content-Security-Policy that blocks inline scripts, skip the first `<script>` and put the settings on the tag instead: `<script src="/welovecookies.min.js" data-privacy="/privacy"></script>` (see [Settings](#settings)).
+
+## No upload (CDN)
 
 Same snippet, but load the file from jsDelivr instead of your own server:
 
@@ -43,7 +45,158 @@ Same snippet, but load the file from jsDelivr instead of your own server:
 
 For a live site, replace `@main` with a release tag (for example `@v1.0.0`) once releases are published, so an update never changes your site without you choosing it.
 
+## Frameworks
+
+In every framework the idea is the same: copy `welovecookies.min.js` into the folder the framework serves as-is, and load it in the document `<head>` before anything that tracks. The script works on its own, so there is nothing to `npm install`. Single-page apps need nothing extra; the banner stays active across client-side page changes.
+
+### React, Vue, Svelte, Solid, Preact (Vite) and Angular
+
+Copy the file to `public/`, and paste the [snippet](#any-website-upload-one-file) into the `<head>` of `index.html` (Angular: `src/index.html`).
+
+### Next.js
+
+Copy the file to `public/`. In the root layout, load it with `beforeInteractive` (Next.js runs these first, in the order written):
+
+```tsx
+// app/layout.tsx
+import Script from 'next/script';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+	return (
+		<html lang="en">
+			<body>
+				{children}
+				<Script id="welovecookies-config" strategy="beforeInteractive">
+					{`window.WeLoveCookiesConfig = { mode: 'auto', rev: 1, links: { privacyPolicy: '/privacy' } };`}
+				</Script>
+				<Script src="/welovecookies.min.js" strategy="beforeInteractive" />
+			</body>
+		</html>
+	);
+}
+```
+
+Pages Router: put the same two `<Script>` tags in `pages/_document.tsx`.
+
+### Nuxt
+
+Copy the file to `public/`, then:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+	app: {
+		head: {
+			script: [
+				{ innerHTML: "window.WeLoveCookiesConfig = { mode: 'auto', rev: 1, links: { privacyPolicy: '/privacy' } };" },
+				{ src: '/welovecookies.min.js' }
+			]
+		}
+	}
+});
+```
+
+### SvelteKit
+
+Copy the file to `static/`, and paste the [snippet](#any-website-upload-one-file) into `src/app.html`, just before `%sveltekit.head%`.
+
+### Astro
+
+Copy the file to `public/`. In your base layout's `<head>`, use `is:inline` so Astro leaves the scripts as they are:
+
+```astro
+<script is:inline>
+	window.WeLoveCookiesConfig = { mode: 'auto', rev: 1, links: { privacyPolicy: '/privacy' } };
+</script>
+<script is:inline src="/welovecookies.min.js"></script>
+```
+
+### Remix and React Router
+
+Copy the file to `public/`. In `app/root.tsx`:
+
+```tsx
+<head>
+	<script dangerouslySetInnerHTML={{ __html: "window.WeLoveCookiesConfig = { mode: 'auto', rev: 1, links: { privacyPolicy: '/privacy' } };" }} />
+	<script src="/welovecookies.min.js" />
+	<Meta />
+	<Links />
+</head>
+```
+
+### Gatsby
+
+Copy the file to `static/`. In `gatsby-ssr.js`:
+
+```jsx
+import React from 'react';
+
+export const onRenderBody = ({ setHeadComponents }) => {
+	setHeadComponents([
+		<script key="wlc-config" dangerouslySetInnerHTML={{ __html: "window.WeLoveCookiesConfig = { mode: 'auto', rev: 1, links: { privacyPolicy: '/privacy' } };" }} />,
+		<script key="wlc" src="/welovecookies.min.js" />
+	]);
+};
+```
+
+### Hugo, Jekyll, Eleventy
+
+Put the file in Hugo's `static/` folder, the root of a Jekyll site, or an Eleventy passthrough copy (`eleventyConfig.addPassthroughCopy('welovecookies.min.js')`). Paste the [snippet](#any-website-upload-one-file) into the `<head>` of your base layout (for example `layouts/_default/baseof.html` or `_layouts/default.html`).
+
+### Laravel, Rails, Django, Flask, PHP
+
+Put the file in the folder your app serves as-is and paste the [snippet](#any-website-upload-one-file) into the base layout's `<head>`, pointing `src` at the file:
+
+| Framework | File in | `src` |
+| --- | --- | --- |
+| Laravel (Blade) | `public/` | `{{ asset('welovecookies.min.js') }}` |
+| Rails (ERB) | `public/` | `/welovecookies.min.js` |
+| Django | an app's `static/` folder | `{% static 'welovecookies.min.js' %}` (with `{% load static %}` at the top) |
+| Flask | `static/` | `{{ url_for('static', filename='welovecookies.min.js') }}` |
+| Plain PHP | the web root | `/welovecookies.min.js` |
+
+### Use it as a JavaScript module
+
+If you prefer to bundle it, copy `dist/welovecookies.mjs` into your source and start it in the browser yourself:
+
+```js
+import { createConsent } from './welovecookies.mjs';
+
+const consent = createConsent({ mode: 'auto', rev: 1, links: { privacyPolicy: '/privacy' } });
+// consent.openPreferences(), consent.get(), consent.onChange(cb)
+```
+
+This does not create `window.WeLoveCookies`, so call `consent.openPreferences()` from your "Cookie settings" link. Bundled code runs after the page's head scripts, so only use this when your analytics also start from your code; otherwise prefer the script tag.
+
+## Shopify
+
+1. **Online Store > Themes**, then on your live theme choose **… > Edit code**.
+2. Open `layout/theme.liquid` and paste the [CDN snippet](#no-upload-cdn) just after `<head>`, **above** `{{ content_for_header }}`. To host the file yourself instead, upload `welovecookies.min.js` under **Assets** and use `<script src="{{ 'welovecookies.min.js' | asset_url }}"></script>`.
+3. Save, then turn off Shopify's own cookie banner (**Settings > Customer privacy**) so visitors don't see two.
+
+Note: Shopify's built-in tracking (Shopify analytics and its app pixels) follows Shopify's own Customer Privacy API, not this banner. The [integration notes](privacy/consent-ux-research.md#shopify-if-the-site-runs-on-shopify-or-hydrogen) show how to pass the choice on.
+
+## Wix, Squarespace, Webflow
+
+These builders need a paid plan to add code to the head. Use the [CDN snippet](#no-upload-cdn), and turn off the builder's own cookie banner so visitors don't see two.
+
+| Builder | Where to paste it |
+| --- | --- |
+| Wix | **Settings > Custom code > + Add Custom Code**. Paste, choose **All pages** and **Head**, then **Apply** |
+| Squarespace | **Settings > Advanced > Code Injection > Header** |
+| Webflow | **Site settings > Custom code > Head code**, then publish the site |
+
+## Google Tag Manager
+
+1. **Tags > New > Custom HTML**, and paste the [CDN snippet](#no-upload-cdn).
+2. Trigger: **Consent Initialization - All Pages**, so it runs before every other tag.
+3. Save and publish.
+
+The banner sends Google Consent Mode v2 signals, so Google tags in the container wait for the visitor's choice automatically.
+
 ## WordPress
+
+WordPress sites can use the [snippet](#any-website-upload-one-file) like any other site (in the theme's `header.php`, or a header-code plugin). For a no-code install there is an optional plugin:
 
 1. Download [`dist/welovecookies-wordpress.zip`](../dist/welovecookies-wordpress.zip).
 2. In WordPress: **Plugins > Add New > Upload Plugin**, choose the zip, **Install Now**, then **Activate**.
@@ -61,32 +214,6 @@ add_filter( 'welovecookies_config', function ( $config ) {
 	return $config;
 } );
 ```
-
-## Shopify
-
-1. **Online Store > Themes**, then on your live theme choose **… > Edit code**.
-2. Open `layout/theme.liquid` and paste the [CDN snippet](#any-website-no-upload-cdn) just after `<head>`, **above** `{{ content_for_header }}`. To host the file yourself instead, upload `welovecookies.min.js` under **Assets** and use `<script src="{{ 'welovecookies.min.js' | asset_url }}"></script>`.
-3. Save, then turn off Shopify's own cookie banner (**Settings > Customer privacy**) so visitors don't see two.
-
-Note: Shopify's built-in tracking (Shopify analytics and its app pixels) follows Shopify's own Customer Privacy API, not this banner. The [integration notes](privacy/consent-ux-research.md#shopify-if-the-site-runs-on-shopify-or-hydrogen) show how to pass the choice on.
-
-## Wix, Squarespace, Webflow
-
-These builders need a paid plan to add code to the head. Use the [CDN snippet](#any-website-no-upload-cdn), and turn off the builder's own cookie banner so visitors don't see two.
-
-| Builder | Where to paste it |
-| --- | --- |
-| Wix | **Settings > Custom code > + Add Custom Code**. Paste, choose **All pages** and **Head**, then **Apply** |
-| Squarespace | **Settings > Advanced > Code Injection > Header** |
-| Webflow | **Site settings > Custom code > Head code**, then publish the site |
-
-## Google Tag Manager
-
-1. **Tags > New > Custom HTML**, and paste the [CDN snippet](#any-website-no-upload-cdn).
-2. Trigger: **Consent Initialization - All Pages**, so it runs before every other tag.
-3. Save and publish.
-
-The banner sends Google Consent Mode v2 signals, so Google tags in the container wait for the visitor's choice automatically.
 
 ## Add a "Cookie settings" link
 
