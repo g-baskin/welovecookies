@@ -21,7 +21,7 @@ A framework-free cookie consent banner, preferences panel and consent manager. A
 
 ## Build
 
-`node tools/build-consent.mjs` writes `static/consent/welovecookies.min.js` (IIFE) and `static/consent/welovecookies.mjs` (ESM) and prints their gzip sizes. Demo: `/consent/demo.html?mode=opt-in|opt-out-gpc|opt-out|notice&lang=de&gpc=1&prefs=1`.
+`npm run build` writes `dist/welovecookies.min.js` (IIFE) and `dist/welovecookies.mjs` (ESM), prints their gzip sizes and packages the WordPress plugin as `dist/welovecookies-wordpress.zip`. Demo: `npm run demo`, then open `/demo/?mode=opt-in|opt-out-gpc|opt-out|notice&lang=de&gpc=1&prefs=1`.
 
 ## Any site: one script tag
 
@@ -31,7 +31,7 @@ Put the tag **before** your analytics and ad tags. Consent defaults (Google, UET
 <script>
 	window.WeLoveCookiesConfig = { mode: 'auto', rev: 1, links: { privacyPolicy: '/privacy' } };
 </script>
-<script src="/consent/welovecookies.min.js"></script>
+<script src="/welovecookies.min.js"></script>
 ```
 
 You can also use data attributes: `data-mode`, `data-rev`, `data-lang`, `data-position`, `data-floating`, `data-preferences`, `data-avoid`, `data-gpc`, `data-record`, `data-seen`, `data-privacy`, `data-cookies-page`, `data-choices`, and `data-auto="false"` to call `WeLoveCookies.init(config)` yourself. `mode: 'auto'` guesses the region from the browser time zone and falls back to opt-in.
@@ -40,10 +40,10 @@ You can also use data attributes: `data-mode`, `data-rev`, `data-lang`, `data-po
 
 `mode`, `rev` (raise it to ask everyone again), `lang`, `texts` (`{'*': {...}, de: {...}}` overrides), `theme` (bg, fg, primary... falls back to the page's `--color-*`, `--radius-theme`, `--radius-button`, `--font-body`), `position`, `preferencesCategory`, `floatingButton`, `noticeBanner`, `cookies` (the list shown per category), `links`, `endpoints.record` / `endpoints.seen` (POST JSON), `cookieName` (default `wlc_consent`), `cookieDomain`, `integrations` (each one is on by default), `compactOn` (path prefixes), `avoidSelector` (a fixed bottom bar to sit above, e.g. `[data-sticky-cta]`).
 
-### Hosted install (other websites)
+### Hosted install (config from your server)
 
 ```html
-<script src="https://YOUR-SERVER/consent/welovecookies.min.js" data-site="SITE_KEY" async></script>
+<script src="https://YOUR-SERVER/welovecookies.min.js" data-site="SITE_KEY" async></script>
 ```
 
 With `data-site`, Google Consent Mode and Microsoft UET default to denied at once. Then the script fetches `/api/consent/config?site=SITE_KEY` from the server that serves it (no cookies, CORS) and starts with that config. Every record and seen request carries the site key. If the fetch fails, the banner still works in `auto` mode and nothing is logged. Cross-origin requests use CORS without cookies or keepalive.
@@ -54,7 +54,7 @@ When a category is off (after any save, Reject all, withdraw, GPC, and once at s
 
 ### One choice for the whole domain
 
-`cookieDomain: 'auto'` (default) finds the root domain with a short test cookie, so a choice made on shop.example.com also counts on example.com. localhost and IP addresses use host-only cookies. A domain string is used as given. Before the domain cookie is written, any host-only copy is removed. If two copies exist anyway, the newest one wins.
+`cookieDomain: 'auto'` (default) finds the root domain with a short test cookie, so a choice made on blog.example.com also counts on example.com. localhost and IP addresses use host-only cookies. A domain string is used as given. Before the domain cookie is written, any host-only copy is removed. If two copies exist anyway, the newest one wins.
 
 ### Logo
 
@@ -96,6 +96,6 @@ Once the category is allowed, each script is cloned into a real script. This hap
 - Turning everything off after allowing something records `withdraw`.
 - **Network:** the banner closes synchronously. Vendor signals and the record POST (`keepalive`, path only) run after it. The server's corrected `consent` is adopted. The seen POST is sent once per page load.
 
-## With a server
+## With a server or a framework
 
-The server builds the config per request (`clientConfigFor` in `reference/server/src/lib/server/consent/settings.ts`) and the page layout renders `<CookieConsent {config} {posthog} onready={(m) => ...} />` (or `bind:manager`).
+A server can build the config per request (for example with the visitor's country from a CDN header) and pass it to `WeLoveCookies.init(config)`, `createConsent(config)` or the Svelte wrapper `<CookieConsent {config} {posthog} onready={(m) => ...} />`. To keep proof of consent, point `endpoints.record` at an endpoint that stores the `ConsentRecordPayload` JSON (see `types.ts`).

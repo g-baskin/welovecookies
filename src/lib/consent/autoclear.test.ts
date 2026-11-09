@@ -57,7 +57,7 @@ describe('auto-clear helpers', () => {
 		expect(matchesPattern('_ga_ABC', ['_ga'])).toBe(false);
 		expect(matchesPattern('_ga_ABC', ['_ga_*'])).toBe(true);
 		expect(matchesPattern('ph_phc_x_posthog', ['ph_*'])).toBe(true);
-		expect(matchesPattern('cart', ['ph_*', '_fbp'])).toBe(false);
+		expect(matchesPattern('theme', ['ph_*', '_fbp'])).toBe(false);
 	});
 	it('lists only off categories, plus owner extras, and never the choice cookie', () => {
 		const p = patternsFor({ ...ALL_GRANTED, marketing: false }, { marketing: ['my_ad*'] });
@@ -70,10 +70,10 @@ describe('auto-clear helpers', () => {
 		]);
 	});
 	it('builds root candidates shortest first and skips local hosts', () => {
-		expect(rootCandidates('shop.example.co.uk')).toEqual([
+		expect(rootCandidates('blog.example.co.uk')).toEqual([
 			'co.uk',
 			'example.co.uk',
-			'shop.example.co.uk'
+			'blog.example.co.uk'
 		]);
 		expect(rootCandidates('localhost')).toEqual([]);
 		expect(rootCandidates('127.0.0.1')).toEqual([]);
@@ -90,9 +90,9 @@ describe('auto-clear helpers', () => {
 		const j = jar({ _ga: '1', wlc_consent: 'x' });
 		const ls = store();
 		ls.setItem('ph_phc_abc_posthog', '{}');
-		ls.setItem('cart', '1');
+		ls.setItem('theme', '1');
 		clearOff({ document: j.doc, location: { hostname: 'localhost', pathname: '/' }, localStorage: ls }, NONE_GRANTED, {}, 'wlc_consent'); // prettier-ignore
-		expect([...ls.m.keys()]).toEqual(['cart']);
+		expect([...ls.m.keys()]).toEqual(['theme']);
 		expect(j.doc.cookie).toBe('wlc_consent=x');
 	});
 });
@@ -110,7 +110,7 @@ describe('choice cookie copies', () => {
 	});
 });
 
-function manager(cookies: Record<string, string>, over: Partial<ConsentConfig> = {}, hostname = 'shop.example.co.uk') {
+function manager(cookies: Record<string, string>, over: Partial<ConsentConfig> = {}, hostname = 'blog.example.co.uk') {
 	const j = jar(cookies, (d) => d === 'co.uk');
 	const w: ConsentWindow = {
 		document: j.doc as unknown as Document,

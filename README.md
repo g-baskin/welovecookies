@@ -6,47 +6,51 @@
 
 ## About
 
-We Love Cookies is a cookie consent and tracking-compliance system for online stores and websites. It works out where a visitor is and shows the banner the local rules call for: ask-first in the EU, UK, Brazil and other opt-in countries, a short notice with "Do Not Sell or Share" in US privacy-law states, and nothing intrusive where no consent is required. Analytics and ad tags stay blocked until they are allowed, Global Privacy Control is honoured, and every choice can be kept as proof of consent.
+We Love Cookies is a cookie consent banner for any website. Add one file and it shows every visitor the banner their own location calls for: ask-first in the EU, UK, Brazil and other opt-in countries, a short notice with "Do Not Sell or Share" in US privacy-law states, and nothing in the way where no consent is needed. Analytics and ad tags wait until they are allowed, Global Privacy Control is honoured, and tracking cookies are cleared the moment someone says no.
 
-It drops into any site with one script tag, or into a JavaScript app as a module.
+It works on plain HTML sites, WordPress, Shopify, Wix, Squarespace, Webflow and Google Tag Manager, with no account, no monthly fee and no outside requests.
 
 - **Rules for 57 countries, Quebec and every US state** (any other country gets the strict ask-first banner), backed by a dated law matrix with sources
-- **US wiretap protection**: identifying and session-recording tags need an explicit Accept in all-party-consent states
-- **Google Consent Mode v2, Microsoft UET, Meta, TikTok and PostHog** signals built in
-- **Auto-clear**: known analytics and ad cookies are deleted the moment a category is switched off
-- **20 languages** (including right-to-left Arabic), phone, tablet and desktop layouts, and themes that match your site
-- **Proof of consent**: a consent log, privacy requests (delete, copy, correct, don't sell) with due dates, and one banner shared across several websites
+- **US wiretap protection**: tags that identify visitors or record sessions can be held until an explicit Accept in all-party-consent states
+- **Works with the tools you already use**: Google Consent Mode v2, Google Tag Manager, Microsoft UET, Meta, TikTok and PostHog
+- **Auto-clear**: known analytics and ad cookies are deleted as soon as a category is switched off
+- **20 languages** (including right-to-left Arabic), phone, tablet and desktop layouts, and colours that match your site
+- **Proof of consent**: send every choice to your own endpoint to keep a record
 
-> Engineering defaults, not legal advice. Have the rules table and banner texts reviewed for your business, and re-check them at least yearly.
+> Engineering defaults, not legal advice. Have your privacy policy and banner wording reviewed for your business, and re-check the rules at least yearly.
 
-## What is here
+## Install in 2 minutes
 
-| Path | What it is |
-| --- | --- |
-| `src/lib/consent/` | The banner, preferences panel and consent manager (no framework). See its [README](src/lib/consent/README.md) |
-| `src/lib/consent/regions.ts` | **The rules table**: consent mode per country, Canadian province and US state, and what each mode allows |
-| `src/lib/consent/wiretap.ts` | US all-party-consent states and when an identifying tag needs an explicit Accept |
-| `docs/privacy/` | The research behind the rules: law matrix with sources, banner UX research, how it works, privacy requests |
-| `static/consent/` | Built one-file script (`welovecookies.min.js`, `welovecookies.mjs`) and `demo.html` |
-| `tools/build-consent.mjs` | Rebuilds `static/consent/` from `src/lib/consent/` |
-| `reference/server/` | Server side: consent log, database tables and migrations, consent API, owner screens, privacy requests, weekly tracking check. Written for SvelteKit + Cloudflare D1; it does not run on its own |
-
-## Quick start
+**Any website:** upload [`dist/welovecookies.min.js`](dist/welovecookies.min.js) to your site and paste this into the `<head>`, above your analytics and ad code:
 
 ```html
 <script>
 	window.WeLoveCookiesConfig = { mode: 'auto', rev: 1, links: { privacyPolicy: '/privacy' } };
 </script>
-<script src="/consent/welovecookies.min.js"></script>
+<script src="/welovecookies.min.js"></script>
 ```
 
-Put it before your analytics and ad tags. Full options: [src/lib/consent/README.md](src/lib/consent/README.md).
+**WordPress:** upload [`dist/welovecookies-wordpress.zip`](dist/welovecookies-wordpress.zip) under **Plugins > Add New > Upload Plugin** and activate it.
 
-## Commands
+**Shopify, Wix, Squarespace, Webflow, Google Tag Manager, or no upload at all:** see the [install guide](docs/INSTALL.md).
+
+## What's included
+
+| Path | What it is |
+| --- | --- |
+| `dist/` | Ready to use: `welovecookies.min.js` (script tag), `welovecookies.mjs` (JavaScript module), `welovecookies-wordpress.zip` (WordPress plugin) |
+| `docs/INSTALL.md` | Step-by-step install for every platform, settings, and how to check it works |
+| `docs/privacy/` | How it works, the law matrix with sources, and banner research |
+| `demo/` | A demo page to try every region and language |
+| `src/lib/consent/` | Source: banner, consent manager, region rules (`regions.ts`), US wiretap rule (`wiretap.ts`) |
+| `wordpress/` | WordPress plugin source |
+
+## For developers
 
 ```sh
 npm install
-npm test        # unit tests for the banner, rules table and wiretap rule
+npm test        # unit tests
 npm run check   # TypeScript
-npm run build   # rebuild static/consent/
+npm run build   # rebuild dist/ and the WordPress zip
+npm run demo    # demo at http://localhost:4173/demo/
 ```

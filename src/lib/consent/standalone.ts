@@ -24,7 +24,7 @@ declare global {
 }
 
 /**
- * Hosted install (`data-site`): fetch this visitor's config from the store that serves the script.
+ * Hosted install (`data-site`): fetch this visitor's config from the server that serves the script.
  * Any failure gives a working banner with mode 'auto' and no logging.
  */
 export async function loadHosted(
