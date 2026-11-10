@@ -71,6 +71,7 @@ Line numbers drift as code changes. When you change a module, check its page. De
 | --- | --- |
 | [tool-build-consent](entities/tool-build-consent.md) | `tools/build-consent.mjs`: `npm run build` |
 | [tool-serve-demo](entities/tool-serve-demo.md) | `tools/serve-demo.mjs`: `npm run demo` |
+| [tool-test-local](entities/tool-test-local.md) | `tools/test-local.mjs`: `npm run test:local` (fresh-install smoke test) |
 | [wordpress-plugin](entities/wordpress-plugin.md) | `wordpress/welovecookies/welovecookies.php` (stub) |
 
 ## Open questions

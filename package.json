@@ -1,7 +1,7 @@
 {
 	"name": "welovecookies",
 	"private": true,
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"license": "AGPL-3.0-only",
 	"type": "module",
 	"engines": {
@@ -13,12 +13,15 @@
 		"admin:deploy": "npm run admin:assets && wrangler d1 migrations apply DB --remote -c admin/wrangler.jsonc && wrangler deploy -c admin/wrangler.jsonc",
 		"admin:dev": "npm run admin:assets && wrangler dev -c admin/wrangler.jsonc",
 		"build": "node tools/build-consent.mjs",
-		"check": "tsc --noEmit && tsc --noEmit -p admin && tsc --noEmit -p tools && svelte-check --tsconfig src/lib/consent/svelte/tsconfig.json --fail-on-warnings",
+		"check": "tsc --noEmit && tsc --noEmit -p admin && tsc --noEmit -p tools && tsc --noEmit -p e2e && svelte-check --tsconfig src/lib/consent/svelte/tsconfig.json --fail-on-warnings",
 		"demo": "node tools/serve-demo.mjs",
-		"format": "prettier --write \"src/**/*.ts\" \"admin/src/**/*.ts\" \"tools/*.mjs\" eslint.config.js vitest.config.ts",
-		"format:check": "prettier --check \"src/**/*.ts\" \"admin/src/**/*.ts\" \"tools/*.mjs\" eslint.config.js vitest.config.ts",
+		"format": "prettier --write \"src/**/*.ts\" \"admin/src/**/*.ts\" \"tools/*.mjs\" \"e2e/*.ts\" \"e2e/*.mjs\" eslint.config.js vitest.config.ts playwright.config.ts",
+		"format:check": "prettier --check \"src/**/*.ts\" \"admin/src/**/*.ts\" \"tools/*.mjs\" \"e2e/*.ts\" \"e2e/*.mjs\" eslint.config.js vitest.config.ts playwright.config.ts",
 		"lint": "eslint .",
-		"test": "vitest run"
+		"screenshots": "playwright test -c e2e/screenshots.config.ts",
+		"test": "vitest run",
+		"test:e2e": "playwright test",
+		"test:local": "node tools/test-local.mjs"
 	},
 	"imports": {
 		"#lib/*": "./src/lib/*"
@@ -26,6 +29,7 @@
 	"devDependencies": {
 		"@cloudflare/workers-types": "5.20261107.1",
 		"@eslint/js": "10.0.1",
+		"@playwright/test": "1.65.0",
 		"@types/node": "26.6.6",
 		"esbuild": "0.28.2",
 		"eslint": "10.14.0",

@@ -1,9 +1,11 @@
-// Serve the repo on http://localhost:4173 so demo/ can load dist/ (cookies need http, not file://).
+// Serve the repo on http://localhost:4173 (or $PORT) so demo/ can load dist/ (cookies need http, not file://).
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize, resolve } from 'node:path';
 
 const root = resolve('.');
+// PORT lets npm run test:local serve its fresh copy beside a demo that is already running.
+const port = Number(process.env.PORT) || 4173;
 /** @type {Record<string, string>} */
 const types = {
 	'.html': 'text/html; charset=utf-8',
@@ -30,4 +32,4 @@ createServer(async (req, res) => {
 	} catch {
 		res.writeHead(404).end('Not found');
 	}
-}).listen(4173, '127.0.0.1', () => console.log('Demo: http://localhost:4173/demo/'));
+}).listen(port, '127.0.0.1', () => console.log(`Demo: http://localhost:${port}/demo/`));
