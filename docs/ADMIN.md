@@ -42,7 +42,7 @@ Things to do on your side:
 
 ## Set it up (about 10 minutes)
 
-These steps are for Cloudflare. For your own server, follow [ADMIN-SELF-HOSTED.md](ADMIN-SELF-HOSTED.md) instead. You need Node 22 or newer, this repository, and a free Cloudflare account. Run the commands from the repository folder.
+These steps are for Cloudflare. For your own server, follow [ADMIN-SELF-HOSTED.md](ADMIN-SELF-HOSTED.md) instead. You need Node 22.13 or newer, this repository, and a free Cloudflare account. Run the commands from the repository folder.
 
 **1. Install and sign in to Cloudflare**
 
