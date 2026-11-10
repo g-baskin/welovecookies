@@ -34,6 +34,7 @@ Needs a build step for buyers and doesn't help plain HTML sites.
 ## Notes
 
 - 2026-11-09: `src/lib/consent/dist.test.ts` now fails when the committed `welovecookies.min.js` or `welovecookies.mjs` differs from a fresh build, so "No test checks this" above no longer holds for the two scripts. The WordPress zip is still not compared, and `dist/` must still be rebuilt and committed. The decision itself is unchanged.
+- 2026-11-09: Version tags are now published, starting with `v1.1.0` (with `v1.0.0` and `v1.0.1` tagged afterwards at the commits that set them), each with a GitHub Release. Sites can pin `@vX.Y.Z`; `@main` still follows every release.
 
 ---
 

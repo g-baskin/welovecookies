@@ -1,7 +1,7 @@
 === We Love Cookies ===
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: AGPL-3.0-only
 License URI: https://www.gnu.org/licenses/agpl-3.0.html
 

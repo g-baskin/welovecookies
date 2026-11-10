@@ -32,7 +32,7 @@ Stub: PHP is outside the v1 extraction grammar. Optional install path, one of ma
 
 ## Names (no deep extraction)
 
-- Header `Version: 1.0.1` (`wordpress/welovecookies/welovecookies.php:5`) and `define( 'WELOVECOOKIES_VERSION', '1.0.1' )` (`wordpress/welovecookies/welovecookies.php:17`).
+- Header `Version: 1.1.0` (`wordpress/welovecookies/welovecookies.php:5`) and `define( 'WELOVECOOKIES_VERSION', '1.1.0' )` (`wordpress/welovecookies/welovecookies.php:17`).
 - `function welovecookies_config()` (`wordpress/welovecookies/welovecookies.php:22-32`) ending in filter `welovecookies_config` (`wordpress/welovecookies/welovecookies.php:31`).
 - Action `wp_head` at priority 1: inline `window.WeLoveCookiesConfig` then the script with `?ver=WELOVECOOKIES_VERSION` (`wordpress/welovecookies/welovecookies.php:35-46`).
 - Shortcode `[welovecookies_settings]` (`wordpress/welovecookies/welovecookies.php:52-58`).

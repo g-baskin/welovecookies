@@ -44,7 +44,7 @@ Same snippet, but load the file from jsDelivr instead of your own server:
 <script src="https://cdn.jsdelivr.net/gh/g-baskin/welovecookies@main/dist/welovecookies.min.js"></script>
 ```
 
-For a live site, replace `@main` with a release tag (for example `@v1.0.0`) once releases are published, so an update never changes your site without you choosing it.
+For a live site, replace `@main` with a release tag (for example `@v1.1.0`; all releases are listed on [GitHub](https://github.com/g-baskin/welovecookies/releases)), so an update never changes your site without you choosing it.
 
 ## Frameworks
 

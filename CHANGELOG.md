@@ -5,16 +5,30 @@ All notable changes to We Love Cookies are recorded here.
 The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/),
 and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-No git tags exist yet. The versioned sections below are reconstructed from git
-history: each date is the date of the commit that set that version in
-`package.json` and the WordPress plugin header (`Version:` /
-`WELOVECOOKIES_VERSION`). A version appearing here does not mean it was
-published to any package registry.
+Releases from 1.1.0 on are git tags (`vX.Y.Z`) with a GitHub Release. The
+1.0.0 and 1.0.1 tags were added afterwards, on 2026-11-09, at the commits that
+set those versions; 0.0.1 has no tag. A version appearing here does not mean it
+was published to any package registry.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-09
+
 ### Added
 
+- A real-browser test (`npm run test:e2e`, Playwright with Chromium) of the
+  banner (accept, reject, opt-out notice, notice mode, right-to-left) and the
+  admin sign-in, run against a throwaway local admin database.
+- A fresh-install test (`npm run test:local`) that copies the current files to
+  a temp folder and runs `npm ci`, every check, the build, and the demo and
+  admin over HTTP.
+- Screenshots from the browser test in the README and the new
+  `docs/TESTING.md` (`npm run screenshots` refreshes them).
+- A social preview image for link previews (`docs/assets/social-preview.jpg`).
+- A version test (`src/version.test.ts`) that keeps `package.json`, the lock
+  file, the WordPress plugin and the newest changelog entry on the same
+  version.
+- The demo server takes an optional `PORT`.
 - Optional admin on Cloudflare (Worker + D1): manage sites, a hosted install
   that fetches its settings with `data-site`, consent records, and a hosted
   privacy request form. See `docs/ADMIN.md`.
@@ -46,7 +60,7 @@ published to any package registry.
 
 ## [1.0.1] - 2026-11-09
 
-Set in commit `d6f1964`.
+Set in commit `d6f1964` (tag `v1.0.1`).
 
 ### Added
 
@@ -61,7 +75,7 @@ Set in commit `d6f1964`.
 
 ## [1.0.0] - 2026-11-09
 
-Set in commit `f14f71e`.
+Set in commit `f14f71e` (tag `v1.0.0`).
 
 ### Added
 
@@ -81,3 +95,8 @@ Set in commit `888ca73`.
 
 - First version of We Love Cookies: a location-aware cookie consent banner that
   picks opt-in, opt-out or notice behaviour for the visitor's region.
+
+[Unreleased]: https://github.com/g-baskin/welovecookies/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/g-baskin/welovecookies/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/g-baskin/welovecookies/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/g-baskin/welovecookies/compare/888ca73...v1.0.0
