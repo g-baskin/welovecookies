@@ -11,6 +11,7 @@ For maintainers: what the parts of We Love Cookies are and how they connect.
 - [`../codebase-graph/concepts/hosted-install-flow.md`](../codebase-graph/concepts/hosted-install-flow.md)
 - [`../../../../docs/decisions/0006-script-tag-first.md`](../../../../docs/decisions/0006-script-tag-first.md)
 - [`../../../../docs/decisions/0007-admin-on-cloudflare.md`](../../../../docs/decisions/0007-admin-on-cloudflare.md)
+- [`../../../../docs/decisions/0008-self-hosted-admin.md`](../../../../docs/decisions/0008-self-hosted-admin.md)
 
 ---
 
@@ -27,6 +28,7 @@ The product is one script tag. Everything else is an optional install path or ad
 | Cookie wire format | `src/lib/consent/cookie.ts` | [consent-cookie](../codebase-graph/entities/consent-cookie.md) |
 | Shared types, UI, i18n rows | `types.ts`, `ui.ts`, `i18n/row.ts` | [consent-types](../codebase-graph/entities/consent-types.md), [consent-ui](../codebase-graph/entities/consent-ui.md), [consent-i18n-rows](../codebase-graph/entities/consent-i18n-rows.md) |
 | Optional admin: Cloudflare Worker + D1 | `admin/src/index.ts` | [admin-index](../codebase-graph/entities/admin-index.md), [admin-data-model](../codebase-graph/entities/admin-data-model.md) |
+| Optional admin on your own server: Node + SQLite | `admin/src/node/server.ts` | [admin-node](../codebase-graph/entities/admin-node.md), [admin-sqlite](../codebase-graph/entities/admin-sqlite.md) |
 | WordPress plugin, one optional install path | `wordpress/welovecookies/welovecookies.php` | [wordpress-plugin](../codebase-graph/entities/wordpress-plugin.md) |
 | Build and local demo | `tools/build-consent.mjs`, `tools/serve-demo.mjs`, `demo/index.html` | [tool-build-consent](../codebase-graph/entities/tool-build-consent.md), [tool-serve-demo](../codebase-graph/entities/tool-serve-demo.md) |
 

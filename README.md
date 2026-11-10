@@ -15,7 +15,7 @@ It is one small JavaScript file (about 23 KB gzipped). If your site can put a sc
 - **Works with the tools you already use**: Google Consent Mode v2, Google Tag Manager, Microsoft UET, Meta, TikTok and PostHog
 - **Auto-clear**: known analytics and ad cookies are deleted as soon as a category is switched off
 - **20 languages** (including right-to-left Arabic), phone, tablet and desktop layouts, and colours that match your site
-- **Proof of consent**: send every choice to your own endpoint to keep a record, or use the optional admin
+- **Proof of consent**: send every choice to your own endpoint to keep a record ([how](docs/RECORDS.md)), or use the optional admin
 
 > Engineering defaults, not legal advice. Have your privacy policy and banner wording reviewed for your business, and re-check the rules at least yearly.
 
@@ -61,7 +61,7 @@ Single-page apps need nothing extra: the banner keeps working across client-side
 
 ## Optional admin
 
-Want answer rates, proof-of-consent records with a CSV export, banner and cookie-list settings, privacy requests and a daily compliance check, for one website or several? Deploy the optional admin to your own Cloudflare account (a Worker and a D1 database; the free tier covers small sites) and swap the script tag for the one it gives you. Your data stays in your account. Setup takes about 10 minutes: [docs/ADMIN.md](docs/ADMIN.md).
+Want answer rates, proof-of-consent records with a CSV export, banner and cookie-list settings, privacy requests and a daily compliance check, for one website or several? Run the optional admin on your own Cloudflare account (a Worker and a D1 database; the free tier covers small sites; [docs/ADMIN.md](docs/ADMIN.md)) or on your own server with Node.js or Docker and a SQLite file ([docs/ADMIN-SELF-HOSTED.md](docs/ADMIN-SELF-HOSTED.md)), and swap the script tag for the one it gives you. Your data stays with you. To keep only the records on a server you already run: [docs/RECORDS.md](docs/RECORDS.md).
 
 ## What's included
 
@@ -69,7 +69,8 @@ Want answer rates, proof-of-consent records with a CSV export, banner and cookie
 | --- | --- |
 | `dist/` | Ready to use: `welovecookies.min.js` (script tag, works on any site), `welovecookies.mjs` (JavaScript module), `welovecookies-wordpress.zip` (optional WordPress plugin) |
 | `docs/INSTALL.md` | Install steps for every framework and site builder, settings, and how to check it works |
-| `admin/`, `docs/ADMIN.md` | The optional admin (Cloudflare Worker and D1) and its setup guide |
+| `admin/`, `docs/ADMIN.md`, `docs/ADMIN-SELF-HOSTED.md` | The optional admin (Cloudflare Worker and D1, or Node/Docker and SQLite) and its setup guides |
+| `docs/RECORDS.md` | Keeping proof-of-consent records on your own server, with example receivers |
 | `docs/privacy/` | How it works, the law matrix with sources, and banner research |
 | `docs/api/openapi.json` | OpenAPI description of the admin's public endpoints, and what your own record endpoint receives |
 | `CONTEXT.md`, `docs/decisions/` | Glossary of terms, and the records of key decisions |
@@ -92,6 +93,7 @@ npm run format:check   # Prettier (npm run format to fix)
 npm run build   # rebuild dist/ (script, module and WordPress zip)
 npm run demo    # demo at http://localhost:4173/demo/
 npm run admin:dev   # optional admin at http://127.0.0.1:8787/admin (see docs/ADMIN.md)
+npm run admin:node  # the same admin on Node and SQLite (see docs/ADMIN-SELF-HOSTED.md)
 npm run test:e2e    # banner and admin in a real browser (once first: npx playwright install chromium)
 npm run test:local  # fresh install of your current files in a temp folder, then every check
 npm run screenshots # refresh the pictures in docs/assets/screenshots/

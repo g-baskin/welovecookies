@@ -44,7 +44,7 @@ sources:
 
 ## Overview
 
-Entry point of the optional admin Worker (ADR 0007): routes public banner endpoints, the hosted privacy form, `/wlc.css` and the signed-in admin pages, and runs the daily job (`admin/src/index.ts:1-2`).
+Entry point of the optional admin Worker (ADR 0007; the self-hosted Node runtime in [[entities/admin-node]] calls the same `route()` and `daily()`, ADR 0008): routes public banner endpoints, the hosted privacy form, `/wlc.css` and the signed-in admin pages, and runs the daily job (`admin/src/index.ts:1-2`).
 
 ## Signature / Definition
 

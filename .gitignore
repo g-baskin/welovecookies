@@ -3,6 +3,9 @@ node_modules
 wordpress/welovecookies/assets/
 admin/public/
 admin/.dev.vars
+admin/.env
+admin/node-dist/
+admin/data/
 .wrangler/
 test-results/
 playwright-report/

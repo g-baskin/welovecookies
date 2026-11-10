@@ -1,0 +1,37 @@
+# We Love Cookies admin + Caddy (automatic HTTPS). Setup: docs/ADMIN-SELF-HOSTED.md
+#   cp admin/.env.example admin/.env      # then fill it in (WLC_DOMAIN, ADMIN_PASSWORD, SESSION_SECRET)
+#   docker compose -f admin/compose.yaml up -d --build
+services:
+  admin:
+    build:
+      context: ..
+      dockerfile: admin/Dockerfile
+    env_file: .env
+    environment:
+      WLC_PUBLIC_URL: https://${WLC_DOMAIN:?Set WLC_DOMAIN in admin/.env}
+      WLC_TRUST_PROXY: '1'
+      WLC_HOST: 0.0.0.0
+      WLC_DB_PATH: /data/welovecookies.db
+    volumes:
+      - wlc-data:/data
+    # No published port: only Caddy can reach the admin.
+    restart: unless-stopped
+  caddy:
+    image: caddy:2
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      WLC_DOMAIN: ${WLC_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - admin
+    restart: unless-stopped
+volumes:
+  wlc-data:
+  caddy-data:
+  caddy-config:

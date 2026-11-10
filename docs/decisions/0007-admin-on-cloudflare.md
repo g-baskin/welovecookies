@@ -4,7 +4,7 @@ Date: 2026-11-09
 
 ## Status
 
-Accepted
+Accepted. Amended by [0008](0008-self-hosted-admin.md): the admin can also run on the owner's own server.
 
 ## Context
 
@@ -22,7 +22,7 @@ The admin is a Cloudflare Worker with a D1 database (`admin/`) that each buyer d
 - Cloudflare's free tier covers small sites, and there are no servers to patch.
 
 **Negative:**
-- The admin needs a Cloudflare account; no other host is supported.
+- The admin needs a Cloudflare account; no other host is supported (lifted by ADR 0008).
 - No email notifications (Workers would need a separate mail provider).
 
 **Neutral:**

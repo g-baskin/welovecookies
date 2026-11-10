@@ -1,38 +1,10 @@
-// Test-only D1 stand-in: the real migration on an in-memory node:sqlite database.
-import { readFileSync } from 'node:fs';
-import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
-import type { Db, Stmt } from './db.ts';
+// Test-only D1 stand-in: the real migrations on an in-memory node:sqlite database (same code as self-hosting).
+import { migrate, openSqlite, type SqliteDb } from './sqlite.ts';
 
-const MIGRATIONS = ['0001_init.sql'].map((f) =>
-	readFileSync(new URL(`../migrations/${f}`, import.meta.url), 'utf8')
-);
-
-export function testDb(): Db & { sql: DatabaseSync } {
-	const sql = new DatabaseSync(':memory:');
-	sql.exec('PRAGMA foreign_keys = ON');
-	for (const m of MIGRATIONS) sql.exec(m);
-	const stmt = (q: string, args: SQLInputValue[] = []): Stmt & { exec(): number } => ({
-		bind: (...v: unknown[]) => stmt(q, v as SQLInputValue[]),
-		first: async <T>() => (sql.prepare(q).get(...args) as T | undefined) ?? null,
-		all: async <T>() => ({ results: sql.prepare(q).all(...args) as T[] }),
-		run: async () => ({ meta: { changes: Number(sql.prepare(q).run(...args).changes) } }),
-		exec: () => Number(sql.prepare(q).run(...args).changes)
-	});
-	return {
-		sql,
-		prepare: (q) => stmt(q),
-		async batch(list) {
-			sql.exec('BEGIN');
-			try {
-				const out = list.map((s) => (s as ReturnType<typeof stmt>).exec());
-				sql.exec('COMMIT');
-				return out;
-			} catch (e) {
-				sql.exec('ROLLBACK');
-				throw e;
-			}
-		}
-	};
+export function testDb(): SqliteDb {
+	const db = openSqlite(':memory:');
+	migrate(db);
+	return db;
 }
 
 export const TEST_KEY = 'ws_abcDEF123_-x';
