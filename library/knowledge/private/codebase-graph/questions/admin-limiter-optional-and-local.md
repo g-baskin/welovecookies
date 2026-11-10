@@ -25,7 +25,7 @@ sources:
 
 ## Answer
 
-Unanswered. `limited()` returns false when `env.PUBLIC_LIMITER` is absent (`admin/src/index.ts:94`), so `/api/consent*` has no per-IP limit then. The shipped `admin/wrangler.jsonc:20` defines it, and the limit is per Cloudflare location (`admin/wrangler.jsonc:18`). The tracking check (`admin/src/tracking.ts:42-112`) does not report a missing binding. Needs an owner decision; not a bug claim.
+Unanswered. `limited()` returns false when `env.PUBLIC_LIMITER` is absent (`admin/src/index.ts:94`), so `/api/consent*` has no per-IP limit then. The shipped `admin/wrangler.jsonc:20` defines it, and the limit is per Cloudflare location (`admin/wrangler.jsonc:18`). The tracking check (`admin/src/tracking.ts:43-113`) does not report a missing binding. Needs an owner decision; not a bug claim.
 
 ## Confidence
 

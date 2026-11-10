@@ -29,6 +29,7 @@ Line numbers drift as code changes. When you change a module, check its page. De
 | [consent-ui-css](entities/consent-ui-css.md) | `ui-css.ts` |
 | [consent-signals](entities/consent-signals.md) | `signals.ts`: vendor consent signals |
 | [consent-autoclear](entities/consent-autoclear.md) | `autoclear.ts` |
+| [consent-trackers](entities/consent-trackers.md) | `trackers.ts`: holds known trackers added by other scripts |
 | [consent-i18n](entities/consent-i18n.md) | `i18n.ts` |
 | [consent-i18n-rows](entities/consent-i18n-rows.md) | `i18n/row.ts`, `i18n/a.ts`–`d.ts`: positional text rows |
 | [consent-wiretap](entities/consent-wiretap.md) | `wiretap.ts`: helper for buyers, not called by the banner |

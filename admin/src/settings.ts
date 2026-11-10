@@ -69,7 +69,11 @@ export const INTEGRATIONS = [
 	{ key: 'meta', label: 'Meta Pixel' },
 	{ key: 'tiktok', label: 'TikTok Pixel' },
 	{ key: 'posthog', label: 'PostHog' },
-	{ key: 'scriptBlocking', label: 'Hold back tagged scripts until allowed (data-consent)' }
+	{ key: 'scriptBlocking', label: 'Hold back tagged scripts until allowed (data-consent)' },
+	{
+		key: 'knownTrackers',
+		label: 'Hold back known trackers added by other scripts (Hotjar, Clarity, LinkedIn, ...)'
+	}
 ] as const satisfies readonly { key: keyof ConsentIntegrations; label: string }[];
 
 export interface SiteSettings {
@@ -111,7 +115,8 @@ export const defaultSettings = (): SiteSettings => ({
 		meta: false,
 		tiktok: false,
 		posthog: false,
-		scriptBlocking: true
+		scriptBlocking: true,
+		knownTrackers: true
 	}
 });
 

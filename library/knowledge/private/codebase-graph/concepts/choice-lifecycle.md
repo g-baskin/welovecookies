@@ -19,8 +19,8 @@ related:
   - "[[concepts/hosted-install-flow]]"
 sources:
   - "src/lib/consent/consent.ts:209-262"
-  - "src/lib/consent/consent.ts:315-355"
-  - "src/lib/consent/signals.ts:98-124"
+  - "src/lib/consent/consent.ts:315-356"
+  - "src/lib/consent/signals.ts:102-131"
   - "src/lib/consent/autoclear.ts:111-139"
   - "src/lib/consent/types.ts:71-94"
 ---
@@ -31,8 +31,8 @@ sources:
 ## Before any click (init)
 
 1. Read the newest valid cookie copy and compute effective grants (`src/lib/consent/consent.ts:130-131`).
-2. `applyDefaults` from the mode rule, with marketing off under GPC, then `applyGrants` (PostHog stays `pending` while an ask-first choice is missing), then auto-clear (`src/lib/consent/consent.ts:315-327`). This runs before the UI, so tags placed after the script see the defaults.
-3. Mount the UI once `<body>` exists. A non-ask-first mode with GPC and no choice records action `gpc` silently. Otherwise `bannerFor` decides the banner (`src/lib/consent/consent.ts:329-355`).
+2. `applyDefaults` from the mode rule, with marketing off under GPC, then `applyGrants` (PostHog stays `pending` while an ask-first choice is missing), then auto-clear (`src/lib/consent/consent.ts:315-328`). This runs before the UI, so tags placed after the script see the defaults.
+3. Mount the UI once `<body>` exists. A non-ask-first mode with GPC and no choice records action `gpc` silently. Otherwise `bannerFor` decides the banner (`src/lib/consent/consent.ts:330-356`).
 
 ## On a click (`choose`, `src/lib/consent/consent.ts:209-262`)
 

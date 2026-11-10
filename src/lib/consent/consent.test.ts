@@ -135,6 +135,22 @@ describe('consent manager', () => {
 		expect(decodeConsent(readCookie(t.jar(), 'wlc_consent'))?.grants.marketing).toBe(false);
 	});
 
+	it('hooks createElement for known trackers unless knownTrackers is off', () => {
+		const made = () => {
+			const createElement = () => ({});
+			return { createElement, cookie: '', body: null, addEventListener() {} };
+		};
+		const root = (document: ReturnType<typeof made>) =>
+			({ document, location: { pathname: '/', protocol: 'https:' }, navigator: {}, innerWidth: 1440 }) as unknown as ConsentWindow; // prettier-ignore
+		const on = made();
+		const before = on.createElement;
+		createConsent({ mode: 'opt-in', rev: 1 }, { root: root(on), ui: false });
+		expect(on.createElement).not.toBe(before);
+		const off = made();
+		const native = off.createElement;
+		createConsent({ mode: 'opt-in', rev: 1, integrations: { knownTrackers: false } }, { root: root(off), ui: false }); // prettier-ignore
+		expect(off.createElement).toBe(native);
+	});
 	it('never throws on a broken environment', () => {
 		expect(() =>
 			createConsent({ mode: 'opt-in', rev: 1 }, { root: {} as ConsentWindow, ui: false })

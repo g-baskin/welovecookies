@@ -31,7 +31,7 @@ sources:
 
 ## Overview
 
-A helper for buyers covering US all-party-consent states. There, an identifying tag (one that identifies visitors or records sessions) needs an explicit Accept (`src/lib/consent/wiretap.ts:4-5`). **The banner never calls it.** No consent module imports it, and the ESM barrel does not export it (`src/lib/consent/index.ts:1-19`).
+A helper for buyers covering US all-party-consent states. There, an identifying tag (one that identifies visitors or records sessions) needs an explicit Accept (`src/lib/consent/wiretap.ts:4-5`). **The banner never calls it.** No consent module imports it, and the ESM barrel does not export it (`src/lib/consent/index.ts:1-20`).
 
 ## Signature / Definition
 

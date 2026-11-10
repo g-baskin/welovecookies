@@ -10,6 +10,7 @@ language: ts
 depends_on:
   - "[[entities/consent-manager]]"
   - "[[entities/consent-signals]]"
+  - "[[entities/consent-trackers]]"
   - "[[entities/consent-types]]"
 used_by: []
 last_commit_hash: "f14f71e"
@@ -26,7 +27,7 @@ related:
   - "[[concepts/config-precedence]]"
   - "[[concepts/choice-lifecycle]]"
 sources:
-  - "src/lib/consent/standalone.ts:1-105"
+  - "src/lib/consent/standalone.ts:1-110"
 ---
 # standalone.ts
 
@@ -47,14 +48,14 @@ window.WeLoveCookies: Partial<ConsentManager> & { init(c?, o?): ConsentManager }
 
 ## Behavior
 
-- `init` destroys any earlier manager and merges `{mode:'auto', rev:1, floatingButton:true}`, then `fromScript`, then `WeLoveCookiesConfig`, then the `init` args. It then copies the manager's methods onto the global (`src/lib/consent/standalone.ts:77-92`). See [[concepts/config-precedence]].
-- `fromScript` reads `data-mode/rev/lang/position/floating/preferences/avoid/gpc/record/seen/privacy/cookies-page/choices` (`src/lib/consent/standalone.ts:56-72`).
-- **Hosted install** (`data-site` set and `script.src` present): first `hostedDefaults` sets Google and UET to denied (`src/lib/consent/standalone.ts:51-54`). Then `loadHosted` fetches `/api/consent/config?site=` from the script's origin with `credentials:'omit'` (`src/lib/consent/standalone.ts:30-49`), and the result is passed as the `init` args (`src/lib/consent/standalone.ts:95-101`). On any failure it falls back to `{mode:'auto', rev:1, floatingButton:true, site}` (`src/lib/consent/standalone.ts:35`).
-- `data-auto="false"` skips the automatic start, including on the hosted path, where the fetch still happens but `init` is not called (`src/lib/consent/standalone.ts:100-104`).
+- `init` destroys any earlier manager and merges `{mode:'auto', rev:1, floatingButton:true}`, then `fromScript`, then `WeLoveCookiesConfig`, then the `init` args. It then copies the manager's methods onto the global (`src/lib/consent/standalone.ts:82-97`). See [[concepts/config-precedence]].
+- `fromScript` reads `data-mode/rev/lang/position/floating/preferences/avoid/gpc/record/seen/privacy/cookies-page/choices` (`src/lib/consent/standalone.ts:61-77`).
+- **Hosted install** (`data-site` set and `script.src` present): first `hostedDefaults` sets Google and UET to denied and starts holding known trackers with everything denied (`src/lib/consent/standalone.ts:52-59`). Then `loadHosted` fetches `/api/consent/config?site=` from the script's origin with `credentials:'omit'` (`src/lib/consent/standalone.ts:31-50`), and the result is passed as the `init` args (`src/lib/consent/standalone.ts:100-106`). On any failure it falls back to `{mode:'auto', rev:1, floatingButton:true, site}` (`src/lib/consent/standalone.ts:36`).
+- `data-auto="false"` skips the automatic start, including on the hosted path, where the fetch still happens but `init` is not called (`src/lib/consent/standalone.ts:105-109`).
 
 ## Connections
 
-- **depends_on:** [[entities/consent-manager]], [[entities/consent-signals]], [[entities/consent-types]]
+- **depends_on:** [[entities/consent-manager]], [[entities/consent-signals]], [[entities/consent-trackers]], [[entities/consent-types]]
 - **used_by:** none by import; it is a build entry point (`tools/build-consent.mjs:33-38`)
 - **related concepts:** [[concepts/config-precedence]]
 

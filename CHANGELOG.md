@@ -12,6 +12,24 @@ was published to any package registry.
 
 ## [Unreleased]
 
+### Added
+
+- Known trackers that other scripts add after the page loads (Hotjar,
+  Microsoft Clarity, Mixpanel, Segment, Matomo Cloud, LinkedIn, Pinterest,
+  Snap, Reddit and X) now wait until their category is allowed, even when a
+  tag manager or plugin adds them. A tracker added by code makes no request
+  before consent. Add your own hosts with `blockScripts`. Decision: ADR 0009.
+- Admin: a "Hold back known trackers added by other scripts" switch per site
+  (on by default, also for sites saved before).
+
+### Changed
+
+- **Behaviour change:** in ask-first regions, the trackers above no longer
+  run before the visitor allows their category. To keep the old behaviour,
+  set `integrations: { knownTrackers: false }`. Load the banner script before
+  other tags so it can hold them.
+- The banner is about 1.6 KB larger (about 25 KB gzipped).
+
 ## [1.2.0] - 2026-11-09
 
 ### Added

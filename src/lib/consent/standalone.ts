@@ -6,6 +6,7 @@
  */
 import { createConsent, type ConsentManager, type ConsentOptions } from './consent.ts';
 import { applyDefaults, type SignalTarget } from './signals.ts';
+import { holdTrackers } from './trackers.ts';
 import {
 	HOSTED_CONFIG_PATH,
 	NONE_GRANTED,
@@ -48,9 +49,13 @@ export async function loadHosted(
 	}
 }
 
-/** Safe until the hosted config arrives: Google Consent Mode and Microsoft UET default to denied. */
+/**
+ * Safe until the hosted config arrives: Google Consent Mode and Microsoft UET default to denied,
+ * and known trackers are held (the config's grants then release them or keep them held).
+ */
 export function hostedDefaults(w: SignalTarget): void {
-	applyDefaults(w, { ...NONE_GRANTED }, { googleConsentMode: true, microsoftUet: true, meta: false, tiktok: false, posthog: false, scriptBlocking: false }); // prettier-ignore
+	applyDefaults(w, { ...NONE_GRANTED }, { googleConsentMode: true, microsoftUet: true, meta: false, tiktok: false, posthog: false, scriptBlocking: false, knownTrackers: false }); // prettier-ignore
+	holdTrackers(w, { ...NONE_GRANTED });
 }
 
 export function fromScript(s: HTMLScriptElement | null): Partial<ConsentConfig> {

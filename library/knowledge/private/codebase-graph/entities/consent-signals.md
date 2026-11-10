@@ -9,6 +9,7 @@ path: "src/lib/consent/signals.ts"
 language: ts
 depends_on:
   - "[[entities/consent-types]]"
+  - "[[entities/consent-trackers]]"
 used_by:
   - "[[entities/consent-manager]]"
   - "[[entities/consent-standalone]]"
@@ -25,7 +26,7 @@ tags:
 related:
   - "[[concepts/choice-lifecycle]]"
 sources:
-  - "src/lib/consent/signals.ts:1-159"
+  - "src/lib/consent/signals.ts:1-166"
 ---
 # signals.ts
 
@@ -33,7 +34,7 @@ sources:
 
 ## Overview
 
-Passes grants on to vendors through their globals. It never imports vendor SDKs, and every call is wrapped so that a missing or failing vendor never throws (`src/lib/consent/signals.ts:1-4`, `src/lib/consent/signals.ts:38-44`). "Google Consent Mode" here means Google's API, not a region mode.
+Passes grants on to vendors through their globals. It never imports vendor SDKs, and every call is wrapped so that a missing or failing vendor never throws (`src/lib/consent/signals.ts:1-4`, `src/lib/consent/signals.ts:40-46`). "Google Consent Mode" here means Google's API, not a region mode.
 
 ## Signature / Definition
 
@@ -43,24 +44,24 @@ export interface SignalTarget { dataLayer?; gtag?; uetq?; fbq?; ttq?; posthog?; 
 export const DEFAULT_INTEGRATIONS: ConsentIntegrations;   // all true
 export function googleState(grants);
 export function applyDefaults(w, grants, int?);
-export function applyGrants(w, grants, int?, opts?: { posthog?, pending?, event? });
+export function applyGrants(w, grants, int?, opts?: { posthog?, pending?, event?, blockScripts? });
 export function applyPostHog(ph, analytics);
 export function activateScripts(doc, grants);
 ```
 
 ## Behavior
 
-- Every integration is on unless set to `false` (`src/lib/consent/signals.ts:28-35`).
-- `googleState`: the three `ad_*` keys follow marketing, `analytics_storage` follows analytics, `personalization_storage` follows preferences, and functionality and security are always granted (`src/lib/consent/signals.ts:46-56`).
-- `ensureGtag` creates `dataLayer` and a `gtag` that pushes `arguments`, because gtag.js reads the Arguments object (`src/lib/consent/signals.ts:58-69`).
-- `applyDefaults`: gtag `consent default` with `wait_for_update: 500`, UET `consent default`, and TikTok `holdConsent` (`src/lib/consent/signals.ts:71-88`).
-- `applyGrants`: gtag and UET `update`, then Meta `fbq('consent', grant|revoke)` and TikTok grant/revoke. PostHog is skipped while `pending`. It pushes the `welovecookies_update` event to dataLayer unless `event: false`, then runs script blocking (`src/lib/consent/signals.ts:98-124`).
-- `applyPostHog`: opts in when analytics is on. When it is off and the visitor had opted in, it calls `reset()` then `opt_out_capturing()`, and otherwise opts out unless already denied (`src/lib/consent/signals.ts:126-135`).
-- `activateScripts` clones `script[type=text/plain][data-consent]` into a real script once every listed category is allowed. It marks the original `data-consent-activated` so it never runs twice, and honours `data-src` and `data-type` (`src/lib/consent/signals.ts:137-159`).
+- Every integration is on unless set to `false` (`src/lib/consent/signals.ts:29-37`).
+- `googleState`: the three `ad_*` keys follow marketing, `analytics_storage` follows analytics, `personalization_storage` follows preferences, and functionality and security are always granted (`src/lib/consent/signals.ts:48-58`).
+- `ensureGtag` creates `dataLayer` and a `gtag` that pushes `arguments`, because gtag.js reads the Arguments object (`src/lib/consent/signals.ts:60-71`).
+- `applyDefaults`: gtag `consent default` with `wait_for_update: 500`, UET `consent default`, and TikTok `holdConsent` (`src/lib/consent/signals.ts:73-90`).
+- `applyGrants`: gtag and UET `update`, then Meta `fbq('consent', grant|revoke)` and TikTok grant/revoke. PostHog is skipped while `pending`. It pushes the `welovecookies_update` event to dataLayer unless `event: false`, then holds or releases known trackers (`holdTrackers`, or `stopHolding` when `knownTrackers` is off) and only then runs script blocking. A released tracker is restored in place, so it no longer matches `type="text/plain"` and never runs twice (`src/lib/consent/signals.ts:102-131`).
+- `applyPostHog`: opts in when analytics is on. When it is off and the visitor had opted in, it calls `reset()` then `opt_out_capturing()`, and otherwise opts out unless already denied (`src/lib/consent/signals.ts:133-142`).
+- `activateScripts` clones `script[type=text/plain][data-consent]` into a real script once every listed category is allowed. It marks the original `data-consent-activated` so it never runs twice, and honours `data-src` and `data-type` (`src/lib/consent/signals.ts:144-166`).
 
 ## Connections
 
-- **depends_on:** [[entities/consent-types]]
+- **depends_on:** [[entities/consent-types]], [[entities/consent-trackers]] (`holdTrackers`, `stopHolding`)
 - **used_by:** [[entities/consent-manager]], [[entities/consent-standalone]] (`hostedDefaults`), [[entities/consent-index]], [[entities/consent-svelte-component]] (type only)
 - **related concepts:** [[concepts/choice-lifecycle]]
 

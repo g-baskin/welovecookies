@@ -200,6 +200,11 @@ export interface ConsentIntegrations {
 	posthog: boolean;
 	/** Activate <script type="text/plain" data-consent="analytics|marketing|preferences"> when allowed. */
 	scriptBlocking: boolean;
+	/**
+	 * Hold well-known trackers (Hotjar, Clarity, LinkedIn...; trackers.ts) that other scripts add
+	 * after the banner loaded, until their category is allowed. On by default.
+	 */
+	knownTrackers: boolean;
 }
 
 /** Everything the browser core needs: from the page, the script tag, or a server per request. */
@@ -244,6 +249,11 @@ export interface ConsentConfig {
 	 * prefix). Never shown to people. Added to the built-in list in autoclear.ts.
 	 */
 	autoClear?: Partial<Record<OptionalCategory, string[]>>;
+	/**
+	 * Extra script hosts to hold until a category is allowed, as `host` or `host/path-prefix`
+	 * (subdomains included). Added to the built-in list in trackers.ts; needs `knownTrackers` on.
+	 */
+	blockScripts?: Partial<Record<OptionalCategory, string[]>>;
 	/** Site key for the hosted install, sent with every record. */
 	site?: string;
 	/** Path prefixes where the banner is compact and the floating button hidden (e.g. "/signup"). */
