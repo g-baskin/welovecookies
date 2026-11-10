@@ -1,4 +1,4 @@
-# Optional admin (Cloudflare)
+# Optional admin
 
 The banner works on its own with one script tag. The admin is an **optional add-on** for owners who want, in one place:
 
@@ -10,7 +10,16 @@ The banner works on its own with one script tag. The admin is an **optional add-
 - **Tracking & compliance check**: a daily list of common gaps
 - **Several websites** under one admin, each with its own settings and records
 
-It runs on **your own Cloudflare account** as a Worker with a D1 database. Nobody else, including the We Love Cookies author, can see your data. Sites that don't need it keep using the plain script tag.
+It runs on infrastructure **you** control. Nobody else, including the We Love Cookies author, can see your data. Sites that don't need it keep using the plain script tag. Pick where it runs:
+
+| | Cloudflare (this page) | Your own server ([ADMIN-SELF-HOSTED.md](ADMIN-SELF-HOSTED.md)) |
+| --- | --- | --- |
+| Runs as | A Worker and a D1 database on your Cloudflare account | One Node.js process and a SQLite file, or Docker with automatic HTTPS |
+| You look after | Nothing beyond updates | The server, HTTPS, updates and backups |
+| Visitor location for the region rules | Built in | From your CDN or proxy's headers, otherwise the strictest rules for everyone |
+| Cost | Free tier covers small sites | Your server |
+
+Don't want an admin at all? The banner can send each choice to an endpoint on a server you already run: [RECORDS.md](RECORDS.md).
 
 > Engineering defaults, not legal advice. The admin helps you keep records and answer requests; it does not make a website compliant by itself.
 
@@ -24,16 +33,16 @@ It runs on **your own Cloudflare account** as a Worker with a D1 database. Nobod
 | Privacy requests: email, optional name and message, country, dates, your status and note | `privacy_requests` | Until you delete them |
 | Failed sign-ins and request-form posts: a keyed hash of the IP address, the kind and the time (for rate limits) | `rate_events` | 1 day |
 
-**No IP address is ever stored.** The country and region come from Cloudflare's view of the connection and are used to pick the region rules.
+**No IP address is ever stored.** The country and region come from Cloudflare's view of the connection (on your own server, from the [location headers](ADMIN-SELF-HOSTED.md#visitor-location) you set up) and are used to pick the region rules.
 
 Things to do on your side:
 
-- Mention the consent records and the request form in your privacy policy, and name Cloudflare as the provider that hosts them.
+- Mention the consent records and the request form in your privacy policy, and name Cloudflare (or your server's hosting company) as the provider that hosts them.
 - 5 years is a default (long enough to show proof of consent in most places). If your lawyer advises a different period, change `RETENTION_YEARS` in `admin/src/log.ts` and deploy.
 
 ## Set it up (about 10 minutes)
 
-You need Node 22 or newer, this repository, and a free Cloudflare account. Run the commands from the repository folder.
+These steps are for Cloudflare. For your own server, follow [ADMIN-SELF-HOSTED.md](ADMIN-SELF-HOSTED.md) instead. You need Node 22 or newer, this repository, and a free Cloudflare account. Run the commands from the repository folder.
 
 **1. Install and sign in to Cloudflare**
 
@@ -139,4 +148,4 @@ To test the banner from a local page, add `http://localhost:<port>` as a website
 | `GET`, `POST /privacy/<key>` | Visitors: the "Ask about your data" form |
 | `/admin/*` | You |
 
-Cross-origin access is allowed only for each website's exact address, never with cookies. Request and response formats, status codes and limits for the `/api/consent*` endpoints: [`docs/api/openapi.json`](api/openapi.json) (OpenAPI 3.1). Code: `admin/src/`. Decision: [ADR 0007](decisions/0007-admin-on-cloudflare.md).
+Cross-origin access is allowed only for each website's exact address, never with cookies. Request and response formats, status codes and limits for the `/api/consent*` endpoints: [`docs/api/openapi.json`](api/openapi.json) (OpenAPI 3.1). Code: `admin/src/`. Decisions: [ADR 0007](decisions/0007-admin-on-cloudflare.md) (Cloudflare) and [ADR 0008](decisions/0008-self-hosted-admin.md) (your own server).

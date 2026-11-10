@@ -9,6 +9,7 @@ path: admin/src/test-d1.ts
 language: ts
 depends_on:
   - "[[entities/admin-db]]"
+  - "[[entities/admin-sqlite]]"
 used_by: []
 last_commit_hash: baf8b7a
 tested_by: []
@@ -19,7 +20,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/test-d1.ts:1-68
+  - admin/src/test-d1.ts:1-40
   - admin/migrations/0001_init.sql
 ---
 
@@ -29,30 +30,29 @@ sources:
 
 ## Overview
 
-Test-only D1 stand-in: runs the real migration SQL on an in-memory `node:sqlite` database (`admin/src/test-d1.ts:1`). Imported by every admin `*.test.ts` that touches the DB.
+Test-only D1 stand-in: runs the real migrations on an in-memory `node:sqlite` database through [[entities/admin-sqlite]], the same code the self-hosted admin uses (`admin/src/test-d1.ts:1-8`). Imported by every admin `*.test.ts` that touches the DB.
 
 ## Signature / Definition
 
 ```ts
-const MIGRATIONS = ['0001_init.sql'].map(read)
-export function testDb(): Db & { sql: DatabaseSync }
+export function testDb(): SqliteDb // openSqlite(':memory:') + migrate()
 export const TEST_KEY: string; export const TEST_ORIGIN = 'https://example.com'
 export function addTestSite(db, o?): string
 ```
 
 ## Behavior
 
-- Turns on `PRAGMA foreign_keys` and executes each listed migration (`admin/src/test-d1.ts:6-13`).
-- `batch` wraps statements in `BEGIN`/`COMMIT`, `ROLLBACK` on error, mimicking D1's atomic batch (`admin/src/test-d1.ts:24-34`).
+- `testDb` opens `:memory:` with `openSqlite` (foreign keys on, atomic `batch`) and runs `migrate()` over every file in `admin/migrations/` (`admin/src/test-d1.ts:4-8`).
+- `addTestSite` inserts a site row straight through `db.sql` (`admin/src/test-d1.ts:13-40`).
 
 ## Gotchas
 
 - **Not real D1.** Tests prove SQL on `node:sqlite`; keep to SQL both engines support.
-- **New migrations must be listed** in `MIGRATIONS` (`admin/src/test-d1.ts:6`), or tests run against the old schema. Migrations are forward-only: add a new numbered migration (0002_name.sql), never edit `admin/migrations/0001_init.sql` (`admin/migrations/0001_init.sql:1-2`). See [[entities/admin-data-model]].
+- **New migrations are picked up automatically** by `migrate()`; no list to update. Migrations are forward-only: add a new numbered migration (0002_name.sql), never edit `admin/migrations/0001_init.sql` (`admin/migrations/0001_init.sql:1-2`). See [[entities/admin-data-model]].
 
 ## Connections
 
-- **depends_on:** [[entities/admin-db]]
+- **depends_on:** [[entities/admin-db]], [[entities/admin-sqlite]]
 - **used_by:** none (no non-test importer)
 
 ## Tested by
@@ -65,5 +65,5 @@ export function addTestSite(db, o?): string
 
 ## Sources
 
-- `admin/src/test-d1.ts:1-68`
+- `admin/src/test-d1.ts:1-40`
 - `admin/migrations/0001_init.sql`

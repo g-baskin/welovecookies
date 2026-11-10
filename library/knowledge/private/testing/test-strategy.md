@@ -30,7 +30,7 @@ Two tests guard what ships:
 
 ## Admin
 
-Admin tests run the real migration SQL on an in-memory `node:sqlite` database, not D1 (`admin/src/test-d1.ts:3`, [admin-test-d1](../codebase-graph/entities/admin-test-d1.md)). New migrations must be added to `MIGRATIONS` (`admin/src/test-d1.ts:6`), and SQL must work on both engines.
+Admin tests run the real migration SQL on an in-memory `node:sqlite` database, not D1 (`admin/src/test-d1.ts:4-8`, [admin-test-d1](../codebase-graph/entities/admin-test-d1.md)), using the same `migrate()` as the self-hosted admin ([admin-sqlite](../codebase-graph/entities/admin-sqlite.md)), so new migration files are picked up automatically. SQL must work on both engines. The self-hosted HTTP glue is tested over real `node:http` sockets (`admin/src/node/http.test.ts`).
 
 Coverage by file: `auth.test.ts` (session cookie, sign-in limit, same-origin posts), `cors.test.ts` (exact-origin CORS, no credentials or wildcard), `data.test.ts` (settings, sites, privacy requests, CSV formula defusing, retention purge, tracking check), `index.test.ts` (routed sign-in and admin pages, escaping), `public.test.ts` (public config, record, seen and privacy-form endpoints), and `review.test.ts` (regression tests for security and quality review fixes).
 

@@ -2,6 +2,8 @@
 dist/
 admin/public/
 admin/.wrangler/
+admin/node-dist/
+admin/data/
 admin/wrangler.jsonc
 wordpress/
 library/

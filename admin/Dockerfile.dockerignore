@@ -1,0 +1,11 @@
+# Only what admin/Dockerfile needs, so no secrets (.env, .dev.vars) or local data reach the build.
+**
+!package.json
+!package-lock.json
+!.npmrc
+!tsconfig.json
+!admin/src/
+!admin/migrations/
+!src/lib/consent/
+!dist/welovecookies.min.js
+**/*.test.ts

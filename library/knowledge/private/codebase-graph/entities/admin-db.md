@@ -21,6 +21,8 @@ used_by:
   - "[[entities/admin-sites]]"
   - "[[entities/admin-tracking]]"
   - "[[entities/admin-test-d1]]"
+  - "[[entities/admin-sqlite]]"
+  - "[[entities/admin-node]]"
   - "[[entities/admin-pages-layout]]"
   - "[[entities/admin-pages-login]]"
   - "[[entities/admin-pages-records]]"
@@ -46,7 +48,7 @@ sources:
 
 ## Overview
 
-The small part of the D1 API the Worker uses, so tests can run the same SQL on `node:sqlite` via [[entities/admin-test-d1]] (`admin/src/db.ts:1`). Tables: [[entities/admin-data-model]].
+The small part of the D1 API the Worker uses, so tests and the self-hosted admin can run the same SQL on `node:sqlite` via [[entities/admin-sqlite]] (`admin/src/db.ts:1`). Tables: [[entities/admin-data-model]].
 
 ## Signature / Definition
 
@@ -69,7 +71,7 @@ export async function getSite(db, key); listSiteRows(db); enabledSiteByOrigin(db
 ## Connections
 
 - **depends_on:** none
-- **used_by:** [[entities/admin-index]], [[entities/admin-auth]], [[entities/admin-config]], [[entities/admin-cors]], [[entities/admin-log]], [[entities/admin-privacy]], [[entities/admin-record]], [[entities/admin-requests]], [[entities/admin-settings]], [[entities/admin-sites]], [[entities/admin-tracking]], [[entities/admin-test-d1]], [[entities/admin-pages-layout]], [[entities/admin-pages-login]], [[entities/admin-pages-records]], [[entities/admin-pages-sites]]
+- **used_by:** [[entities/admin-index]], [[entities/admin-auth]], [[entities/admin-config]], [[entities/admin-cors]], [[entities/admin-log]], [[entities/admin-privacy]], [[entities/admin-record]], [[entities/admin-requests]], [[entities/admin-settings]], [[entities/admin-sites]], [[entities/admin-tracking]], [[entities/admin-test-d1]], [[entities/admin-sqlite]], [[entities/admin-node]], [[entities/admin-pages-layout]], [[entities/admin-pages-login]], [[entities/admin-pages-records]], [[entities/admin-pages-sites]]
 
 ## Tested by
 

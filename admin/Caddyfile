@@ -1,0 +1,9 @@
+# HTTPS for the self-hosted admin. Caddy gets the certificate for WLC_DOMAIN automatically
+# (the domain's DNS must point at this server and ports 80/443 must be open).
+# Caddy replaces any visitor-sent X-Forwarded-For with the real address, which the admin reads
+# (WLC_TRUST_PROXY=1 in compose.yaml).
+{$WLC_DOMAIN} {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy admin:8787
+}
