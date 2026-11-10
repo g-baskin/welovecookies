@@ -8,11 +8,12 @@
 
 We Love Cookies is a cookie consent banner for any website. Add one file and it shows every visitor the banner their own location calls for: ask-first in the EU, UK, Brazil and other opt-in countries, a short notice with "Do Not Sell or Share" in US privacy-law states, and nothing in the way where no consent is needed. Analytics and ad tags wait until they are allowed, Global Privacy Control is honoured, and tracking cookies are cleared the moment someone says no.
 
-It is one small JavaScript file (about 23 KB gzipped). If your site can put a script in the page `<head>`, it can use We Love Cookies: plain HTML, React, Next.js, Vue, Nuxt, Svelte, SvelteKit, Angular, Astro, static site generators, server-rendered apps (Laravel, Rails, Django, PHP) and site builders. No account, no monthly fee, no outside requests.
+It is one small JavaScript file (about 25 KB gzipped). If your site can put a script in the page `<head>`, it can use We Love Cookies: plain HTML, React, Next.js, Vue, Nuxt, Svelte, SvelteKit, Angular, Astro, static site generators, server-rendered apps (Laravel, Rails, Django, PHP) and site builders. No account, no monthly fee, no outside requests.
 
 - **Rules for 57 countries, Quebec and every US state** (any other country gets the strict ask-first banner), backed by a dated law matrix with sources
 - **US wiretap protection**: tags that identify visitors or record sessions can be held until an explicit Accept in all-party-consent states
 - **Works with the tools you already use**: Google Consent Mode v2, Google Tag Manager, Microsoft UET, Meta, TikTok and PostHog
+- **Holds known trackers**: Hotjar, Clarity, LinkedIn and other well-known trackers wait for consent, even when a tag manager or plugin adds them
 - **Auto-clear**: known analytics and ad cookies are deleted as soon as a category is switched off
 - **20 languages** (including right-to-left Arabic), phone, tablet and desktop layouts, and colours that match your site
 - **Proof of consent**: send every choice to your own endpoint to keep a record ([how](docs/RECORDS.md)), or use the optional admin

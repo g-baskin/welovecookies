@@ -13,6 +13,7 @@ used_by:
   - "[[entities/consent-regions]]"
   - "[[entities/consent-cookie]]"
   - "[[entities/consent-signals]]"
+  - "[[entities/consent-trackers]]"
   - "[[entities/consent-ui]]"
   - "[[entities/consent-autoclear]]"
   - "[[entities/consent-i18n]]"
@@ -40,7 +41,7 @@ related:
   - "[[concepts/choice-lifecycle]]"
 sources:
   - "src/lib/consent/types.ts:1-111"
-  - "src/lib/consent/types.ts:113-256"
+  - "src/lib/consent/types.ts:113-266"
 ---
 # types.ts
 
@@ -60,17 +61,18 @@ DEVICES / Device                                                             // 
 StoredConsent, ConsentRecordPayload, ConsentRecordResponse, ConsentSeenPayload // :58-103
 HOSTED_CONFIG_PATH = '/api/consent/config'                                   // :111
 CookieInfo, ConsentTexts, ConsentTextOverrides, ConsentTheme                 // :114-181
-BANNER_POSITIONS, ConsentIntegrations, ConsentConfig                         // :187-253
-CONSENT_COOKIE_NAME = 'wlc_consent'                                          // :256
+BANNER_POSITIONS, ConsentIntegrations, ConsentConfig                         // :187-263
+CONSENT_COOKIE_NAME = 'wlc_consent'                                          // :266
 ```
 
 ## Behavior
 
 - `necessary` is always on and is never stored. `Grants` covers only the three optional categories (`src/lib/consent/types.ts:8-17`).
 - `ConsentRecordPayload.page` is the path only, never the query string. `site` is set on a hosted install (`src/lib/consent/types.ts:72-89`). The server may correct the choice in `ConsentRecordResponse` (`src/lib/consent/types.ts:90-94`).
-- `ConsentConfig.mode` accepts `'auto'`, which guesses from the browser time zone (`src/lib/consent/types.ts:207-208`). `country` and `region` are declared but the manager does not read them (no use in `src/lib/consent/consent.ts`).
+- `ConsentConfig.mode` accepts `'auto'`, which guesses from the browser time zone (`src/lib/consent/types.ts:212-213`). `country` and `region` are declared but the manager does not read them (no use in `src/lib/consent/consent.ts`).
 - The `opt-in-light` doc comment notes India's lighter rules "until 2027" (`src/lib/consent/types.ts:23`). This is dated legal data.
-- `cookieDomain` defaults to `'auto'` (`src/lib/consent/types.ts:232-236`). `autoClear` adds to the built-in list (`src/lib/consent/types.ts:242-246`).
+- `cookieDomain` defaults to `'auto'` (`src/lib/consent/types.ts:237-241`). `autoClear` adds to the built-in list (`src/lib/consent/types.ts:247-251`).
+- `ConsentIntegrations.knownTrackers` turns on holding known trackers that other scripts add (`src/lib/consent/types.ts:203-207`). `blockScripts` adds the owner's own script hosts to that list (`src/lib/consent/types.ts:252-256`); see [[entities/consent-trackers]].
 
 ## Connections
 

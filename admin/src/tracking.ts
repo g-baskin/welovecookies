@@ -18,7 +18,8 @@ export const INTEGRATION_CATEGORIES: Record<keyof ConsentIntegrations, ConsentCa
 	meta: ['marketing'],
 	tiktok: ['marketing'],
 	posthog: ['analytics'],
-	scriptBlocking: []
+	scriptBlocking: [],
+	knownTrackers: []
 };
 
 export interface TrackingFacts {

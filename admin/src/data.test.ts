@@ -45,6 +45,14 @@ describe('settings', () => {
 		expect(s.integrations.scriptBlocking).toBe(true);
 		expect(parseSettings('not json')).toEqual(defaultSettings());
 	});
+	it('holds known trackers by default, also for settings saved before the option existed', () => {
+		expect(defaultSettings().integrations.knownTrackers).toBe(true);
+		const old = { integrations: { googleConsentMode: true, scriptBlocking: true } };
+		expect(parseSettings(JSON.stringify(old)).integrations.knownTrackers).toBe(true);
+		expect(
+			parseSettings({ integrations: { knownTrackers: false } }).integrations.knownTrackers
+		).toBe(false);
+	});
 	it('validates cookie rows in plain words', () => {
 		expect(
 			parseCookie({

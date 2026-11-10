@@ -14,6 +14,7 @@ depends_on:
   - "[[entities/consent-i18n]]"
   - "[[entities/consent-device]]"
   - "[[entities/consent-signals]]"
+  - "[[entities/consent-trackers]]"
   - "[[entities/consent-manager]]"
 used_by: []
 last_commit_hash: "888ca73"
@@ -26,7 +27,7 @@ tags:
   - "partial_scan"
 related: []
 sources:
-  - "src/lib/consent/index.ts:1-19"
+  - "src/lib/consent/index.ts:1-20"
 ---
 # index.ts (ESM API)
 
@@ -34,7 +35,7 @@ sources:
 
 ## Overview
 
-The public ESM barrel, built into `dist/welovecookies.mjs` (`tools/build-consent.mjs:43`). It re-exports all of `types`, `regions` and `cookie` (`src/lib/consent/index.ts:1-3`), plus picked symbols from `i18n`, `device`, `signals` and `consent` (`src/lib/consent/index.ts:4-19`).
+The public ESM barrel, built into `dist/welovecookies.mjs` (`tools/build-consent.mjs:43`). It re-exports all of `types`, `regions` and `cookie` (`src/lib/consent/index.ts:1-3`), plus picked symbols from `i18n`, `device`, `signals`, `trackers` and `consent` (`src/lib/consent/index.ts:4-20`).
 
 ## Notes
 
@@ -43,7 +44,7 @@ The public ESM barrel, built into `dist/welovecookies.mjs` (`tools/build-consent
 
 ## Connections
 
-- **depends_on:** [[entities/consent-types]], [[entities/consent-regions]], [[entities/consent-cookie]], [[entities/consent-i18n]], [[entities/consent-device]], [[entities/consent-signals]], [[entities/consent-manager]]
+- **depends_on:** [[entities/consent-types]], [[entities/consent-regions]], [[entities/consent-cookie]], [[entities/consent-i18n]], [[entities/consent-device]], [[entities/consent-signals]], [[entities/consent-trackers]], [[entities/consent-manager]]
 - **used_by:** build entry point only
 
 ## Tested by

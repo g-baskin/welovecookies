@@ -16,7 +16,7 @@ related:
 sources:
   - "src/lib/consent/cookie.ts:1-77"
   - "src/lib/consent/types.ts:57-69"
-  - "src/lib/consent/types.ts:255-256"
+  - "src/lib/consent/types.ts:265-266"
   - "src/lib/consent/contract.test.ts:23-40"
   - "src/lib/consent/consent.ts:177-190"
 ---
@@ -24,7 +24,7 @@ sources:
 
 > Hand-authored seed page (no graph driver); verify against source before relying on line numbers.
 
-Cookie `wlc_consent` (`CONSENT_COOKIE_NAME`, `src/lib/consent/types.ts:256`; can be overridden with `config.cookieName`). Its value is a **wire contract**, read by both the browser and servers (ADR 0004):
+Cookie `wlc_consent` (`CONSENT_COOKIE_NAME`, `src/lib/consent/types.ts:266`; can be overridden with `config.cookieName`). Its value is a **wire contract**, read by both the browser and servers (ADR 0004):
 
 ```
 1.<id>.<at36>.<rev>.<mode>.<pam>.<action>
