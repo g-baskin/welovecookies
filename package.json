@@ -1,11 +1,11 @@
 {
 	"name": "welovecookies",
 	"private": true,
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"license": "AGPL-3.0-only",
 	"type": "module",
 	"engines": {
-		"node": ">=22"
+		"node": ">=22.13"
 	},
 	"scripts": {
 		"admin:assets": "node -e \"fs.mkdirSync('admin/public',{recursive:true});fs.copyFileSync('dist/welovecookies.min.js','admin/public/welovecookies.min.js')\"",
