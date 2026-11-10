@@ -141,12 +141,15 @@ try {
 	await step('npm run check', () => npm('run', 'check'));
 	await step('npm run lint', () => npm('run', 'lint'));
 	await step('npm run format:check', () => npm('run', 'format:check'));
-	await step('npm run build (committed dist JS unchanged)', () => {
-		const files = ['dist/welovecookies.min.js', 'dist/welovecookies.mjs'];
+	await step('npm run build (committed dist unchanged)', () => {
+		const files = [
+			'dist/welovecookies.min.js',
+			'dist/welovecookies.mjs',
+			'dist/welovecookies-wordpress.zip'
+		];
 		const before = files.map(hash);
 		npm('run', 'build');
 		files.forEach((f, i) => expect(hash(f) === before[i], `${f} differs from a fresh build`));
-		expect(existsSync(join(work, 'dist/welovecookies-wordpress.zip')), 'WordPress zip not built');
 	});
 	await step('demo serves the page and the script', async () => {
 		expect(await portFree(demoUrl), `${demoUrl} is already in use; stop that server first`);

@@ -82,7 +82,7 @@ Want answer rates, proof-of-consent records with a CSV export, banner and cookie
 
 ## For developers
 
-Needs Node 22 or newer. `npm run build` also needs the `zip` command (built into macOS and most Linux systems).
+Needs Node 22.13 or newer (the admin and its tests use the built-in `node:sqlite`). `npm run build` also needs the `zip` command (built into macOS and most Linux systems).
 
 ```sh
 npm install

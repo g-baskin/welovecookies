@@ -34,7 +34,7 @@ sources:
 
 ## Overview
 
-The public ESM barrel, built into `dist/welovecookies.mjs` (`tools/build-consent.mjs:31`). It re-exports all of `types`, `regions` and `cookie` (`src/lib/consent/index.ts:1-3`), plus picked symbols from `i18n`, `device`, `signals` and `consent` (`src/lib/consent/index.ts:4-19`).
+The public ESM barrel, built into `dist/welovecookies.mjs` (`tools/build-consent.mjs:43`). It re-exports all of `types`, `regions` and `cookie` (`src/lib/consent/index.ts:1-3`), plus picked symbols from `i18n`, `device`, `signals` and `consent` (`src/lib/consent/index.ts:4-19`).
 
 ## Notes
 

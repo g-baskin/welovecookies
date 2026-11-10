@@ -2,7 +2,7 @@
 
 How We Love Cookies is tested, and how to run each layer yourself. There is no CI: run these before merging and before a release.
 
-Needs Node 22 or newer. `npm run build` and `npm run test:local` also need the `zip` command.
+Needs Node 22.13 or newer (for the built-in `node:sqlite`). `npm run build` and `npm run test:local` also need the `zip` command.
 
 ## The layers
 

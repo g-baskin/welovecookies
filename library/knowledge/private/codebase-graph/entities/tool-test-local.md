@@ -20,7 +20,7 @@ tags:
 related:
   - '[[entities/tool-build-consent]]'
 sources:
-  - tools/test-local.mjs:1-189
+  - tools/test-local.mjs:1-192
   - package.json:24
 ---
 
@@ -35,10 +35,10 @@ Fresh-install smoke test: copies the current files into a temp folder and runs t
 ## Behavior
 
 - Copies `git ls-files -co --exclude-standard`, so uncommitted and new (not ignored) files are tested without a commit; ignored files such as `admin/.dev.vars` and `node_modules` are not copied (`tools/test-local.mjs:124-138`).
-- Steps, stopping at the first failure: `npm ci`, `npm test`, `npm run check`, `npm run lint`, `npm run format:check` (`tools/test-local.mjs:139-143`), then `npm run build` with a SHA-256 check that `dist/welovecookies.min.js` and `dist/welovecookies.mjs` did not change (`tools/test-local.mjs:144-150`).
-- Starts the demo on port 4183 via `PORT` and fetches `/demo/` and the script, checking the licence banner (`tools/test-local.mjs:151-163`).
-- Starts the test admin with `e2e/start-admin.mjs` on 8788 (throwaway database, test-only password from `e2e/admin-env.mjs`), signs in over HTTP (303 plus session cookie), opens Overview and checks an unknown website gets 404 (`tools/test-local.mjs:164-182`).
-- Prints `PASS`/`FAIL` per step; a failing npm step prints the last 6000 characters of its output (`tools/test-local.mjs:20-45`). Always stops the servers (whole process group on macOS/Linux) and deletes the temp folder, also on Ctrl-C or SIGTERM (`tools/test-local.mjs:93-121`, `tools/test-local.mjs:183-189`).
+- Steps, stopping at the first failure: `npm ci`, `npm test`, `npm run check`, `npm run lint`, `npm run format:check` (`tools/test-local.mjs:139-143`), then `npm run build` with a SHA-256 check that `dist/welovecookies.min.js`, `dist/welovecookies.mjs` and `dist/welovecookies-wordpress.zip` did not change (`tools/test-local.mjs:144-153`).
+- Starts the demo on port 4183 via `PORT` and fetches `/demo/` and the script, checking the licence banner (`tools/test-local.mjs:154-166`).
+- Starts the test admin with `e2e/start-admin.mjs` on 8788 (throwaway database, test-only password from `e2e/admin-env.mjs`), signs in over HTTP (303 plus session cookie), opens Overview and checks an unknown website gets 404 (`tools/test-local.mjs:167-185`).
+- Prints `PASS`/`FAIL` per step; a failing npm step prints the last 6000 characters of its output (`tools/test-local.mjs:20-45`). Always stops the servers (whole process group on macOS/Linux) and deletes the temp folder, also on Ctrl-C or SIGTERM (`tools/test-local.mjs:93-121`, `tools/test-local.mjs:186-192`).
 
 ## Gotchas
 
@@ -60,5 +60,5 @@ Fresh-install smoke test: copies the current files into a temp folder and runs t
 
 ## Sources
 
-- `tools/test-local.mjs:1-189`
+- `tools/test-local.mjs:1-192`
 - `package.json:24`

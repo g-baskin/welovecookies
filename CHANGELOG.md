@@ -27,6 +27,11 @@ was published to any package registry.
 
 - Admin tests now run the migrations with the same code as the self-hosted
   admin, so new migration files no longer need to be listed by hand.
+- Developing needs Node.js 22.13 or newer (was 22): the admin and its tests
+  use the built-in `node:sqlite`, which needs no flag from 22.13 on.
+- `npm run build` now makes the WordPress zip reproducible (fixed dates,
+  modes and file order), so a build no longer changes the committed zip unless
+  the plugin did; `npm run test:local` checks it.
 
 ## [1.1.0] - 2026-11-09
 

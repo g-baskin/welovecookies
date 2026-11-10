@@ -5,7 +5,7 @@
 	"license": "AGPL-3.0-only",
 	"type": "module",
 	"engines": {
-		"node": ">=22"
+		"node": ">=22.13"
 	},
 	"scripts": {
 		"admin:assets": "node -e \"fs.mkdirSync('admin/public',{recursive:true});fs.copyFileSync('dist/welovecookies.min.js','admin/public/welovecookies.min.js')\"",

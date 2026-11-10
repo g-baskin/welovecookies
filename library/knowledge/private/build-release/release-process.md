@@ -18,14 +18,14 @@ For maintainers shipping a change: how the build works, what gets committed and 
 
 `dist/` is committed build output, and jsDelivr serves it straight from the `main` branch ([ADR 0005](../../../../docs/decisions/0005-committed-build-served-from-main.md)). Merging to `main` is therefore a release for every site on `@main`. Version tags pin a release: every release is an annotated `vX.Y.Z` tag on `main` with a GitHub Release (from `v1.1.0`; `v1.0.0` and `v1.0.1` were tagged afterwards at the commits that set them), so `https://cdn.jsdelivr.net/gh/g-baskin/welovecookies@v1.1.0/dist/welovecookies.min.js` never changes. Never move or delete a pushed tag.
 
-After any change in `src/lib/consent/`, run `npm run build` and commit `dist/`. `src/lib/consent/dist.test.ts` fails if the committed `welovecookies.min.js` or `welovecookies.mjs` differ from a fresh build (the WordPress zip isn't compared).
+After any change in `src/lib/consent/`, run `npm run build` and commit `dist/`. `src/lib/consent/dist.test.ts` fails if the committed `welovecookies.min.js` or `welovecookies.mjs` differ from a fresh build. The WordPress zip isn't compared there (that would need `zip` for every test run), but it is reproducible: the build zips a staged copy with fixed dates, modes and file order in UTC, so the same sources give the same bytes on macOS and Linux, and `npm run test:local` fails if a fresh build changes the committed zip.
 
 ## What the build does
 
 `npm run build` runs `tools/build-consent.mjs` ([tool-build-consent](../codebase-graph/entities/tool-build-consent.md)):
 
 1. esbuild bundles `standalone.ts` to the IIFE `dist/welovecookies.min.js` and `index.ts` to `dist/welovecookies.mjs`, both minified for `es2019`.
-2. Both files get the `/*! We Love Cookies | ... | AGPL-3.0-only | Source: ... */` banner (`tools/build-consent.mjs:9`). It must stay: it is how sites serving the script pass on the licence terms and source link ([ADR 0001](../../../../docs/decisions/0001-agpl-dual-licence.md)).
+2. Both files get the `/*! We Love Cookies | ... | AGPL-3.0-only | Source: ... */` banner (`tools/build-consent.mjs:21-23`). It must stay: it is how sites serving the script pass on the licence terms and source link ([ADR 0001](../../../../docs/decisions/0001-agpl-dual-licence.md)).
 3. It copies the script to `admin/public/` and `wordpress/welovecookies/assets/` (both gitignored) and zips the plugin into `dist/welovecookies-wordpress.zip`. This step needs the system `zip` binary.
 
 ## WordPress path
@@ -34,7 +34,12 @@ The plugin's JS exists only inside the zip. When shipping new JS, bump `Version:
 
 ## Admin deploy
 
-The admin runs on the buyer's own Cloudflare account. `npm run admin:deploy` copies the script, applies D1 migrations remotely and runs `wrangler deploy`; `admin:dev` and `admin:db:local` cover local work (`package.json`). Migrations are forward-only. Setup steps live in `docs/ADMIN.md`.
+The admin runs on the buyer's own infrastructure, in one of two ways ([ADR 0007](../../../../docs/decisions/0007-admin-on-cloudflare.md), [ADR 0008](../../../../docs/decisions/0008-self-hosted-admin.md)):
+
+- **Cloudflare:** `npm run admin:deploy` copies the script, applies D1 migrations remotely and runs `wrangler deploy`; `admin:dev` and `admin:db:local` cover local work (`package.json`). Setup: `docs/ADMIN.md`.
+- **Own server:** `npm run admin:node` bundles `admin/src/node/` into `admin/node-dist/` with esbuild and starts it; `admin/Dockerfile` (with `admin/compose.yaml` and Caddy) builds the same bundle into an image. Migrations are applied on start, after a backup. Nothing is published: buyers build from the repository. Setup: `docs/ADMIN-SELF-HOSTED.md`.
+
+Migrations are forward-only on both.
 
 ## Branches and changelog
 
