@@ -27,7 +27,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/tracking.ts:1-212
+  - admin/src/tracking.ts:1-214
 ---
 
 # admin/src/tracking.ts (tracking check)
@@ -52,10 +52,11 @@ export function trackingSummary(issues): string
 
 ## Behavior
 
-- Issues (`admin/src/tracking.ts:43-113`): no privacy link (fix); banner off (check); empty cookie list (fix); integration on without cookies in its categories (fix); overdue privacy requests (fix); no views or choices for 7 days on an enabled site older than 7 days (check); `ALL_PARTY_STATES_CHECKED` older than 180 days (check); `REGIONS_CHECKED` older than 365 days (check).
-- `gatherFacts` uses three grouped queries regardless of site count (`admin/src/tracking.ts:116-149`).
-- `runChecks` upserts all results into `check_results` in one `db.batch` (`admin/src/tracking.ts:152-170`).
-- Stored `issues_json` that fails to parse reads as `[]` (`admin/src/tracking.ts:187-194`).
+- Issues (`admin/src/tracking.ts:45-115`): no privacy link (fix); banner off (check); empty cookie list (fix); integration on without cookies in its categories (fix); overdue privacy requests (fix); no views or choices for 7 days on an enabled site older than 7 days (check); `ALL_PARTY_STATES_CHECKED` older than 180 days (check); `REGIONS_CHECKED` older than 365 days (check).
+- `DAILY_STALE_DAYS = 2`: the Overview's stale daily-job warning (`admin/src/tracking.ts:13-14`).
+- `gatherFacts` uses three grouped queries regardless of site count (`admin/src/tracking.ts:118-151`).
+- `runChecks` upserts all results into `check_results` in one `db.batch` (`admin/src/tracking.ts:154-172`).
+- Stored `issues_json` that fails to parse reads as `[]` (`admin/src/tracking.ts:189-196`).
 
 ## Connections
 
@@ -72,4 +73,4 @@ export function trackingSummary(issues): string
 
 ## Sources
 
-- `admin/src/tracking.ts:1-212`
+- `admin/src/tracking.ts:1-214`

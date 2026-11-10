@@ -128,6 +128,8 @@ export async function route(request: Request, env: Env, now = Date.now()): Promi
 				: methodNotAllowed('POST, OPTIONS');
 	const privacy = /^\/privacy\/(ws_[A-Za-z0-9_-]{12})$/.exec(p);
 	if (privacy) return handlePrivacy(request, env, privacy[1], now);
+	if (p === '/health')
+		return m === 'GET' || m === 'HEAD' ? health(env) : methodNotAllowed('GET, HEAD');
 	if (p === '/wlc.css')
 		return new Response(CSS, {
 			headers: {
@@ -138,6 +140,18 @@ export async function route(request: Request, env: Env, now = Date.now()): Promi
 	if (p === '/' || p === '') return redirect('/admin');
 	if (p === '/admin' || p.startsWith('/admin/')) return admin(request, env, url, now);
 	return notFound();
+}
+
+/** For uptime monitors and the Docker HEALTHCHECK: 200 only when the database answers. */
+async function health(env: Env): Promise<Response> {
+	const headers = { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' };
+	try {
+		await env.DB.prepare('SELECT 1').first();
+		return new Response('ok', { headers });
+	} catch (err) {
+		console.error('health check failed', err instanceof Error ? err.message : err);
+		return new Response('database unavailable', { status: 503, headers });
+	}
 }
 
 /** Daily job: retention purge first, then the tracking check for each connected website. */

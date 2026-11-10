@@ -1,8 +1,9 @@
 import { html } from '../html.ts';
+import { DAY_MS } from '../db.ts';
 import { DEVICE_LABEL, pct, utc } from '../labels.ts';
 import { overview, type Tally } from '../log.ts';
 import { requestCounts } from '../requests.ts';
-import { latestCheck, trackingSummary } from '../tracking.ts';
+import { DAILY_STALE_DAYS, latestCheck, trackingSummary } from '../tracking.ts';
 import { adminPage, noSitePrompt, type Ctx } from './layout.ts';
 
 const PERIODS = [7, 30, 90] as const;
@@ -22,13 +23,16 @@ export async function overviewPage(ctx: Ctx) {
 		latestCheck(ctx.db, site.key)
 	]);
 	const t = o.total;
+	// Only the daily job checks every connected site, so an old (or missing) check means it stopped.
+	const lastRun = check?.at ?? site.created_at;
+	const stale = !!site.enabled && ctx.now - lastRun > DAILY_STALE_DAYS * DAY_MS;
 	const stat = (label: string, value: string | number, note = '') =>
 		html`<div class="card stat"><b>${value}</b><span>${label}${note ? html`<br>${note}` : ''}</span></div>`;
 	return adminPage(
 		ctx,
 		`Overview: ${site.name}`,
 		'/admin',
-		html`<form method="get" action="/admin" class="row"><input type="hidden" name="site" value="${site.key}"><label for="days" class="inline">Period</label><select id="days" name="days">${PERIODS.map((p) => html`<option value="${p}" ${p === days ? html`selected` : ''}>Last ${p} days</option>`)}</select><button type="submit" class="secondary">Show</button></form>
+		html`${stale ? html`<p class="msg err" role="alert">The daily job has not run since ${utc(lastRun)} UTC. It deletes records older than 5 years and runs the tracking check. Look at the admin's logs (see Logs in docs/ADMIN.md or docs/ADMIN-SELF-HOSTED.md).</p>` : ''}<form method="get" action="/admin" class="row"><input type="hidden" name="site" value="${site.key}"><label for="days" class="inline">Period</label><select id="days" name="days">${PERIODS.map((p) => html`<option value="${p}" ${p === days ? html`selected` : ''}>Last ${p} days</option>`)}</select><button type="submit" class="secondary">Show</button></form>
 <div class="grid">
 ${stat('Banner shown', t.seen)}
 ${stat('Answered', t.answered, `${pct(t.answered, t.seen)} of views`)}

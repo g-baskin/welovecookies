@@ -25,7 +25,7 @@ sources:
   - admin/src/cors.ts:1-26
   - admin/src/config.ts:86-94
   - admin/src/auth.ts:37-188
-  - admin/src/index.ts:32-138
+  - admin/src/index.ts:32-140
   - admin/src/privacy.ts:16-90
   - admin/src/requests.ts:48-135
   - admin/src/html.ts:1-69
@@ -75,7 +75,7 @@ The controls the admin Worker applies to every request, grouped by surface. Only
 - `admin/src/cors.ts:1-26`
 - `admin/src/config.ts:86-94`
 - `admin/src/auth.ts:37-188`
-- `admin/src/index.ts:32-138`
+- `admin/src/index.ts:32-140`
 - `admin/src/privacy.ts:16-90`
 - `admin/src/requests.ts:48-135`
 - `admin/src/html.ts:1-69`
