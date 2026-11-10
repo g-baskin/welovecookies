@@ -94,7 +94,7 @@ import { appendFile } from 'node:fs/promises';
 const ACTIONS = ['accept_all', 'reject_all', 'custom', 'acknowledge', 'withdraw', 'gpc'];
 const str = (v, max) => (typeof v === 'string' ? v.slice(0, max) : '');
 
-createServer(async (req, res) => {
+async function record(req, res) {
 	if (req.method !== 'POST' || req.url !== '/api/consent') return res.writeHead(404).end();
 	let body = '';
 	for await (const chunk of req) {
@@ -127,7 +127,16 @@ createServer(async (req, res) => {
 	};
 	await appendFile('consent-records.jsonl', JSON.stringify(row) + '\n');
 	res.writeHead(204).end();
-}).listen(3000, '127.0.0.1');
+}
+
+// A dropped connection or a full disk fails only that request, never the whole receiver.
+createServer((req, res) =>
+	record(req, res).catch((err) => {
+		console.error('consent record failed:', err.message);
+		if (!res.headersSent) res.writeHead(500);
+		res.end();
+	})
+).listen(3000, '127.0.0.1');
 ```
 
 ### PHP
