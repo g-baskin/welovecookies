@@ -108,6 +108,13 @@ You can also give the Worker your own domain (Workers → your Worker → Settin
 - The admin and the request form are in English. The banner itself has 20 languages.
 - The tracking check is a reminder list. Some items (dated legal lists) go away when you update We Love Cookies.
 
+## Logs
+
+Errors from the admin and the daily job (03:17 UTC) are written to Cloudflare's logs, which `admin/wrangler.jsonc` turns on. Read them in the Cloudflare dashboard under **Workers & Pages** > **welovecookies-admin** > **Logs**, or live from your computer with `npx wrangler tail -c admin/wrangler.jsonc`. Nothing emails you when something fails, so:
+
+- The Overview shows a red warning when the daily job hasn't run for 2 days.
+- For an uptime monitor, use `GET /health`: it answers `ok` (200) when the database works and 503 when it doesn't.
+
 ## Backups
 
 D1 keeps a history of your database: **Time Travel** can restore it to any minute in the last 7 days on the free plan, or 30 days on Workers Paid, at no extra cost (Cloudflare docs, Nov 2026). To also keep a copy outside Cloudflare:
@@ -146,6 +153,7 @@ To test the banner from a local page, add `http://localhost:<port>` as a website
 | `GET /api/consent/config?site=<key>` | The banner, from the website's exact address only |
 | `POST /api/consent`, `POST /api/consent/seen` | The banner: a choice, and a cookieless view count |
 | `GET`, `POST /privacy/<key>` | Visitors: the "Ask about your data" form |
+| `GET /health` | Uptime monitors: `ok` (200), or 503 when the database fails |
 | `/admin/*` | You |
 
 Cross-origin access is allowed only for each website's exact address, never with cookies. Request and response formats, status codes and limits for the `/api/consent*` endpoints: [`docs/api/openapi.json`](api/openapi.json) (OpenAPI 3.1). Code: `admin/src/`. Decisions: [ADR 0007](decisions/0007-admin-on-cloudflare.md) (Cloudflare) and [ADR 0008](decisions/0008-self-hosted-admin.md) (your own server).

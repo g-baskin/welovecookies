@@ -295,3 +295,39 @@ describe('public routes and daily job', () => {
 		expect(db.sql.prepare('SELECT site FROM check_results').all()).toEqual([{ site: TEST_KEY }]);
 	});
 });
+
+describe('monitoring', () => {
+	it('answers /health only when the database works', async () => {
+		const { call, env } = app();
+		const ok = await call('/health');
+		expect(ok.status).toBe(200);
+		expect(await ok.text()).toBe('ok');
+		expect(ok.headers.get('cache-control')).toBe('no-store');
+		expect((await call('/health', { method: 'POST' })).status).toBe(405);
+		const broken = { ...env, DB: { prepare: () => { throw new Error('disk gone'); } } }; // prettier-ignore
+		const errors: unknown[] = [];
+		const log = console.error;
+		console.error = (...a: unknown[]) => void errors.push(a);
+		try {
+			const r = await route(new Request(`${W}/health`), broken as unknown as typeof env, now);
+			expect(r.status).toBe(503);
+		} finally {
+			console.error = log;
+		}
+		expect(errors).toHaveLength(1);
+	});
+	it('warns on the Overview when the daily job has not run for 2 days', async () => {
+		const { call, db, login } = app();
+		addTestSite(db, { createdAt: now - 10 * 86_400_000 });
+		await login();
+		const page = async () =>
+			(await (await call(`/admin?site=${TEST_KEY}`)).text()).includes('The daily job has not run');
+		expect(await page()).toBe(true); // never ran
+		await daily(db, now - 86_400_000);
+		expect(await page()).toBe(false); // ran yesterday
+		db.sql.prepare('UPDATE check_results SET at = ?').run(now - 3 * 86_400_000);
+		expect(await page()).toBe(true); // last run 3 days ago
+		db.sql.prepare('UPDATE sites SET enabled = 0').run();
+		expect(await page()).toBe(false); // the daily job skips websites that are off
+	});
+});

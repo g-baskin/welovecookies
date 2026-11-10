@@ -10,6 +10,8 @@ import { INTEGRATIONS, siteSettings, type SiteSettings } from './settings.ts';
 export const STATE_LIST_RECHECK_DAYS = 180;
 export const REGIONS_RECHECK_DAYS = 365;
 export const NO_VIEWS_DAYS = 7;
+/** The Overview warns when a connected website's daily check is older than this. */
+export const DAILY_STALE_DAYS = 2;
 
 /** Which cookie-list categories each integration's cookies belong to (any one is enough). */
 export const INTEGRATION_CATEGORIES: Record<keyof ConsentIntegrations, ConsentCategory[]> = {

@@ -12,6 +12,15 @@ was published to any package registry.
 
 ## [Unreleased]
 
+### Added
+
+- Admin: `GET /health` answers `ok` when the database works and 503 when it
+  doesn't, for uptime monitors. The Docker image's health check now uses it
+  instead of a static file.
+- Admin: the Overview shows a warning when the daily job (5-year purge and
+  tracking check) hasn't run for 2 days.
+- Docs: where to find the admin's logs on Cloudflare and on your own server.
+
 ## [1.3.0] - 2026-11-10
 
 ### Added

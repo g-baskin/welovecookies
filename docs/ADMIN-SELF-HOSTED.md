@@ -122,7 +122,9 @@ Database changes ship as new numbered files in `admin/migrations/`. On start, th
 
 - **Run one copy.** SQLite allows one writing process, and the rate limits are kept in memory. For more traffic, give the one process a bigger server.
 - **Rate limits** work as on Cloudflare: about 120 calls a minute per visitor IP to the public endpoints (per process), plus the sign-in and request-form limits. Request bodies over 1 MB are refused.
-- **The daily job** (5-year retention purge and the tracking check) runs inside the process at 03:17 UTC.
+- **The daily job** (5-year retention purge and the tracking check) runs inside the process at 03:17 UTC. If it hasn't run for 2 days, the Overview shows a red warning.
+- **Logs:** the admin writes to standard output and errors to standard error. With Docker: `docker compose -f admin/compose.yaml logs -f admin`. Without Docker, read them where your process manager keeps them, for example `journalctl -u <your service>` (systemd) or `pm2 logs`.
+- **Health check:** `GET /health` answers `ok` (200) when the database works and 503 when it doesn't. The Docker image uses it; point an uptime monitor at it too.
 - **Extra protection:** restrict `/admin*` at your reverse proxy (an IP allow-list or single sign-on) as a second lock. Leave `/api/*`, `/privacy/*` and `/welovecookies.min.js` open: visitors' browsers need them.
 - **Moving between Cloudflare and your own server** isn't automated. Websites keep working if you add them again in the new admin and update their script tags; records stay in the old admin.
 

@@ -17,7 +17,8 @@ depends_on:
 used_by:
   - "[[entities/admin-index]]"
 last_commit_hash: baf8b7a
-tested_by: []
+tested_by:
+  - admin/src/index.test.ts
 tags:
   - entity
   - admin
@@ -25,7 +26,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/pages/overview.ts:1-49
+  - admin/src/pages/overview.ts:1-53
 ---
 
 # admin/src/pages/overview.ts (Overview page)
@@ -44,9 +45,10 @@ export async function overviewPage(ctx: Ctx): Promise<Response>
 
 ## Behavior
 
-- Period from `?days=` limited to 7/30/90, default 30 (`admin/src/pages/overview.ts:8`, `admin/src/pages/overview.ts:18`).
-- Loads `overview`, `requestCounts` and `latestCheck` in parallel (`admin/src/pages/overview.ts:19-23`).
-- Rates are of `answered`; GPC count and withdrawals shown separately (`admin/src/pages/overview.ts:33-40`).
+- Period from `?days=` limited to 7/30/90, default 30 (`admin/src/pages/overview.ts:9`, `admin/src/pages/overview.ts:19`).
+- Loads `overview`, `requestCounts` and `latestCheck` in parallel (`admin/src/pages/overview.ts:20-24`).
+- Shows a red alert when a connected website's latest check (or, with none, its creation) is older than `DAILY_STALE_DAYS`: only the daily job checks every connected site, so this means it stopped. A manual "Check now" also resets it (`admin/src/pages/overview.ts:26-28`, `admin/src/pages/overview.ts:35`).
+- Rates are of `answered`; GPC count and withdrawals shown separately (`admin/src/pages/overview.ts:37-44`).
 
 ## Connections
 
@@ -55,7 +57,7 @@ export async function overviewPage(ctx: Ctx): Promise<Response>
 
 ## Tested by
 
-- No test file imports this module directly.
+- `admin/src/index.test.ts` (through the router: the stale daily-job warning)
 
 ## History
 
@@ -63,4 +65,4 @@ export async function overviewPage(ctx: Ctx): Promise<Response>
 
 ## Sources
 
-- `admin/src/pages/overview.ts:1-49`
+- `admin/src/pages/overview.ts:1-53`

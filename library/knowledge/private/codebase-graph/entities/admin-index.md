@@ -35,7 +35,7 @@ tags:
   - partial_scan
 related: []
 sources:
-  - admin/src/index.ts:1-171
+  - admin/src/index.ts:1-185
 ---
 
 # admin/src/index.ts (Worker router and daily job)
@@ -57,12 +57,13 @@ export default { fetch(request, env: WorkerEnv), scheduled(_c, env, ctx) }
 ## Behavior
 
 - **Public rate limit.** `/api/consent*` and `POST /privacy/*` return 429 with `retry-after: 60` when the optional `PUBLIC_LIMITER` binding refuses; key is path (or `privacy`) plus `ipHash` (`admin/src/index.ts:93-110`). OPTIONS and missing binding skip it (`admin/src/index.ts:94`).
-- **Public routes.** `/api/consent/config` (GET/OPTIONS), `/api/consent` and `/api/consent/seen` (POST/OPTIONS) (`admin/src/index.ts:111-128`); `/privacy/ws_<12>` (`admin/src/index.ts:129-130`); `/wlc.css` serves `CSS` cached 1h (`admin/src/index.ts:131-137`); `/` redirects to `/admin` (`admin/src/index.ts:138`).
+- **Public routes.** `/api/consent/config` (GET/OPTIONS), `/api/consent` and `/api/consent/seen` (POST/OPTIONS) (`admin/src/index.ts:111-128`); `/privacy/ws_<12>` (`admin/src/index.ts:129-130`); `/wlc.css` serves `CSS` cached 1h (`admin/src/index.ts:133-139`); `/` redirects to `/admin` (`admin/src/index.ts:140`).
 - **Admin gate** (`admin/src/index.ts:36-90`): setup check first (503 setup page) (`admin/src/index.ts:37-38`); only GET/HEAD/POST (`admin/src/index.ts:42-43`); `/admin/login` is open (`admin/src/index.ts:44-45`); otherwise session must verify, else POST 403 / GET redirect (`admin/src/index.ts:46-47`); every admin POST must pass `sameOrigin` (`admin/src/index.ts:48-49`); logout is POST only (`admin/src/index.ts:50`); form bodies capped at 65,536 bytes, 413 otherwise (`admin/src/index.ts:32`, `admin/src/index.ts:52-53`).
 - **Site selection.** `form.site` or `?site=`, else first enabled, else first site (`admin/src/index.ts:55-57`). Builds `Ctx` incl. open-request count (`admin/src/index.ts:58-68`).
 - **Admin routes** switch (`admin/src/index.ts:69-89`): request detail matches `pr_` + 16 chars (`admin/src/index.ts:69-70`).
-- **Errors.** Uncaught errors log the message and return a plain 500 (`admin/src/index.ts:157-165`).
-- **Daily job.** `purgeOld` first, then `checkAllSites`; a tracking failure is logged, not thrown (`admin/src/index.ts:144-154`). `scheduled` wraps it in `waitUntil` (`admin/src/index.ts:168-170`).
+- **Health.** `GET`/`HEAD /health` runs `SELECT 1` and answers `ok` (200), or logs and answers 503; never cached, no rate limit (`admin/src/index.ts:131-132`, `admin/src/index.ts:145-156`). The Docker `HEALTHCHECK` uses it (`admin/Dockerfile:24-25`).
+- **Errors.** Uncaught errors log the message and return a plain 500 (`admin/src/index.ts:171-179`).
+- **Daily job.** `purgeOld` first, then `checkAllSites`; a tracking failure is logged, not thrown (`admin/src/index.ts:158-168`). `scheduled` wraps it in `waitUntil` (`admin/src/index.ts:182-184`).
 
 ## Gotchas
 
@@ -84,4 +85,4 @@ export default { fetch(request, env: WorkerEnv), scheduled(_c, env, ctx) }
 
 ## Sources
 
-- `admin/src/index.ts:1-171`
+- `admin/src/index.ts:1-185`
