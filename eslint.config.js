@@ -4,7 +4,15 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-	{ ignores: ['dist/', 'admin/public/', 'admin/.wrangler/', 'wordpress/welovecookies/assets/'] },
+	{
+		ignores: [
+			'dist/',
+			'admin/public/',
+			'admin/.wrangler/',
+			'admin/node-dist/',
+			'wordpress/welovecookies/assets/'
+		]
+	},
 	js.configs.recommended,
 	tseslint.configs.recommended,
 	{

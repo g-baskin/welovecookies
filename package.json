@@ -12,6 +12,8 @@
 		"admin:db:local": "wrangler d1 migrations apply DB --local -c admin/wrangler.jsonc",
 		"admin:deploy": "npm run admin:assets && wrangler d1 migrations apply DB --remote -c admin/wrangler.jsonc && wrangler deploy -c admin/wrangler.jsonc",
 		"admin:dev": "npm run admin:assets && wrangler dev -c admin/wrangler.jsonc",
+		"admin:node": "npm run admin:node:build && node --disable-warning=ExperimentalWarning admin/node-dist/server.mjs",
+		"admin:node:build": "node -e \"fs.rmSync('admin/node-dist',{recursive:true,force:true})\" && esbuild admin/src/node/server.ts --bundle --platform=node --format=esm --target=node22 --splitting --outdir=admin/node-dist --out-extension:.js=.mjs --log-level=warning",
 		"build": "node tools/build-consent.mjs",
 		"check": "tsc --noEmit && tsc --noEmit -p admin && tsc --noEmit -p tools && tsc --noEmit -p e2e && svelte-check --tsconfig src/lib/consent/svelte/tsconfig.json --fail-on-warnings",
 		"demo": "node tools/serve-demo.mjs",

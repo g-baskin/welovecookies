@@ -12,6 +12,22 @@ was published to any package registry.
 
 ## [Unreleased]
 
+### Added
+
+- The optional admin can run on your own server: one Node.js 22.13+ process
+  and a SQLite file (`npm run admin:node`), or Docker with Caddy for automatic
+  HTTPS (`admin/Dockerfile`, `admin/compose.yaml`). It applies database
+  changes itself after backing the file up, has a `backup` command, and reads
+  visitor location only from headers you name. Guide:
+  `docs/ADMIN-SELF-HOSTED.md`, decision: ADR 0008.
+- `docs/RECORDS.md`: how to keep proof-of-consent records on a server you
+  already run, with example receivers for Node.js, PHP and Python.
+
+### Changed
+
+- Admin tests now run the migrations with the same code as the self-hosted
+  admin, so new migration files no longer need to be listed by hand.
+
 ## [1.1.0] - 2026-11-09
 
 ### Added

@@ -28,7 +28,7 @@ sources:
 
 ## Overview
 
-First and only admin schema. Forward-only; no IP address stored (`admin/migrations/0001_init.sql:1-2`). Accessed through [[entities/admin-db]]; applied by `npm run admin:db:local` / `admin:deploy` (wrangler) and by [[entities/admin-test-d1]] in tests.
+First and only admin schema. Forward-only; no IP address stored (`admin/migrations/0001_init.sql:1-2`). Accessed through [[entities/admin-db]]; applied by `npm run admin:db:local` / `admin:deploy` (wrangler), and by `migrate()` in [[entities/admin-sqlite]] for the self-hosted admin and in tests ([[entities/admin-test-d1]]).
 
 ## Tables
 
@@ -52,7 +52,7 @@ All `site` FKs reference `sites(key)` `ON DELETE RESTRICT`, matching "switched o
 
 ## Gotchas
 
-- **Forward-only.** Never edit this file once released; add a new numbered migration (0002_name.sql) and list it in `MIGRATIONS` in `admin/src/test-d1.ts:6`.
+- **Forward-only.** Never edit this file once released; add a new numbered migration (0002_name.sql). `migrate()` in [[entities/admin-sqlite]] applies it for the tests and the self-hosted admin; wrangler applies it on Cloudflare.
 - `consent_records.rev` allows 0 while `consent_versions.rev` and `sites.rev` require >= 1 (`admin/migrations/0001_init.sql:31`, `admin/migrations/0001_init.sql:57`, `admin/migrations/0001_init.sql:13`).
 - `consent_daily.mode` and `device` have no CHECK, unlike `consent_records` (`admin/migrations/0001_init.sql:47-49`).
 - `admin/wrangler.jsonc` ships a placeholder `database_id` the buyer replaces (`admin/wrangler.jsonc:14`).
@@ -60,7 +60,7 @@ All `site` FKs reference `sites(key)` `ON DELETE RESTRICT`, matching "switched o
 ## Connections
 
 - **depends_on:** none
-- **used_by:** [[entities/admin-test-d1]]
+- **used_by:** [[entities/admin-test-d1]], [[entities/admin-sqlite]]
 
 ## Tested by
 

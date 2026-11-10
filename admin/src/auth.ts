@@ -36,9 +36,9 @@ function sameBytes(a: ArrayBuffer, b: ArrayBuffer): boolean {
 /** What is missing before the admin can be used, or null when both secrets are set. */
 export function setupProblem(env: Pick<Env, 'ADMIN_PASSWORD' | 'SESSION_SECRET'>): string | null {
 	if (!env.ADMIN_PASSWORD || env.ADMIN_PASSWORD.length < 12)
-		return 'Set ADMIN_PASSWORD (at least 12 characters) with: npx wrangler secret put ADMIN_PASSWORD -c admin/wrangler.jsonc';
+		return 'Set ADMIN_PASSWORD (at least 12 characters). On Cloudflare: npx wrangler secret put ADMIN_PASSWORD -c admin/wrangler.jsonc. On your own server: in the environment or admin/.env, then restart.';
 	if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32)
-		return 'Set SESSION_SECRET (at least 32 random characters) with: npx wrangler secret put SESSION_SECRET -c admin/wrangler.jsonc';
+		return 'Set SESSION_SECRET (at least 32 random characters). On Cloudflare: npx wrangler secret put SESSION_SECRET -c admin/wrangler.jsonc. On your own server: in the environment or admin/.env, then restart.';
 	return null;
 }
 

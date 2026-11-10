@@ -253,7 +253,7 @@ Put any of these in `window.WeLoveCookiesConfig`. Full list: [`src/lib/consent/R
 | `theme` | Colours, if your page has no `--color-*` CSS variables | `{ primary: '#14532d' }` |
 | `cookies` | The cookie list visitors see in the settings panel | see `ConsentConfig` |
 | `texts` | Your own wording, per language | `{ en: { title: 'Cookies?' } }` |
-| `endpoints.record` | An address that receives each choice as JSON, to keep proof of consent | `'/api/consent'` |
+| `endpoints.record` | An address that receives each choice as JSON, to keep proof of consent ([RECORDS.md](RECORDS.md)) | `'/api/consent'` |
 
 The same settings can go on the script tag as `data-` attributes, for example `<script src="/welovecookies.min.js" data-privacy="/privacy" data-rev="2"></script>`.
 
@@ -266,4 +266,6 @@ The same settings can go on the script tag as `data-` attributes, for example `<
 
 ## Optional admin
 
-To keep proof-of-consent records, see answer rates, edit the banner and cookie list without touching code, and receive privacy requests, deploy the optional admin to your own Cloudflare account and use the script tag it gives you instead of the one above. Setup: [ADMIN.md](ADMIN.md).
+To keep proof-of-consent records, see answer rates, edit the banner and cookie list without touching code, and receive privacy requests, run the optional admin on your own Cloudflare account ([ADMIN.md](ADMIN.md)) or your own server with Node or Docker ([ADMIN-SELF-HOSTED.md](ADMIN-SELF-HOSTED.md)), and use the script tag it gives you instead of the one above.
+
+To keep only the records, on a server you already run, set `endpoints.record` and see [RECORDS.md](RECORDS.md) for what your endpoint receives, with short Node, PHP and Python examples.

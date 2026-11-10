@@ -56,6 +56,8 @@ Line numbers drift as code changes. When you change a module, check its page. De
 | [admin-sites](entities/admin-sites.md) | `src/sites.ts` |
 | [admin-tracking](entities/admin-tracking.md) | `src/tracking.ts` |
 | [admin-test-d1](entities/admin-test-d1.md) | `src/test-d1.ts`: `node:sqlite` stand-in for tests |
+| [admin-sqlite](entities/admin-sqlite.md) | `src/sqlite.ts`: `node:sqlite` `Db`, migrations, backups |
+| [admin-node](entities/admin-node.md) | `src/node/`: self-hosted Node runtime (HTTP glue, process, entry) |
 | [admin-pages-layout](entities/admin-pages-layout.md) | `src/pages/layout.ts` |
 | [admin-pages-login](entities/admin-pages-login.md) | `src/pages/login.ts` |
 | [admin-pages-overview](entities/admin-pages-overview.md) | `src/pages/overview.ts` |
