@@ -92,9 +92,19 @@ npm run format:check   # Prettier (npm run format to fix)
 npm run build   # rebuild dist/ (script, module and WordPress zip)
 npm run demo    # demo at http://localhost:4173/demo/
 npm run admin:dev   # optional admin at http://127.0.0.1:8787/admin (see docs/ADMIN.md)
+npm run test:e2e    # banner and admin in a real browser (once first: npx playwright install chromium)
+npm run test:local  # fresh install of your current files in a temp folder, then every check
+npm run screenshots # refresh the pictures in docs/assets/screenshots/
 ```
 
-`npm test` covers the consent manager, region rules, cookie format (pinned so saved choices keep working), signals, auto-clear, translations, the banner UI (in happy-dom), script-tag config, the admin (its real database migration on `node:sqlite`), and that the committed `dist/` scripts match a fresh build. It also checks that the docs' file and line citations and links still point at things that exist, and that the API spec's enums match the code.
+`npm test` covers the consent manager, region rules, cookie format (pinned so saved choices keep working), signals, auto-clear, translations, the banner UI (in happy-dom), script-tag config, the admin (its real database migration on `node:sqlite`), and that the committed `dist/` scripts match a fresh build. It also checks that the docs' file and line citations and links still point at things that exist, and that the API spec's enums match the code. A version test keeps every version field and the changelog in step.
+
+**Tested on a fresh install.** `npm run test:local` installs a clean copy and runs every check, and `npm run test:e2e` clicks through the banner and the admin in Chromium. Details and all screenshots: [docs/TESTING.md](docs/TESTING.md).
+
+<p>
+<img src="docs/assets/screenshots/banner-ask-first.png" alt="Ask-first cookie banner on the demo site" width="49%">
+<img src="docs/assets/screenshots/admin-overview.png" alt="Admin Overview after signing in" width="49%">
+</p>
 
 After changing anything in `src/lib/consent/`, run `npm run build` and commit `dist/`. Changes go in the [CHANGELOG](CHANGELOG.md). Maintainer notes and the code wiki are in [`library/`](library/README.md) ([architecture overview](library/knowledge/private/architecture/overview.md), [release process](library/knowledge/private/build-release/release-process.md), [test strategy](library/knowledge/private/testing/test-strategy.md)). The endpoint formats are in [`docs/api/openapi.json`](docs/api/openapi.json).
 

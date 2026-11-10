@@ -4,3 +4,5 @@ wordpress/welovecookies/assets/
 admin/public/
 admin/.dev.vars
 .wrangler/
+test-results/
+playwright-report/
