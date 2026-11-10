@@ -14,6 +14,7 @@ A framework-free cookie consent banner, preferences panel and consent manager. A
 | `signals.ts`                          | Google Consent Mode v2, Microsoft UET, Meta, TikTok, PostHog, dataLayer event, script unblocking   |
 | `ui.ts`, `ui-css.ts`                  | Shadow DOM banner, preferences panel, floating button                                              |
 | `autoclear.ts`                        | Built-in list of tracking cookie names per category; deletes them when a category is off           |
+| `trackers.ts`                         | Holds known trackers (Hotjar, Clarity, LinkedIn...) that other scripts add, until allowed           |
 | `consent.ts`                          | `createConsent(config, options)`: the manager                                                      |
 | `standalone.ts`                       | `window.WeLoveCookies` for the script-tag build                                                       |
 | `svelte/CookieConsent.svelte`         | Thin Svelte 5 wrapper                                                                              |
@@ -38,7 +39,7 @@ You can also use data attributes: `data-mode`, `data-rev`, `data-lang`, `data-po
 
 ### Config (see `ConsentConfig` in types.ts)
 
-`mode`, `rev` (raise it to ask everyone again), `lang`, `texts` (`{'*': {...}, de: {...}}` overrides), `theme` (bg, fg, primary... falls back to the page's `--color-*`, `--radius-theme`, `--radius-button`, `--font-body`), `position`, `preferencesCategory`, `floatingButton`, `noticeBanner`, `cookies` (the list shown per category), `links`, `endpoints.record` / `endpoints.seen` (POST JSON), `cookieName` (default `wlc_consent`), `cookieDomain`, `integrations` (each one is on by default), `compactOn` (path prefixes), `avoidSelector` (a fixed bottom bar to sit above, e.g. `[data-sticky-cta]`).
+`mode`, `rev` (raise it to ask everyone again), `lang`, `texts` (`{'*': {...}, de: {...}}` overrides), `theme` (bg, fg, primary... falls back to the page's `--color-*`, `--radius-theme`, `--radius-button`, `--font-body`), `position`, `preferencesCategory`, `floatingButton`, `noticeBanner`, `cookies` (the list shown per category), `links`, `endpoints.record` / `endpoints.seen` (POST JSON), `cookieName` (default `wlc_consent`), `cookieDomain`, `integrations` (each one is on by default), `blockScripts` (more script hosts to hold, per category), `compactOn` (path prefixes), `avoidSelector` (a fixed bottom bar to sit above, e.g. `[data-sticky-cta]`).
 
 ### Hosted install (config from your server)
 
@@ -74,6 +75,10 @@ People only see plain words. Technical cookie names are never displayed: they li
 ```
 
 Once the category is allowed, each script is cloned into a real script. This happens once per page and never twice.
+
+### Known trackers
+
+`integrations.knownTrackers` (on by default) holds well-known trackers that other scripts add after the banner loaded: Hotjar, Clarity, Mixpanel, Segment and Matomo Cloud (analytics), and LinkedIn, Pinterest, Snap, Reddit and X (marketing). It wraps `document.createElement` for `<script>` only and watches the page for added `<script src>`. A match becomes `type="text/plain"` with `data-consent` and `data-src`, so a script added by code never downloads before consent, and it runs once when its category is allowed. Google, Meta, TikTok, UET and PostHog are not on the list: their consent signals handle them. Add hosts with `blockScripts: { analytics: ['stats.example.com'] }` (`host` or `host/path`, subdomains included). Only scripts added after the banner script runs can be held. ADR 0009 has the reasoning.
 
 ### Integrations
 

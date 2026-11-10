@@ -42,9 +42,9 @@ The WordPress plugin fits the same path: it prints an inline `WeLoveCookiesConfi
 
 ## Hosted install and logging
 
-With `data-site`, the script fetches its config from `/api/consent/config` on the script's own origin (`loadHosted`, `src/lib/consent/standalone.ts:30`) and passes it as the `init()` arguments, so the admin's settings override everything else. Any failure falls back to a working banner in `auto` mode with no logging. See [hosted-install-flow](../codebase-graph/concepts/hosted-install-flow.md) and [admin-config](../codebase-graph/entities/admin-config.md).
+With `data-site`, the script fetches its config from `/api/consent/config` on the script's own origin (`loadHosted`, `src/lib/consent/standalone.ts:31`) and passes it as the `init()` arguments, so the admin's settings override everything else. Any failure falls back to a working banner in `auto` mode with no logging. See [hosted-install-flow](../codebase-graph/concepts/hosted-install-flow.md) and [admin-config](../codebase-graph/entities/admin-config.md).
 
-When `endpoints` are set (`src/lib/consent/standalone.ts:68`), the manager POSTs each choice to the record endpoint (`src/lib/consent/consent.ts:246`) and sends one "seen" POST per page (`src/lib/consent/consent.ts:275`). The Worker stores these via `admin/src/record.ts` ([admin-record](../codebase-graph/entities/admin-record.md)). Request hardening is covered in [admin-request-security](../codebase-graph/concepts/admin-request-security.md); the choice itself in [choice-lifecycle](../codebase-graph/concepts/choice-lifecycle.md) and [consent-cookie-format](../codebase-graph/concepts/consent-cookie-format.md).
+When `endpoints` are set (`src/lib/consent/standalone.ts:73`), the manager POSTs each choice to the record endpoint (`src/lib/consent/consent.ts:246`) and sends one "seen" POST per page (`src/lib/consent/consent.ts:275`). The Worker stores these via `admin/src/record.ts` ([admin-record](../codebase-graph/entities/admin-record.md)). Request hardening is covered in [admin-request-security](../codebase-graph/concepts/admin-request-security.md); the choice itself in [choice-lifecycle](../codebase-graph/concepts/choice-lifecycle.md) and [consent-cookie-format](../codebase-graph/concepts/consent-cookie-format.md).
 
 ## The admin shares the consent core
 

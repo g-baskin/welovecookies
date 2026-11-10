@@ -12,6 +12,26 @@ was published to any package registry.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-10
+
+### Added
+
+- Known trackers that other scripts add after the page loads (Hotjar,
+  Microsoft Clarity, Mixpanel, Segment, Matomo Cloud, LinkedIn, Pinterest,
+  Snap, Reddit and X) now wait until their category is allowed, even when a
+  tag manager or plugin adds them. A tracker added by code makes no request
+  before consent. Add your own hosts with `blockScripts`. Decision: ADR 0009.
+- Admin: a "Hold back known trackers added by other scripts" switch per site
+  (on by default, also for sites saved before).
+
+### Changed
+
+- **Behaviour change:** in ask-first regions, the trackers above no longer
+  run before the visitor allows their category. To keep the old behaviour,
+  set `integrations: { knownTrackers: false }`. Load the banner script before
+  other tags so it can hold them.
+- The banner is about 1.6 KB larger (about 25 KB gzipped).
+
 ## [1.2.0] - 2026-11-09
 
 ### Added
@@ -119,7 +139,8 @@ Set in commit `888ca73`.
 - First version of We Love Cookies: a location-aware cookie consent banner that
   picks opt-in, opt-out or notice behaviour for the visitor's region.
 
-[Unreleased]: https://github.com/g-baskin/welovecookies/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/g-baskin/welovecookies/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/g-baskin/welovecookies/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/g-baskin/welovecookies/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/g-baskin/welovecookies/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/g-baskin/welovecookies/compare/v1.0.0...v1.0.1

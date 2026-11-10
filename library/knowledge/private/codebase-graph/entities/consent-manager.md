@@ -41,7 +41,7 @@ sources:
   - "src/lib/consent/consent.ts:96-131"
   - "src/lib/consent/consent.ts:143-190"
   - "src/lib/consent/consent.ts:209-262"
-  - "src/lib/consent/consent.ts:264-357"
+  - "src/lib/consent/consent.ts:264-358"
 ---
 # consent.ts (the consent manager)
 
@@ -65,9 +65,10 @@ interface ConsentState { mode; grants; stored; gpc; lang; device }
 - **Mode:** `'auto'` resolves through `modeFromTimeZone(Intl…timeZone)` only. There is no country lookup in the browser (`src/lib/consent/consent.ts:112-119`).
 - **GPC:** `config.gpc === true` or `navigator.globalPrivacyControl === true` (`src/lib/consent/consent.ts:121`).
 - **Stored choice:** the newest valid copy across host-only and domain cookies (`src/lib/consent/consent.ts:130`), then `effectiveGrants` (`src/lib/consent/consent.ts:131`).
-- **Init order:** `applyDefaults` first (GPC forces marketing off in the defaults), then `applyGrants` with PostHog `pending` while an ask-first choice is missing, then auto-clear. All of this runs before the UI (`src/lib/consent/consent.ts:315-327`). The UI waits for `DOMContentLoaded` when `<body>` is missing (`src/lib/consent/consent.ts:353-355`).
-- **Silent GPC choice:** in a non-ask-first mode with GPC and no current choice, it records action `gpc` silently and shows no banner (`src/lib/consent/consent.ts:344-345`).
+- **Init order:** `applyDefaults` first (GPC forces marketing off in the defaults), then `applyGrants` with PostHog `pending` while an ask-first choice is missing, then auto-clear. All of this runs before the UI (`src/lib/consent/consent.ts:315-328`). The UI waits for `DOMContentLoaded` when `<body>` is missing (`src/lib/consent/consent.ts:354-356`).
+- **Silent GPC choice:** in a non-ask-first mode with GPC and no current choice, it records action `gpc` silently and shows no banner (`src/lib/consent/consent.ts:345-346`).
 - **choose():** `custom` with everything off after something was on becomes `withdraw` (`src/lib/consent/consent.ts:214`). The consent id is reused (`src/lib/consent/consent.ts:216`). The cookie write and UI close happen synchronously, then a `setTimeout(0)` runs signals, auto-clear, the `welovecookies:change` event and the record POST (`src/lib/consent/consent.ts:223-261`).
+- **Known trackers:** every `applyGrants` call passes `config.blockScripts`, so held trackers follow the same grants (`src/lib/consent/consent.ts:243`, `src/lib/consent/consent.ts:257`, `src/lib/consent/consent.ts:326`). `destroy()` leaves the `createElement` hook in place, because `init()` creates the next manager straight away and keeps using it; see [[entities/consent-trackers]].
 - **Server correction:** a record reply carrying `consent` with the same id that differs from the local choice is adopted, rewritten and re-applied (`src/lib/consent/consent.ts:246-260`).
 - **POST:** same-origin requests use `keepalive` with same-origin credentials. Cross-origin requests (hosted install) use CORS with `credentials: 'omit'` and no keepalive (`src/lib/consent/consent.ts:143-159`).
 - **Cookie domain:** with `'auto'`, it probes `rootCandidates(host)` with a `<name>_probe` cookie. Before writing a domain copy it drops the host-only copy. `max-age` comes from the mode's `maxAgeDays`, and `Secure` is added on https (`src/lib/consent/consent.ts:160-190`).

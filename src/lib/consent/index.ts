@@ -11,6 +11,7 @@ export {
 	googleState,
 	type PostHogLike
 } from './signals.ts';
+export { holdTrackers, KNOWN_TRACKERS, stopHolding, trackerCategory } from './trackers.ts';
 export {
 	createConsent,
 	type ConsentManager,

@@ -2,7 +2,8 @@
  * Fan the visitor's grants out to vendors. Every call is guarded: a missing vendor never throws.
  * Never imports vendor SDKs; it talks to the globals (or the PostHog instance passed in).
  */
-import type { ConsentIntegrations, Grants } from './types.ts';
+import { holdTrackers, stopHolding } from './trackers.ts';
+import type { ConsentIntegrations, Grants, OptionalCategory } from './types.ts';
 
 /** Minimal PostHog surface we use (posthog-js compatible). */
 export interface PostHogLike {
@@ -31,7 +32,8 @@ export const DEFAULT_INTEGRATIONS: ConsentIntegrations = {
 	meta: true,
 	tiktok: true,
 	posthog: true,
-	scriptBlocking: true
+	scriptBlocking: true,
+	knownTrackers: true
 };
 
 const g = (on: boolean) => (on ? 'granted' : 'denied');
@@ -93,6 +95,8 @@ export interface ApplyOptions {
 	pending?: boolean;
 	/** Push the dataLayer event (default true). */
 	event?: boolean;
+	/** The owner's extra script hosts to hold (ConsentConfig.blockScripts). */
+	blockScripts?: Partial<Record<OptionalCategory, string[]>>;
 }
 
 /** Apply grants: on init when a choice exists, and on every change. */
@@ -120,6 +124,9 @@ export function applyGrants(
 			if (!Array.isArray(w.dataLayer)) w.dataLayer = [];
 			w.dataLayer.push({ event: 'welovecookies_update', ...grants });
 		});
+	// Before activateScripts: a released tracker is restored in place, so it is no text/plain match.
+	if (w.document)
+		safe(() => (on.knownTrackers ? holdTrackers(w, grants, opts.blockScripts) : stopHolding(w)));
 	if (on.scriptBlocking && w.document) safe(() => activateScripts(w.document!, grants));
 }
 

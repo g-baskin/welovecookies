@@ -12,3 +12,4 @@ Hard-to-reverse decisions and why they were made (Nygard format). Numbers are pe
 | [0006](0006-script-tag-first.md) | One script tag for any website; WordPress is optional | Accepted |
 | [0007](0007-admin-on-cloudflare.md) | The optional admin runs on the owner's Cloudflare account | Accepted, amended by 0008 |
 | [0008](0008-self-hosted-admin.md) | The optional admin can also run on the owner's own server | Accepted |
+| [0009](0009-hold-known-trackers.md) | Hold known trackers that other scripts add, on by default | Accepted |

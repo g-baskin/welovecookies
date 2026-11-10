@@ -240,7 +240,7 @@ function create(config: ConsentConfig, o: ConsentOptions): ConsentManager {
 			...(config.site ? { site: config.site } : {})
 		};
 		defer(() => {
-			applyGrants(w, grants, int, { posthog: posthog() });
+			applyGrants(w, grants, int, { posthog: posthog(), blockScripts: config.blockScripts });
 			clear(grants);
 			emit();
 			void post(config.endpoints?.record, payload).then((res) => {
@@ -254,7 +254,7 @@ function create(config: ConsentConfig, o: ConsentOptions): ConsentManager {
 				stored = fixed;
 				grants = effectiveGrants(mode, fixed, config.rev, gpc, now());
 				writeCookie(fixed);
-				applyGrants(w, grants, int, { posthog: posthog() });
+				applyGrants(w, grants, int, { posthog: posthog(), blockScripts: config.blockScripts });
 				clear(grants);
 				emit();
 			});
@@ -322,7 +322,8 @@ function create(config: ConsentConfig, o: ConsentOptions): ConsentManager {
 	applyGrants(w, grants, int, {
 		posthog: posthog(),
 		pending: !hasChoice && rule.optIn,
-		event: hasChoice
+		event: hasChoice,
+		blockScripts: config.blockScripts
 	});
 	guard(clear)(grants);
 

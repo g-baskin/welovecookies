@@ -18,7 +18,7 @@ We Love Cookies is one script file that works on any website. Pick the way that 
 
 ## Any website: upload one file
 
-1. Download [`dist/welovecookies.min.js`](../dist/welovecookies.min.js) (about 23 KB gzipped).
+1. Download [`dist/welovecookies.min.js`](../dist/welovecookies.min.js) (about 25 KB gzipped).
 2. Upload it to the top folder of your website, so it opens at `https://your-site.com/welovecookies.min.js`.
 3. Paste this into the `<head>` of every page, above any analytics or ad code, and change the privacy policy address:
 
@@ -44,7 +44,7 @@ Same snippet, but load the file from jsDelivr instead of your own server:
 <script src="https://cdn.jsdelivr.net/gh/g-baskin/welovecookies@main/dist/welovecookies.min.js"></script>
 ```
 
-For a live site, replace `@main` with a release tag (for example `@v1.2.0`; all releases are listed on [GitHub](https://github.com/g-baskin/welovecookies/releases)), so an update never changes your site without you choosing it.
+For a live site, replace `@main` with a release tag (for example `@v1.3.0`; all releases are listed on [GitHub](https://github.com/g-baskin/welovecookies/releases)), so an update never changes your site without you choosing it.
 
 ## Frameworks
 
@@ -238,6 +238,25 @@ Google tags (through Consent Mode), Microsoft UET, the Meta pixel, TikTok and Po
 </script>
 ```
 
+### Known trackers are held for you
+
+Some trackers are often added by a tag manager or a plugin rather than written in your page. The banner holds these back until their category is allowed, even when another script adds them later:
+
+- **Analytics:** Hotjar, Microsoft Clarity, Mixpanel, Segment, Matomo Cloud
+- **Marketing:** LinkedIn Insight, Pinterest, Snap, Reddit, X (Twitter)
+
+A tracker added by code makes no request before consent. This only works for scripts added after the banner script runs, so keep it first in `<head>`. For your own tags, still use `type="text/plain"` as above: the browser may download a tracker written straight into the HTML (it won't run it), but never a `text/plain` one.
+
+Hold other script hosts too with `blockScripts`, as `host` or `host/path` (subdomains included):
+
+```js
+window.WeLoveCookiesConfig = {
+	blockScripts: { analytics: ['stats.example.com'], marketing: ['ads.example.net/pixel/'] }
+};
+```
+
+This is on by default. To turn it off, set `integrations: { knownTrackers: false }` (in the admin: **Hold back known trackers added by other scripts**).
+
 ## Settings
 
 Put any of these in `window.WeLoveCookiesConfig`. Full list: [`src/lib/consent/README.md`](../src/lib/consent/README.md).
@@ -254,6 +273,8 @@ Put any of these in `window.WeLoveCookiesConfig`. Full list: [`src/lib/consent/R
 | `cookies` | The cookie list visitors see in the settings panel | see `ConsentConfig` |
 | `texts` | Your own wording, per language | `{ en: { title: 'Cookies?' } }` |
 | `endpoints.record` | An address that receives each choice as JSON, to keep proof of consent ([RECORDS.md](RECORDS.md)) | `'/api/consent'` |
+| `blockScripts` | More script hosts to hold until a category is allowed ([how](#known-trackers-are-held-for-you)) | `{ analytics: ['stats.example.com'] }` |
+| `integrations` | Turn a built-in integration off, for example holding known trackers | `{ knownTrackers: false }` |
 
 The same settings can go on the script tag as `data-` attributes, for example `<script src="/welovecookies.min.js" data-privacy="/privacy" data-rev="2"></script>`.
 
